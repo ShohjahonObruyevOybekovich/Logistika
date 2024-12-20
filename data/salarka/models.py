@@ -10,7 +10,7 @@ class Salarka(TimeStampModel):
         return self.oil_volume
 
 
-class Remaining_gas_quantity(TimeStampModel):
+class Remaining_salarka_quantity(TimeStampModel):
     oil_volume = models.CharField(max_length=100, help_text="Salarka volume litr")
 
     def __str__(self):

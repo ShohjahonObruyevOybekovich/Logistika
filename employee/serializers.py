@@ -9,7 +9,15 @@ User = get_user_model()
 class EmployeeListserializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = '__all__'
+        fields = [
+            "id",
+            'full_name',
+            'phone',
+            'city',
+            'price_of_flight',""
+            "departure_date",
+            'cargo_description'
+        ]
 
 class EmployeeCreateSerializer(serializers.ModelSerializer):
     class Meta:

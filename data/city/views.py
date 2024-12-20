@@ -39,16 +39,43 @@ class CityListAPIView(ListAPIView):
     ordering_fields = ['name']
     search_fields = ['name','region']
 
-class CityDeleteAPIView(RetrieveAPIView):
+class CityDeleteAPIView(DestroyAPIView):
     queryset = City.objects.all()
     permission_classes = (IsAuthenticated,)
     lookup_field = 'id'
-
 
 
 class RegionCreateAPIView(CreateAPIView):
     queryset = Region.objects.all()
     serializer_class = RegionCreateSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class RegionUpdateAPIView(UpdateAPIView):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'id'
+
+
+class RegionDeleteAPIView(DestroyAPIView):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'id'
+
+
+class RegionListAPIView(ListAPIView):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        'name',
+    ]
+    ordering_fields = ['name']
+    search_fields = ['name']
+
+
 
 

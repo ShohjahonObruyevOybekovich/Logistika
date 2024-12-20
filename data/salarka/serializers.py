@@ -1,35 +1,31 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Oil
+from .models import Salarka,Remaining_salarka_quantity
 
 User = get_user_model()
 
 
-class OilListserializer(serializers.ModelSerializer):
+class SalarkaListserializer(serializers.ModelSerializer):
     class Meta:
-        model = Oil
+        model = Salarka
         fields = [
             "id",
-            'oil_name',
             'oil_volume',
-            'paid_amount',
             'oil_price',
         ]
 
-class OilCreateseralizer(serializers.ModelSerializer):
+class SalarkaCreateseralizer(serializers.ModelSerializer):
     class Meta:
-        model = Oil
+        model = Salarka
         fields = [
-            'oil_name',
             'oil_volume',
-            'paid_amount',
             'oil_price',
         ]
 
-class Remaining_oil_quantityserializer(serializers.Serializer):
+class Remaining_salarka_quantityserializer(serializers.Serializer):
     class Meta:
-        model = Oil
+        model = Remaining_salarka_quantity
         fields = [
             'oil_volume'
         ]

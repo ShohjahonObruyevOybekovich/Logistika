@@ -57,14 +57,14 @@ INSTALLED_APPS = [
 
     # INSTALLED APPS
     'account',
-
+    'employee',
     'data.command',
     'data.cars',
     'data.oil',
     'data.gas',
     'data.salarka',
     'data.city',
-    'employee'
+
 
 ]
 
