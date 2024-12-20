@@ -11,27 +11,11 @@ services:
       - static_file:/app/static
     environment:
       - TZ=Asia/Tashkent
-    depends_on:
-      - postgres
-
-
-  postgres:
-    image: postgres:latest
-    container_name: "postgres"
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    volumes:
-      - "../app_data:/var/lib/postgresql/data"
-    ports:
-      - "5433:5432"
-    command: postgres -c max_connections=1500
 
   nginx:
     build: ./nginx
     ports:
-      - 8000:80
+      - 8081:80
     volumes:
       - media_file:/app/media
       - static_file:/app/static
@@ -41,6 +25,5 @@ services:
       - TZ=Asia/Tashkent
 
 volumes:
-
   media_file:
   static_file:
