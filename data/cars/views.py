@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import *
-from .models import Car,Trailer_cars
+from .models import Car
 
 
 class CarCreateAPIView(CreateAPIView):
@@ -27,10 +27,10 @@ class CarsListAPIView(ListAPIView):
     queryset = Car.objects.all()
     serializer_class = CarListserializer
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (JWTAuthentication,)
+
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['name','number','type_of_payment',
-                        'with_trailer',"fuel_type",'car_price',
+    filterset_fields = ['name',"driver",'number','type_of_payment',
+                        'with_trailer',"fuel_type",'price',
                         'distance_travelled']
     ordering_fields = ['number']
     search_fields = ['name']
@@ -40,11 +40,10 @@ class CarByIDAPIView(RetrieveAPIView):
     queryset = Car.objects.all()
     serializer_class = CarListserializer
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (JWTAuthentication,)
 
     def get_object(self):
         try:
-            obj = self.get_queryset().get(pk=self.kwargs.get('uuid'))
+            obj = self.get_queryset().get(pk=self.kwargs.get('id'))
             self.check_object_permissions(self.request, obj)
             return obj
         except Car.DoesNotExist:
@@ -54,6 +53,5 @@ class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarListserializer
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (JWTAuthentication,)
-    lookup_field = 'id'
+
 

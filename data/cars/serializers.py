@@ -1,15 +1,15 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Car,Trailer_cars
+from .models import Car, Trailer
 
 User = get_user_model()
 
 class CarCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ['driver', 'name','number','model_car','type_of_payment'
-                  ,'lizing_period','with_trailer','fuel_type','car_price',
+        fields = ['driver', 'name','number','model','type_of_payment'
+                  ,'leasing_period','with_trailer','fuel_type','price',
                   'distance_travelled']
 
         def validate_driver(self, value):
@@ -21,8 +21,8 @@ class CarCreateSerializer(serializers.ModelSerializer):
 class CarListserializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ["id",'driver', 'name','number','model_car','type_of_payment'
-                  ,'lizing_period','with_trailer','fuel_type','car_price',
+        fields = ["id",'driver', 'name','number','model','type_of_payment'
+                  ,'leasing_period','with_trailer','fuel_type','price',
                   'distance_travelled']
 
 
@@ -31,13 +31,13 @@ class CarListserializer(serializers.ModelSerializer):
 class TrailerCarsSerializer(serializers.ModelSerializer):
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
     class Meta:
-        model = Trailer_cars
-        fields = ['car','trailer_number']
+        model = Trailer
+        fields = ['car','number']
 
 
 class TrailerListSerializer(serializers.ModelSerializer):
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
     class Meta:
-        model = Trailer_cars
-        fields = ['car', 'number', 'model_car', 'number', 'trailer_number']
+        model = Trailer
+        fields = ['car', 'number']
 

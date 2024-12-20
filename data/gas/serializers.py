@@ -1,18 +1,20 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import GasPurchase, GasInventory, Gas_another_station
+from .models import GasPurchase, Gas_another_station,GasStation
 
 User = get_user_model()
 
 
-class GasInventoryListserializer(serializers.ModelSerializer):
+class GasStationListserializer(serializers.ModelSerializer):
     class Meta:
-        model = GasInventory
+        model = GasStation
         fields = [
             "id",
-            'remaining_gas_volume',
-            'remaining_payment',
+            'name',
+            'gas_volume',
+            'last_payment',
+
         ]
 
 class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
@@ -33,5 +35,5 @@ class GasPurchaseCreateseralizer(serializers.ModelSerializer):
             'purchased_volume',
             'paid_amount',
             'gas_price',
-            'station_name'
+            'station'
         ]

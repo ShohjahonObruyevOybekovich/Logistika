@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from data.cars.models import Car,Trailer_cars
+from data.cars.models import Car
 
 
 #

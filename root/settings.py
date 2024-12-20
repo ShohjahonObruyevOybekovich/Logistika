@@ -40,6 +40,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,[::1]').spl
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -236,3 +237,16 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'shohjahonobruyev3@gmail.com'
 EMAIL_HOST_PASSWORD = 'pwmbntlpqmtkxsrd'
+
+JAZZMIN_UI_TWEAKS = {
+    "site_title": "Logistic Admin",
+
+    # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_header": "Logistic",
+
+    # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_brand": "Logistic",
+    "theme": "flatly",
+    "dark_mode_theme": "darkly",
+}
+

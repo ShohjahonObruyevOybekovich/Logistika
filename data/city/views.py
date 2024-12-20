@@ -26,7 +26,7 @@ class CityUpdateAPIView(UpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CityCreateSerializer
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'
+
 
 class CityListAPIView(ListAPIView):
     queryset = City.objects.all()
@@ -42,7 +42,7 @@ class CityListAPIView(ListAPIView):
 class CityDeleteAPIView(DestroyAPIView):
     queryset = City.objects.all()
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'
+
 
 
 class RegionCreateAPIView(CreateAPIView):
@@ -55,14 +55,14 @@ class RegionUpdateAPIView(UpdateAPIView):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'
+
 
 
 class RegionDeleteAPIView(DestroyAPIView):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'
+
 
 
 class RegionListAPIView(ListAPIView):
