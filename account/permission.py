@@ -1,4 +1,5 @@
 from django.contrib.auth.backends import BaseBackend, UserModel
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import BasePermission
 # from .models import UserRole
 
@@ -13,19 +14,25 @@ from rest_framework.permissions import BasePermission
 
 from django.contrib.auth import get_user_model
 
-class EmailAuthBackend:
-    def authenticate(self, request, email=None, password=None):
-        User = get_user_model()
+from account.models import CustomUser
+
+
+class PhoneAuthBackend(BaseBackend):
+    def authenticate(self, request, phone=None, password=None):
+        print(f"Attempting authentication for phone: {phone}")
         try:
-            user = User.objects.get(email=email)
+            user = CustomUser.objects.get(phone=phone)
             if user.check_password(password):
+                print("Authentication successful")
                 return user
-        except User.DoesNotExist:
-            return None
+            else:
+                print("Invalid password")
+        except CustomUser.DoesNotExist:
+            print("User does not exist")
+        return None
 
     def get_user(self, user_id):
-        User = get_user_model()
         try:
-            return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
+            return CustomUser.objects.get(pk=user_id)
+        except CustomUser.DoesNotExist:
             return None

@@ -1,22 +1,25 @@
 # Create your views here.
-import random
 
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.cache import cache
-from django.core.mail import send_mail
+from django.contrib.auth import get_user_model, authenticate
 from passlib.context import CryptContext
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.generics import CreateAPIView, GenericAPIView, ListAPIView
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 
-from account.serializers import UserLoginSerializer, ConfirmationCodeSerializer, UserListSerializer, UserSerializer
+from account.serializers import UserLoginSerializer, UserListSerializer, UserSerializer
 from .serializers import UserCreateSerializer, UserUpdateSerializer
+
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter
+
 
 User = get_user_model()
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
@@ -25,63 +28,54 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 class RegisterAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
 
-    def generate_confirmation_code(self):
-        return random.randrange(10000, 99999)
-
     def create(self, request, *args, **kwargs):
+        # Validate incoming data using the serializer
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        email = serializer.validated_data['email']
+        # Extract validated data
+        phone = serializer.validated_data['phone']
         password = serializer.validated_data['password']
-        # username = serializer.validated_data['username']
 
-        confirmation_code = self.generate_confirmation_code()
+        # Check if the phone number already exists
+        if User.objects.filter(phone=phone).exists():
+            return Response({'success': False, 'message': 'This phone number is already registered.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Send confirmation email
-        subject = 'Registration Confirmation Code'
-        message = f'Your confirmation code is: {confirmation_code}'
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+        # Hash the password before creating the user
+        user = User.objects.create(
+            phone=phone,
+        )
+        user.set_password(password)  # Hash the password
+        user.save()
 
-        cache_data = {
-            'email': email,
-            # 'username': username,
-            'password': password,
-            'confirmation_code': confirmation_code
-        }
-        # print(cache_data)
-        cache.set(email, cache_data, timeout=300)
-        # print(cache)
-        return Response({'confirmation_code': confirmation_code}, status=status.HTTP_201_CREATED)
-
-
-class ConfirmationCodeAPIView(GenericAPIView):
-    serializer_class = ConfirmationCodeSerializer
-
-    def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        # username = request.data.get('username')
-        confirm_code = request.data.get('confirmation_code')
-        cached_data = cache.get(email)
-        print(email)
-        print(confirm_code)
-        print(cached_data)
-        if cached_data and confirm_code == cached_data['confirmation_code']:
-            password = cached_data['password']
-
-            if User.objects.filter(email=email).exists():
-                return Response({'success': False, 'message': 'This email already exists!'}, status=400)
-            # if User.objects.filter(username=cached_data['username']).exists():
-            #     return Response({'success': False, 'message': 'This username already exists!'}, status=400)
-            else:
-                User.objects.create_user(
-                    email=email,
-                    # username=cached_data['username'],
-                    password=password,
-                )
-                return Response({'success': True})
-        else:
-            return Response({'message': 'The entered code is not valid! '}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'success': True, 'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
+# class ConfirmationCodeAPIView(GenericAPIView):
+#     serializer_class = ConfirmationCodeSerializer
+#
+#     def post(self, request, *args, **kwargs):
+#         email = request.data.get('email')
+#         # username = request.data.get('username')
+#         confirm_code = request.data.get('confirmation_code')
+#         cached_data = cache.get(email)
+#         print(email)
+#         print(confirm_code)
+#         print(cached_data)
+#         if cached_data and confirm_code == cached_data['confirmation_code']:
+#             password = cached_data['password']
+#
+#             if User.objects.filter(email=email).exists():
+#                 return Response({'success': False, 'message': 'This email already exists!'}, status=400)
+#             # if User.objects.filter(username=cached_data['username']).exists():
+#             #     return Response({'success': False, 'message': 'This username already exists!'}, status=400)
+#             else:
+#                 User.objects.create_user(
+#                     email=email,
+#                     # username=cached_data['username'],
+#                     password=password,
+#                 )
+#                 return Response({'success': True})
+#         else:
+#             return Response({'message': 'The entered code is not valid! '}, status=status.HTTP_400_BAD_REQUEST)
 
 # class PasswordResetRequestView(GenericAPIView):
 #     serializer_class = PasswordResetRequestSerializer
@@ -135,29 +129,48 @@ class ConfirmationCodeAPIView(GenericAPIView):
 
 class UserList(ListAPIView):
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     queryset = User.objects.all().order_by('id')
 
     serializer_class = UserListSerializer
 
+@extend_schema(
+    request=UserLoginSerializer,
+    responses={
+        200: OpenApiTypes.OBJECT,
+        400: OpenApiTypes.OBJECT,
+    }
+)
 
-class CustomAuthToken(ObtainAuthToken):
+
+class CustomAuthToken(APIView):
     serializer_class = UserLoginSerializer
 
     def post(self, request, *args, **kwargs):
+        # Validate serializer data
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
+
+        # Get the validated user
+        user = serializer.validated_data.get('user')
+        if not user:
+            raise AuthenticationFailed("Invalid credentials or user does not exist.")
+
+        # Generate Refresh and Access Tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
         return Response({
-            'token': token.key,
+            'access_token': access_token,
+            'refresh_token': refresh_token,
             'user_id': user.pk,
-            'email': user.email  # Return user's email instead of username
-        })
+            'phone': user.phone,
+        }, status=status.HTTP_200_OK)
 
 class UserUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
 
     def get_object(self):
         return self.request.user  # Get the current user
@@ -173,7 +186,7 @@ class UserUpdateAPIView(APIView):
 
 class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request, *args, **kwargs):
         request.user.auth_token.delete()
@@ -181,7 +194,7 @@ class LogoutAPIView(APIView):
 
 class UserInfo(APIView):
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     def get(self, request):
         user = request.user
         user_serializer = UserSerializer(user)

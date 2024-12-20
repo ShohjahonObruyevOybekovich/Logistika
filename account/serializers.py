@@ -1,10 +1,11 @@
+from django.contrib.auth.backends import BaseBackend
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ModelSerializer
 
 from .models import CustomUser
-
+from account.permission import PhoneAuthBackend
 User = get_user_model()
 
 
@@ -12,42 +13,48 @@ User = get_user_model()
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('email','password')
+        fields = ('phone','password')
 
-class ConfirmationCodeSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    confirmation_code = serializers.IntegerField()
+# class ConfirmationCodeSerializer(serializers.Serializer):
+#     phone = serializers.EmailField()
+#     confirmation_code = serializers.IntegerField()
+#
+#
+# class PasswordResetRequestSerializer(serializers.Serializer):
+#     phone = serializers.EmailField()
+#
+#
+# class PasswordResetLoginSerializer(serializers.Serializer):
+#     new_password = serializers.CharField()
 
 
-class PasswordResetRequestSerializer(serializers.Serializer):
-    email = serializers.EmailField()
 
-
-class PasswordResetLoginSerializer(serializers.Serializer):
-    new_password = serializers.CharField()
-
-
-
-from account.permission import EmailAuthBackend
 class UserLoginSerializer(serializers.Serializer):
-    email = serializers.CharField(max_length=30)
-    password = serializers.CharField(max_length=20, write_only=True)
+    phone = serializers.CharField(max_length=30, required=True)
+    password = serializers.CharField(max_length=128, required=True, write_only=True)
 
     def validate(self, attrs):
-        email = attrs.get('email')
+        phone = attrs.get('phone')
         password = attrs.get('password')
 
-        if email and password:
+        if phone and password:
+            backend = PhoneAuthBackend()
+            user = backend.authenticate(
+                request=self.context.get('request'),
+                phone=phone,
+                password=password,
+            )
 
-            user = EmailAuthBackend().authenticate(request=self.context.get('request'),
-                                email=email, password=password)
-            print(user)
             if not user:
-                msg = ('Unable to log in with provided credentials.')
-                raise serializers.ValidationError(msg, code='authorization')
+                raise serializers.ValidationError(
+                    "Unable to log in with provided credentials.",
+                    code="authorization"
+                )
         else:
-            msg = ('Must include "email" and "password".')
-            raise serializers.ValidationError(msg, code='authorization')
+            raise serializers.ValidationError(
+                "Must include 'phone' and 'password'.",
+                code="authorization"
+            )
 
         attrs['user'] = user
         return attrs
@@ -62,7 +69,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email','full_name','image', 'phone', 'password','telegram_username']
+        fields = ['phone','full_name', 'password',]
 
     def validate(self, attrs):
         user = self.instance  # Get the user instance
@@ -74,8 +81,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class UserListSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id',"image",'email',"full_name", 'password','telegram_username']
+        fields = ['id','phone',"full_name", 'password',]
+
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('image',"full_name", 'email',  'phone','telegram_username')
+        fields = ("id","full_name", 'phone',)

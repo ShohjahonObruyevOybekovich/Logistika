@@ -21,6 +21,8 @@ from django.urls import include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from drf_spectacular.views import (SpectacularAPIView,
+                                   SpectacularSwaggerView)
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -34,26 +36,27 @@ schema_view = get_schema_view(
 
 
 from django.urls import path
-from django.views.generic import TemplateView
 
 urlpatterns = [
-    # path('', TemplateView.as_view(template_name='home.html'), name='home'),
+
     path('admin/', admin.site.urls),
     path('auth/',include('account.urls')),
+    path('cars/',include('data.cars.urls')),
+    path('employees/',include('employee.urls')),
 
 
     path('docs<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
-from django.views.i18n import set_language
 
-# urlpatterns_LANG = [
-#     # Other URL patterns
-#     path('set-language/', set_language, name='set_language'),
-# ]
-#
-# urlpatterns+=urlpatterns_LANG
+
+urlpatterns += [
+    path('api_docs/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+]
+
+
 urlpatterns+=static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

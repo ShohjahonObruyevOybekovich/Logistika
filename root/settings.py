@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 from decouple import config
+# from rest_framework_simplejwt import settings
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +27,9 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS')
+# Read ALLOWED_HOSTS from the .env file
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,[::1]').split(',')
+
 
 # CSRF_TRUSTED_ORIGINS = [
 #     'https://templify.uz',
@@ -44,12 +48,23 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Utils
     "corsheaders",
     'drf_yasg',
     'rest_framework',
-    'rest_framework.authtoken',
+    'drf_spectacular',
+    'rest_framework_simplejwt',
 
-    'account.apps.AccountConfig',
+    # INSTALLED APPS
+    'account',
+
+    'data.command',
+    'data.cars',
+    'data.oil',
+    'data.gas',
+    'data.salarka',
+    'data.city',
+    'employee'
 
 ]
 
@@ -65,16 +80,44 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'root.urls'
+
 REST_FRAMEWORK = {
     'DEFAULT_CACHE_ALIAS': 'default',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10  # Adjust the page size as needed
+    'PAGE_SIZE': 10,  # Adjust the page size as needed
 }
+
+# AUTHENTICATION_BACKENDS = [
+#     'account.backends.PhoneAuthBackend',  # Correct path to your custom backend
+#     'django.contrib.auth.backends.ModelBackend',  # Default backend for admin authentication
+# ]
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=300),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Logistic platform',
+    'DESCRIPTION': 'Logistic platform description.',
+    'VERSION': '1.0.0',
+}
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
