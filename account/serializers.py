@@ -63,7 +63,6 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False)
     phone = serializers.CharField(max_length=15, required=False)
     password = serializers.CharField(max_length=128, write_only=True, required=False)
 

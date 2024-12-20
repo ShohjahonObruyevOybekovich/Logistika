@@ -19,9 +19,9 @@ urlpatterns = [
     # path('reset-password/<str:uid>/<str:token>', PasswordResetView.as_view() ,name='reset-password-view'),
 
     path('user-list',UserList.as_view(), name='user_list'),
-    path('user-update', UserUpdateAPIView.as_view(), name='user_update'),
+    path('user-update/<int:id>/', UserUpdateAPIView.as_view(), name='user_update'),
     path('logout', LogoutAPIView.as_view(), name='logout'),
-    path('user-info',UserInfo.as_view(), name='user-info')
+    path('user-info/<int:id>/',UserInfo.as_view(), name='user-info')
 ]
 
 urlpatterns += [

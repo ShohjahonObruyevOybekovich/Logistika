@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -195,7 +195,14 @@ class LogoutAPIView(APIView):
 class UserInfo(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (JWTAuthentication,)
-    def get(self, request):
-        user = request.user
+
+    def get(self, request, id=None):
+        try:
+            # Fetch the user by the given ID or raise a 404 error if not found
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            raise NotFound(detail="User not found.")
+
+        # Serialize the user data
         user_serializer = UserSerializer(user)
         return Response(user_serializer.data)
