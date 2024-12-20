@@ -32,14 +32,6 @@ services:
         depends_on:
             - postgres
 
-    nginx:
-        image: logistika-nginx
-        container_name: logistika-nginx-1
-        ports:
-            - "8080:80"
-        depends_on:
-            - django
-
 
 
 volumes:
