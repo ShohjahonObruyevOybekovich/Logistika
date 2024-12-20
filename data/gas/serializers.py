@@ -16,6 +16,14 @@ class GasStationListserializer(serializers.ModelSerializer):
             'last_payment',
 
         ]
+class GasStationCreateserializer(serializers.ModelSerializer):
+    class Meta:
+        model = GasStation
+        fields = [
+            "name",
+            "gas_volume",
+            "last_payment",
+        ]
 
 class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
     class Meta:
