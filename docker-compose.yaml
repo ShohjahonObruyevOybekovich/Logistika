@@ -1,15 +1,37 @@
-version: '3'
+services:
+
+    postgres:
+        image: postgres:latest
+        container_name: "postgres"
+        environment:
+            - POSTGRES_DB=${POSTGRES_DB}
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        volumes:
+            - "../app_data:/var/lib/postgresql/data"
+        ports:
+            - "5433:5432"
+        command: postgres -c max_connections=1500
+
+    django:
+        container_name: django
+        build:
+            context: ./
+        command: python manage.py runserver 0.0.0.0:8000
+        # --noreload
+        volumes: &shared_volumes
+            - ./:/usr/src/app
+            - ./data:/usr/src/app/data
+            - ./account:/usr/src/app/account
+            - ./employee:/usr/src/app/employee
+
+        ports:
+            - 8000:8000
+        env_file:
+            - .env
+        depends_on:
+            - postgres
+
 
 volumes:
-  media_file:
-
-services:
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    ports:
-      - 8000:8000
-    volumes:
-      - media_file:/app/media
-    environment:
-      - TZ=Asia/Tashkent
+    postgres:
