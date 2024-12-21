@@ -15,7 +15,7 @@ from data.command.models import TimeStampModel
 
 
 class Gas_another_station(TimeStampModel):
-    car : Car = models.ForeignKey("Car", on_delete=models.CASCADE)
+    car : Car = models.ForeignKey("cars.Car", on_delete=models.CASCADE)
     purchased_volume = models.FloatField(help_text="Volume of gas purchased in m³")
     payed_price_uzs = models.FloatField(
         max_length=150,
