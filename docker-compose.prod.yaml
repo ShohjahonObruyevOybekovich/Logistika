@@ -9,7 +9,7 @@ services:
     volumes:
       - media_file:/app/media
       - static_file:/app/static
-      - /var/data/db:/app/db
+      - ./app_data:/app
     environment:
       - TZ=Asia/Tashkent
 
