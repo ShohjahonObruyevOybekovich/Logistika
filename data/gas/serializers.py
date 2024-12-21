@@ -29,6 +29,7 @@ class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
     class Meta:
         model = Gas_another_station
         fields = [
+            "car",
             'purchased_volume',
             'payed_price_uzs',
             'payed_price_usd'
@@ -38,6 +39,7 @@ class GasAnotherListserializer(serializers.ModelSerializer):
         model = Gas_another_station
         fields = [
             'id',
+            "car"
             'purchased_volume',
             'payed_price_uzs',
             'payed_price_usd'
