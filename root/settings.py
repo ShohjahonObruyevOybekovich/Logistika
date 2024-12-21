@@ -66,8 +66,8 @@ INSTALLED_APPS = [
     'data.gas',
     'data.salarka',
     'data.city',
-    'data.flight'
-
+    'data.flight',
+    'data.upload',
 
 ]
 

@@ -37,6 +37,7 @@ class Flight(models.Model):
         null=True,
         blank=True,
     )
+
     driver_expenses_uzs = models.FloatField(
         max_length=30,
         help_text="Расходы, выделяемые водителю на рейс",
@@ -51,7 +52,7 @@ class Flight(models.Model):
     )
 
     cargo_info = models.TextField(blank=True, null=True)
-    uploaded_file = models.FileField(upload_to="flight_files/", blank=True, null=True)
+    upload = models.ForeignKey("upload.File", on_delete=models.CASCADE, related_name="flights")
 
     STATUS_CHOICES = (
         ("ACTIVE", "Active"),

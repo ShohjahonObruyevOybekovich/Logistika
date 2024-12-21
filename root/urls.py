@@ -49,6 +49,7 @@ urlpatterns = [
     path('salarka/',include('data.salarka.urls')),
     path('flight/',include('data.flight.urls')),
 
+    path('upload/',include('data.upload.urls')),
 
     path('docs<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

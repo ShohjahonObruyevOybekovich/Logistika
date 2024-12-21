@@ -36,7 +36,7 @@ class FlightListserializer(serializers.ModelSerializer):
             "driver_expenses_uzs",
             'driver_expenses_usd',
             'cargo_info',
-            'uploaded_file',
+            'upload',
             'status',
         ]
 
@@ -57,7 +57,7 @@ class FlightCreateserializer(serializers.ModelSerializer):
             "driver_expenses_uzs",
             'driver_expenses_usd',
             'cargo_info',
-            'uploaded_file',
+            'upload',
             'status',
         ]
 
