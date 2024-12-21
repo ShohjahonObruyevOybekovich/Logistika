@@ -18,15 +18,14 @@ from .models import Car
 class CarCreateAPIView(CreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarCreateSerializer
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (JWTAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
 
 
 class CarsListAPIView(ListAPIView):
     queryset = Car.objects.all()
     serializer_class = CarListserializer
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ['name','number','type_of_payment',
