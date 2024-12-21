@@ -7,38 +7,37 @@ from rest_framework.generics import (
 )
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Route,Flight
-from .serializers import (
-    RouteSerializer,RouteCreateSerializer,FlightCreateserializer,FlightListserializer
+from .models import Flight
+from .serializers import (FlightCreateserializer,FlightListserializer
 )
 
-
-class RouteCreateAPIView(CreateAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteCreateSerializer
-    permission_classes = (IsAuthenticated,)
-
-
-class RouteListAPIView(ListAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['start',"end",]
-    ordering_fields = ['start']
-    search_fields = ['start',"end",]
-
-
-class RouteUpdateAPIView(UpdateAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteSerializer
-    permission_classes = (IsAuthenticated,)
-
-
-class RouteDeleteAPIView(DestroyAPIView):
-    queryset = Route.objects.all()
-    permission_classes = (IsAuthenticated,)
-
+#
+# class RouteCreateAPIView(CreateAPIView):
+#     queryset = Route.objects.all()
+#     serializer_class = RouteCreateSerializer
+#     permission_classes = (IsAuthenticated,)
+#
+#
+# class RouteListAPIView(ListAPIView):
+#     queryset = Route.objects.all()
+#     serializer_class = RouteSerializer
+#     permission_classes = (IsAuthenticated,)
+#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+#     filterset_fields = ['start',"end",]
+#     ordering_fields = ['start']
+#     search_fields = ['start',"end",]
+#
+#
+# class RouteUpdateAPIView(UpdateAPIView):
+#     queryset = Route.objects.all()
+#     serializer_class = RouteSerializer
+#     permission_classes = (IsAuthenticated,)
+#
+#
+# class RouteDeleteAPIView(DestroyAPIView):
+#     queryset = Route.objects.all()
+#     permission_classes = (IsAuthenticated,)
+#
 
 
 

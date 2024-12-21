@@ -1,21 +1,21 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Flight,Route
+from .models import Flight
 
 User = get_user_model()
 
-
-class RouteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Route
-        fields = '__all__'
-
-
-class RouteCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Route
-        fields = 'start','end'
+#
+# class RouteSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Route
+#         fields = '__all__'
+#
+#
+# class RouteCreateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Route
+#         fields = 'start','end'
 
 
 

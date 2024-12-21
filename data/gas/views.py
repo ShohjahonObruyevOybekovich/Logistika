@@ -8,6 +8,7 @@ from rest_framework.generics import (
 )
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import (
@@ -40,6 +41,27 @@ class GasPurchaseListAPIView(ListAPIView):
                      'payed_price_uzs',
             'payed_price_usd'
                      ]
+
+class GasPurchasenopgListAPIView(ListAPIView):
+    queryset = GasPurchase.objects.all()
+    serializer_class = GasPurchaseListseralizer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        'purchased_volume',
+        'payed_price_uzs',
+        'payed_price_usd',
+        'price_uzs',
+        'price_usd',
+        "station",
+    ]
+    ordering_fields = ['purchased_volume']
+    search_fields = ['purchased_volume',
+                     'payed_price_uzs',
+            'payed_price_usd'
+                     ]
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class GasPurchaseUpdateAPIView(UpdateAPIView):
@@ -94,6 +116,20 @@ class GasAnotherStationListAPIView(ListAPIView):
     search_fields = ['purchased_volume','payed_price_uzs',
             'payed_price_usd']
     ordering_fields = ['purchased_volume']
+
+class GasAnotherStationnopgListAPIView(ListAPIView):
+    queryset = Gas_another_station.objects.all()
+    serializer_class = GasAnotherListserializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = ['purchased_volume','payed_price_uzs',
+            'payed_price_usd',]
+    search_fields = ['purchased_volume','payed_price_uzs',
+            'payed_price_usd']
+    ordering_fields = ['purchased_volume']
+    def get_paginated_response(self, data):
+        return Response(data)
+
 
 class GasAnotherStationUpdateAPIView(UpdateAPIView):
     queryset = Gas_another_station.objects.all()

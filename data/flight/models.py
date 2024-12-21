@@ -1,26 +1,30 @@
 from django.db import models
 
-
-class Route(models.Model):
-    start = models.ForeignKey(
-        "city.City",
-        on_delete=models.CASCADE,
-        related_name="routes_starting"
-    )
-    end = models.ForeignKey(
-        "city.City",
-        on_delete=models.CASCADE,
-        related_name="routes_ending"
-    )
-
-    def __str__(self):
-        return f"{self.start} → {self.end}"
+#
+# class Route(models.Model):
+#     start = models.ForeignKey(
+#         "city.City",
+#         on_delete=models.CASCADE,
+#         related_name="routes_starting"
+#     )
+#     end = models.ForeignKey(
+#         "city.City",
+#         on_delete=models.CASCADE,
+#         related_name="routes_ending"
+#     )
+#
+#     def __str__(self):
+#         return f"{self.start} → {self.end}"
+#
 
 
 class Flight(models.Model):
     region = models.ForeignKey("city.Region", on_delete=models.CASCADE, related_name="flights")
     city = models.ForeignKey("city.City", on_delete=models.CASCADE, related_name="flights")
-    route = models.ForeignKey("flight.Route", on_delete=models.CASCADE, related_name="flights")
+    # ROUTE_CHOICES = (
+    #     ("")
+    # )
+    route = models.CharField(max_length=100)
     car = models.ForeignKey("cars.Car", on_delete=models.CASCADE, related_name="flights")
     driver = models.ForeignKey("employee.Employee", on_delete=models.CASCADE, related_name="flights")
 
@@ -52,7 +56,8 @@ class Flight(models.Model):
     )
 
     cargo_info = models.TextField(blank=True, null=True)
-    upload = models.ForeignKey("upload.File", on_delete=models.CASCADE, related_name="flights")
+    upload = models.ForeignKey("upload.File", on_delete=models.CASCADE, related_name="flights",
+                               null=True, blank=True)
 
     STATUS_CHOICES = (
         ("ACTIVE", "Active"),

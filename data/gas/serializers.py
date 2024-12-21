@@ -66,5 +66,6 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             'payed_price_usd',
             'price_uzs',
             'price_usd',
-            'station'
+            'station',
+            'updated_at',
         ]
