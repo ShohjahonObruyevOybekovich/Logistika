@@ -111,7 +111,7 @@ class GasAnotherStationListAPIView(ListAPIView):
     serializer_class = GasAnotherListserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['purchased_volume','payed_price_uzs',
+    filterset_fields = ["car",'purchased_volume','payed_price_uzs',
             'payed_price_usd',]
     search_fields = ['purchased_volume','payed_price_uzs',
             'payed_price_usd']

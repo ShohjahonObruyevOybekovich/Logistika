@@ -1,6 +1,8 @@
 from itertools import count
 
 from django.db import models
+
+from data.cars.models import Car
 from data.command.models import TimeStampModel
 
 
@@ -13,6 +15,7 @@ from data.command.models import TimeStampModel
 
 
 class Gas_another_station(TimeStampModel):
+    car : Car = models.ForeignKey("Car", on_delete=models.CASCADE)
     purchased_volume = models.FloatField(help_text="Volume of gas purchased in m³")
     payed_price_uzs = models.FloatField(
         max_length=150,
@@ -26,7 +29,7 @@ class Gas_another_station(TimeStampModel):
     )
 
     def __str__(self):
-        return f"Purchased {self.purchased_volume} gas - {self.paid_amount} m³"
+        return f"Purchased {self.purchased_volume} gas - {self.payed_price_uzs} m³"
 
 
 class GasPurchase(TimeStampModel):
