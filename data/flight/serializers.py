@@ -15,13 +15,13 @@ class RouteSerializer(serializers.ModelSerializer):
 class RouteCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
-        fields = '__all__'
+        fields = 'start','end'
 
 
 
 class FlightListserializer(serializers.ModelSerializer):
     class Meta:
-        model = Route
+        model = Flight
         fields = [
             "id",
             'region',
@@ -42,7 +42,7 @@ class FlightListserializer(serializers.ModelSerializer):
 
 class FlightCreateserializer(serializers.ModelSerializer):
     class Meta:
-        model = Route
+        model = Flight
         fields = [
             "id",
             'region',

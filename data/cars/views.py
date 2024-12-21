@@ -42,11 +42,12 @@ class CarByIDAPIView(RetrieveAPIView):
 
     def get_object(self):
         try:
-            obj = self.get_queryset().get(pk=self.kwargs.get('id'))
+            obj = self.get_queryset().get(pk=self.kwargs.get('pk'))  # Use 'pk' here
             self.check_object_permissions(self.request, obj)
             return obj
         except Car.DoesNotExist:
             raise NotFound("Car not found.")
+
 
 class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()

@@ -1,24 +1,28 @@
 from django.db import models
 
-from data.cars.models import Car
-from data.city.models import Region, City
-from employee.models import Employee
-
 
 class Route(models.Model):
-    start : City = models.ForeignKey("City", on_delete=models.CASCADE)
-    end : City = models.ForeignKey("City", on_delete=models.CASCADE)
+    start = models.ForeignKey(
+        "city.City",
+        on_delete=models.CASCADE,
+        related_name="routes_starting"
+    )
+    end = models.ForeignKey(
+        "city.City",
+        on_delete=models.CASCADE,
+        related_name="routes_ending"
+    )
 
     def __str__(self):
         return f"{self.start} → {self.end}"
 
 
 class Flight(models.Model):
-    region : Region = models.ForeignKey("Region", on_delete=models.CASCADE, related_name='flights')
-    city : City = models.ForeignKey("City", on_delete=models.CASCADE, related_name='flights')
-    route:Route = models.ForeignKey("Route", on_delete=models.CASCADE, related_name='flights')
-    car : Car = models.ForeignKey("Car", on_delete=models.CASCADE, related_name='flights')
-    driver : Employee = models.ForeignKey("Employee", on_delete=models.CASCADE, related_name='flights')
+    region = models.ForeignKey("city.Region", on_delete=models.CASCADE, related_name="flights")
+    city = models.ForeignKey("city.City", on_delete=models.CASCADE, related_name="flights")
+    route = models.ForeignKey("flight.Route", on_delete=models.CASCADE, related_name="flights")
+    car = models.ForeignKey("cars.Car", on_delete=models.CASCADE, related_name="flights")
+    driver = models.ForeignKey("employee.Employee", on_delete=models.CASCADE, related_name="flights")
 
     departure_date = models.DateField()
     arrival_date = models.DateField()
@@ -33,22 +37,31 @@ class Flight(models.Model):
         null=True,
         blank=True,
     )
-    driver_expenses_uzs = models.FloatField(max_length=30,
-                                          help_text="Расходы, выделяемые водителю на рейс",
-                                              null=True,blank=True)
-    driver_expenses_usd = models.FloatField(max_length=30,
-                                          help_text="Расходы, выделяемые водителю на рейс",
-                                              null=True,blank=True)
+    driver_expenses_uzs = models.FloatField(
+        max_length=30,
+        help_text="Расходы, выделяемые водителю на рейс",
+        null=True,
+        blank=True,
+    )
+    driver_expenses_usd = models.FloatField(
+        max_length=30,
+        help_text="Расходы, выделяемые водителю на рейс",
+        null=True,
+        blank=True,
+    )
 
     cargo_info = models.TextField(blank=True, null=True)
-    uploaded_file = models.FileField(upload_to='flight_files/', blank=True, null=True)
+    uploaded_file = models.FileField(upload_to="flight_files/", blank=True, null=True)
+
     STATUS_CHOICES = (
-        ("ACTIVE" , "Active"),
-        ("INACTIVE" , "Inactive")
+        ("ACTIVE", "Active"),
+        ("INACTIVE", "Inactive"),
     )
-    status = models.BooleanField(max_length=10,
-                                 choices=STATUS_CHOICES,
-                                 default="Active")
+    status = models.BooleanField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="Active",
+    )
 
     def __str__(self):
-        return f"Flight  - {self.route} ({self.departure_date})"
+        return f"Flight - {self.route} ({self.departure_date})"

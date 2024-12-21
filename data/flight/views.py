@@ -62,6 +62,7 @@ class FlightUpdateAPIView(UpdateAPIView):
     serializer_class = FlightCreateserializer
     permission_classes = (IsAuthenticated,)
 
+
 class FlightDeleteAPIView(DestroyAPIView):
     queryset = Flight.objects.all()
     permission_classes = (IsAuthenticated,)
