@@ -13,10 +13,10 @@ class EmployeeListserializer(serializers.ModelSerializer):
             "id",
             'full_name',
             'phone',
-            'city',
-            'price_of_flight',""
-            "departure_date",
-            'cargo_description'
+            'passport',
+            'license',
+            'flight',
+            'balance',
         ]
 
 class EmployeeCreateSerializer(serializers.ModelSerializer):
@@ -25,8 +25,8 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
         fields = [
             'full_name',
             'phone',
-            'city',
-            'price_of_flight',""
-            "departure_date",
-            'cargo_description'
+            'passport',
+            'license',
+            'flight',
+            'balance',
         ]

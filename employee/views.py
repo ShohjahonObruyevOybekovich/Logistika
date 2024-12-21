@@ -33,7 +33,6 @@ class EmployeeUpdateAPIView(UpdateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeCreateSerializer
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'
 
 class EmployeeListAPIView(ListAPIView):
     queryset = Employee.objects.all()
@@ -41,14 +40,23 @@ class EmployeeListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = [
-        "full_name",'phone','city','price_of_flight','departure_date','cargo_description',
+        'full_name',
+            'phone',
+            'passport',
+            'license',
+            'flight',
+            'balance',
     ]
-    ordering_fields = ['number']
-    search_fields = ['full_name','phone',"price_of_flight",'cargo_description']
+    ordering_fields = ['phone']
+    search_fields = ['full_name',
+            'phone',
+            'passport',
+            'license',
+            'flight',
+            'balance',]
 
 
 
 class EmployeeDeleteAPIView(DestroyAPIView):
     queryset = Employee.objects.all()
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'

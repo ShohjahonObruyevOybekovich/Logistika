@@ -1,5 +1,6 @@
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -9,6 +10,7 @@ from rest_framework.generics import (
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import (
@@ -141,4 +143,33 @@ class GasAnotherStationDeleteAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
+class GasStationAPI(APIView):
+    """
+    API for managing and retrieving gas purchase data for a station.
+    """
+
+    def get(self, request, pk=None):
+        """
+        Retrieve the total gas volume and prices (UZS, USD) for a given station
+        or details of a specific purchase by ID.
+        """
+        if pk:
+            try:
+                # Retrieve totals for the given station by pk
+                totals = GasPurchase.get_totals(pk)
+                purchases = GasPurchase.objects.filter(station=pk)  # Filter by station, not by id
+                serializer = GasPurchaseListseralizer(purchases, many=True)
+
+                return Response({
+                    "station_id": pk,
+                    "message": "Gas volume and prices retrieved successfully.",
+                    "total_volume": totals["total_volume"],
+                    "total_price_uzs": totals["total_price_uzs"],
+                    "total_price_usd": totals["total_price_usd"],
+                    "purchases": serializer.data,
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({"error": "Station ID is required."}, status=status.HTTP_400_BAD_REQUEST)
 
