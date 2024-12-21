@@ -14,10 +14,10 @@ if TYPE_CHECKING:
 class Employee(models.Model):
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
-    passport = models.CharField(max_length=20, help_text="Passport number")
-    license = models.CharField(max_length=20, help_text="Prava number")
+    passport = models.CharField(max_length=20, help_text="Passport number",null=True,blank=True)
+    license = models.CharField(max_length=20, help_text="Prava number",null=True,blank=True)
     flight = models.ForeignKey('flight.flight', on_delete=models.SET_NULL, null=True)
-    balance = models.DecimalField(max_digits=10, decimal_places=5)
+    balance = models.DecimalField(max_digits=10, decimal_places=5, null=True,blank=True)
 
     created_at = models.DateField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateField(auto_now=True, null=True, blank=True)
