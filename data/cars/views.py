@@ -29,8 +29,8 @@ class CarsListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['name',"driver",'number','type_of_payment',
-                        'with_trailer',"fuel_type",'price',
+    filterset_fields = ['name','number','type_of_payment',
+                        'with_trailer',"fuel_type","price_uzs","price_usd",
                         'distance_travelled']
     ordering_fields = ['number']
     search_fields = ['name']
