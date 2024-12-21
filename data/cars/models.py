@@ -32,15 +32,13 @@ class Car(TimeStampModel):
         choices=FUEL_CHOICES,
         default='Diesel',
     )
-    price_uzs = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    price_uzs = models.FloatField(
+        max_length=150,
         null=True,
         blank=True,
     )
-    price_usd = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    price_usd = models.FloatField(
+        max_length=150,
         null=True,
         blank=True,
     )

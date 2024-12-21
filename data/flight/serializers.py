@@ -6,42 +6,58 @@ from .models import Flight,Route
 User = get_user_model()
 
 
-class GasStationListserializer(serializers.ModelSerializer):
+class RouteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = '__all__'
+
+
+class RouteCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = '__all__'
+
+
+
+class FlightListserializer(serializers.ModelSerializer):
     class Meta:
         model = Route
         fields = [
             "id",
-            'name',
-            'gas_volume',
-            'last_payment',
-
+            'region',
+            'city',
+            'route',
+            'car',
+            'driver',
+            'departure_date',
+            'arrival_date',
+            'price_uzs',
+            "price_usd",
+            "driver_expenses_uzs",
+            'driver_expenses_usd',
+            'cargo_info',
+            'uploaded_file',
+            'status',
         ]
-class GasStationCreateserializer(serializers.ModelSerializer):
-    class Meta:
-        model = Flight
-        fields = [
-            "name",
-            "gas_volume",
-            "last_payment",
-        ]
 
-class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
+class FlightCreateserializer(serializers.ModelSerializer):
     class Meta:
-        model = Flight
+        model = Route
         fields = [
             "id",
-            'purchased_volume',
-            'paid_amount'
+            'region',
+            'city',
+            'route',
+            'car',
+            'driver',
+            'departure_date',
+            'arrival_date',
+            'price_uzs',
+            "price_usd",
+            "driver_expenses_uzs",
+            'driver_expenses_usd',
+            'cargo_info',
+            'uploaded_file',
+            'status',
         ]
 
-
-class GasPurchaseCreateseralizer(serializers.ModelSerializer):
-    class Meta:
-        model = Flight
-        fields = [
-            'id',
-            'purchased_volume',
-            'paid_amount',
-            'gas_price',
-            'station'
-        ]

@@ -6,11 +6,11 @@ from employee.models import Employee
 
 
 class Route(models.Model):
-    start_location = models.CharField(max_length=255)
-    end_location = models.CharField(max_length=255)
+    start : City = models.ForeignKey("City", on_delete=models.CASCADE)
+    end : City = models.ForeignKey("City", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.start_location} → {self.end_location}"
+        return f"{self.start} → {self.end}"
 
 
 class Flight(models.Model):
@@ -23,13 +23,22 @@ class Flight(models.Model):
     departure_date = models.DateField()
     arrival_date = models.DateField()
 
-    price = models.DecimalField(max_digits=10,
-                                decimal_places=2,
-                                help_text="Введите стоимость рейса")
-
-    driver_expenses = models.DecimalField(max_digits=10,
-                                          decimal_places=2,
-                                          help_text="Расходы, выделяемые водителю на рейс")
+    price_uzs = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    price_usd = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    driver_expenses_uzs = models.FloatField(max_length=30,
+                                          help_text="Расходы, выделяемые водителю на рейс",
+                                              null=True,blank=True)
+    driver_expenses_usd = models.FloatField(max_length=30,
+                                          help_text="Расходы, выделяемые водителю на рейс",
+                                              null=True,blank=True)
 
     cargo_info = models.TextField(blank=True, null=True)
     uploaded_file = models.FileField(upload_to='flight_files/', blank=True, null=True)
