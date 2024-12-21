@@ -12,7 +12,8 @@ class SalarkaListserializer(serializers.ModelSerializer):
         fields = [
             "id",
             'oil_volume',
-            'oil_price',
+            'price_uzs',
+            'price_usd'
         ]
 
 class SalarkaCreateseralizer(serializers.ModelSerializer):
@@ -20,7 +21,7 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
         model = Salarka
         fields = [
             'oil_volume',
-            'oil_price',
+            'price_usd',
         ]
 
 class Remaining_salarka_quantityserializer(serializers.Serializer):

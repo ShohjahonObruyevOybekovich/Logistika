@@ -25,10 +25,9 @@ class OilListAPIView(ListAPIView):
     serializer_class = OilListserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['oil_name','oil_volume',
-                        'paid_amount',"oil_price",]
+    filterset_fields = ['oil_name','oil_volume',]
     ordering_fields = ['oil_name']
-    search_fields = ['oil_name','paid_amount']
+    search_fields = ['oil_name','payed_price_uzs','payed_price_usd']
 
 
 class OilUpdateAPIView(UpdateAPIView):

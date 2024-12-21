@@ -12,9 +12,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import (
     GasPurchaseCreateseralizer,
-    GasAnotherStationCreateseralizer,
-    GasStationListserializer, GasStationCreateserializer, GasPurchaseListseralizer, GasAnotherListserializer)
-from .models import GasStation,GasPurchase,Gas_another_station
+    GasAnotherStationCreateseralizer,GasPurchaseListseralizer, GasAnotherListserializer)
+from .models import GasPurchase,Gas_another_station
 
 
 class GasPurchaseCreateAPIView(CreateAPIView):
@@ -50,32 +49,32 @@ class GasPurchaseUpdateAPIView(UpdateAPIView):
 
 
 
-
-class GasInventoryListAPIView(ListAPIView):
-    queryset = GasStation.objects.all()
-    serializer_class = GasStationListserializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['gas_volume','last_payment',]
-    ordering_fields = ['last_gas_volume']
-    search_fields = ['last_gas_volume','last_payment']
-
-
-
-class GasStationCreateAPIView(CreateAPIView):
-    queryset = GasStation.objects.all()
-    serializer_class = GasStationCreateserializer
-    permission_classes = (IsAuthenticated,)
-
-class GasStationUpdateAPIView(UpdateAPIView):
-    queryset = GasStation.objects.all()
-    serializer_class = GasStationCreateserializer
-    permission_classes = (IsAuthenticated,)
+#
+# class GasInventoryListAPIView(ListAPIView):
+#     queryset = GasStation.objects.all()
+#     serializer_class = GasStationListserializer
+#     permission_classes = (IsAuthenticated,)
+#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+#     filterset_fields = ['gas_volume','last_payment',]
+#     ordering_fields = ['last_gas_volume']
+#     search_fields = ['last_gas_volume','last_payment']
 
 
-class GasStationDeleteAPIView(DestroyAPIView):
-    queryset = GasStation.objects.all()
-    permission_classes = (IsAuthenticated,)
+#
+# class GasStationCreateAPIView(CreateAPIView):
+#     queryset = GasStation.objects.all()
+#     serializer_class = GasStationCreateserializer
+#     permission_classes = (IsAuthenticated,)
+#
+# class GasStationUpdateAPIView(UpdateAPIView):
+#     queryset = GasStation.objects.all()
+#     serializer_class = GasStationCreateserializer
+#     permission_classes = (IsAuthenticated,)
+#
+#
+# class GasStationDeleteAPIView(DestroyAPIView):
+#     queryset = GasStation.objects.all()
+#     permission_classes = (IsAuthenticated,)
 
 
 

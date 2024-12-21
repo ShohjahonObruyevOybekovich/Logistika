@@ -5,6 +5,7 @@ urlpatterns = [
     path("update/<uuid:pk>",CityUpdateAPIView.as_view(), name="update"),
     path("delete/<uuid:pk>",CityDeleteAPIView.as_view(), name="delete"),
     path("list/",CityListAPIView.as_view(), name="list"),
+    path('list-no-pg/',RegionListnopgAPIView.as_view(), name='list-no-pg'),
 
     path("region-create/",RegionCreateAPIView.as_view(), name="region-create"),
     path("region-update/<uuid:pk>",RegionUpdateAPIView.as_view(), name="region-update"),

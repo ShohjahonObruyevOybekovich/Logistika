@@ -1,29 +1,29 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import GasPurchase, Gas_another_station,GasStation
+from .models import GasPurchase, Gas_another_station
 
 User = get_user_model()
 
 
-class GasStationListserializer(serializers.ModelSerializer):
-    class Meta:
-        model = GasStation
-        fields = [
-            "id",
-            'name',
-            'gas_volume',
-            'last_payment',
-
-        ]
-class GasStationCreateserializer(serializers.ModelSerializer):
-    class Meta:
-        model = GasStation
-        fields = [
-            "name",
-            "gas_volume",
-            "last_payment",
-        ]
+# class GasStationListserializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = GasStation
+#         fields = [
+#             "id",
+#             'name',
+#             'gas_volume',
+#             'last_payment',
+#
+#         ]
+# class GasStationCreateserializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = GasStation
+#         fields = [
+#             "name",
+#             "gas_volume",
+#             "last_payment",
+#         ]
 
 class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
     class Meta:

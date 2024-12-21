@@ -25,9 +25,9 @@ class SalarkaListAPIView(ListAPIView):
     serializer_class = SalarkaListserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['oil_volume',"oil_price",]
+    filterset_fields = ['oil_volume',]
     ordering_fields = ['oil_volume']
-    search_fields = ['oil_volume',"oil_price",]
+    search_fields = ['oil_volume',"price_uzs",'price_usd']
 
 
 class SalarkaUpdateAPIView(UpdateAPIView):

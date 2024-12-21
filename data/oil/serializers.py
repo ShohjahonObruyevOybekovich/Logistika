@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Oil
+from .models import Oil, Remaining_oil_quantity
 
 User = get_user_model()
 
@@ -13,8 +13,10 @@ class OilListserializer(serializers.ModelSerializer):
             "id",
             'oil_name',
             'oil_volume',
-            'paid_amount',
-            'oil_price',
+            'payed_price_uzs',
+            'payed_price_usd',
+            'price_uzs',
+            'price_usd',
         ]
 
 class OilCreateseralizer(serializers.ModelSerializer):
@@ -23,14 +25,16 @@ class OilCreateseralizer(serializers.ModelSerializer):
         fields = [
             'oil_name',
             'oil_volume',
-            'paid_amount',
-            'oil_price',
+            'payed_price_uzs',
+            'payed_price_usd',
+            'price_uzs',
+            'price_usd',
         ]
 
 class Remaining_oil_quantityserializer(serializers.Serializer):
     class Meta:
-        model = Oil
+        model = Remaining_oil_quantity
         fields = [
-            'oil_volume'
+            'oil_volume',
         ]
 

@@ -4,12 +4,12 @@ from django.db import models
 from data.command.models import TimeStampModel
 
 
-class GasStation(TimeStampModel):
-    name = models.CharField(max_length=100)
-    gas_volume = models.FloatField(default=0,help_text="Remaining gas volume in m³")
-    last_payment = models.DateField(auto_now=True,null=True, blank=True)
-    def __str__(self):
-        return f"Gas Inventory - {self.gas_volume} m³ remaining"
+# class GasStation(TimeStampModel):
+#     name = models.CharField(max_length=100)
+#     gas_volume = models.FloatField(default=0,help_text="Remaining gas volume in m³")
+#     last_payment = models.DateField(auto_now=True,null=True, blank=True)
+#     def __str__(self):
+#         return f"Gas Inventory - {self.gas_volume} m³ remaining"
 
 
 class Gas_another_station(TimeStampModel):
@@ -30,7 +30,10 @@ class Gas_another_station(TimeStampModel):
 
 
 class GasPurchase(TimeStampModel):
-    station :GasStation = models.ForeignKey("GasStation", on_delete=models.CASCADE)
+    station = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,)
     purchased_volume = models.FloatField(help_text="Volume of gas purchased in m³")
     payed_price_uzs = models.FloatField(
         max_length=150,

@@ -39,6 +39,20 @@ class CityListAPIView(ListAPIView):
     ordering_fields = ['name']
     search_fields = ['name','region']
 
+class CitynopgListAPIView(ListAPIView):
+    queryset = City.objects.all()
+    serializer_class = CityListserializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        'name','region',
+        ]
+    ordering_fields = ['name']
+    search_fields = ['name','region']
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
 class CityDeleteAPIView(DestroyAPIView):
     queryset = City.objects.all()
     permission_classes = (IsAuthenticated,)
@@ -76,6 +90,19 @@ class RegionListAPIView(ListAPIView):
     ordering_fields = ['name']
     search_fields = ['name']
 
+class RegionListnopgAPIView(ListAPIView):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        'name',
+    ]
+    ordering_fields = ['name']
+    search_fields = ['name']
+
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 

@@ -4,7 +4,16 @@ from data.command.models import  TimeStampModel
 
 class Salarka(TimeStampModel):
     oil_volume = models.CharField(max_length=100, help_text="Salarka volume litr")
-    oil_price = models.CharField(max_length=100, help_text="Salarka price")
+    price_uzs = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    price_usd = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.oil_volume
