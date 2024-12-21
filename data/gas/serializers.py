@@ -29,19 +29,42 @@ class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
     class Meta:
         model = Gas_another_station
         fields = [
-            "id",
             'purchased_volume',
-            'paid_amount'
+            'payed_price_uzs',
+            'payed_price_usd'
         ]
+class GasAnotherListserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gas_another_station
+        fields = [
+            'id',
+            'purchased_volume',
+            'payed_price_uzs',
+            'payed_price_usd'
+        ]
+
 
 
 class GasPurchaseCreateseralizer(serializers.ModelSerializer):
     class Meta:
         model = GasPurchase
         fields = [
+            'purchased_volume',
+            'payed_price_uzs',
+            'payed_price_usd',
+            'price_uzs',
+            'price_usd',
+            'station'
+        ]
+class GasPurchaseListseralizer(serializers.ModelSerializer):
+    class Meta:
+        model = GasPurchase
+        fields = [
             'id',
             'purchased_volume',
-            'paid_amount',
-            'gas_price',
+            'payed_price_uzs',
+            'payed_price_usd',
+            'price_uzs',
+            'price_usd',
             'station'
         ]

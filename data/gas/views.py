@@ -13,7 +13,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import (
     GasPurchaseCreateseralizer,
     GasAnotherStationCreateseralizer,
-    GasStationListserializer, GasStationCreateserializer)
+    GasStationListserializer, GasStationCreateserializer, GasPurchaseListseralizer, GasAnotherListserializer)
 from .models import GasStation,GasPurchase,Gas_another_station
 
 
@@ -25,23 +25,30 @@ class GasPurchaseCreateAPIView(CreateAPIView):
 
 class GasPurchaseListAPIView(ListAPIView):
     queryset = GasPurchase.objects.all()
-    serializer_class = GasPurchaseCreateseralizer
+    serializer_class = GasPurchaseListseralizer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = [
-        'id',
         'purchased_volume',
-        'paid_amount',
-        'gas_price',
-        "station",]
+        'payed_price_uzs',
+        'payed_price_usd',
+        'price_uzs',
+        'price_usd',
+        "station",
+    ]
     ordering_fields = ['purchased_volume']
-    search_fields = ['purchased_volume','paid_amount']
+    search_fields = ['purchased_volume',
+                     'payed_price_uzs',
+            'payed_price_usd'
+                     ]
 
 
 class GasPurchaseUpdateAPIView(UpdateAPIView):
     queryset = GasPurchase.objects.all()
     serializer_class = GasPurchaseCreateseralizer
     permission_classes = (IsAuthenticated,)
+
+
 
 
 class GasInventoryListAPIView(ListAPIView):
@@ -62,14 +69,14 @@ class GasStationCreateAPIView(CreateAPIView):
 
 class GasStationUpdateAPIView(UpdateAPIView):
     queryset = GasStation.objects.all()
-    serializer_class = GasStationListserializer
+    serializer_class = GasStationCreateserializer
     permission_classes = (IsAuthenticated,)
 
 
 class GasStationDeleteAPIView(DestroyAPIView):
     queryset = GasStation.objects.all()
-    serializer_class = GasStationListserializer
     permission_classes = (IsAuthenticated,)
+
 
 
 class GasAnotherStationCreateAPIView(CreateAPIView):
@@ -80,11 +87,13 @@ class GasAnotherStationCreateAPIView(CreateAPIView):
 
 class GasAnotherStationListAPIView(ListAPIView):
     queryset = Gas_another_station.objects.all()
-    serializer_class = GasAnotherStationCreateseralizer
+    serializer_class = GasAnotherListserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['purchased_volume','paid_amount',]
-    search_fields = ['purchased_volume','paid_amount']
+    filterset_fields = ['purchased_volume','payed_price_uzs',
+            'payed_price_usd',]
+    search_fields = ['purchased_volume','payed_price_uzs',
+            'payed_price_usd']
     ordering_fields = ['purchased_volume']
 
 class GasAnotherStationUpdateAPIView(UpdateAPIView):
