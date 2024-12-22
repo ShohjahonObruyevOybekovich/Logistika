@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from config.data.cars.models import Car
+from data.cars.models import Car
 from data.gas.models import GasPurchase, GasStation
 
 
