@@ -2,7 +2,6 @@ from itertools import count
 
 from django.db import models
 
-from data.cars.models import Car
 from data.command.models import TimeStampModel
 
 
