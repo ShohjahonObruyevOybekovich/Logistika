@@ -44,7 +44,7 @@ class EmployeeListAPIView(ListAPIView):
             'phone',
             'passport',
             'license',
-            'flight',
+            'flight_type',
             'balance',
     ]
     ordering_fields = ['phone']
@@ -52,7 +52,7 @@ class EmployeeListAPIView(ListAPIView):
             'phone',
             'passport',
             'license',
-            'flight',
+            'flight_type',
             'balance',]
 
 

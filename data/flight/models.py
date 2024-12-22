@@ -21,10 +21,17 @@ from django.db import models
 class Flight(models.Model):
     region = models.ForeignKey("city.Region", on_delete=models.CASCADE, related_name="flights")
     city = models.ForeignKey("city.City", on_delete=models.CASCADE, related_name="flights")
-    # ROUTE_CHOICES = (
-    #     ("")
-    # )
-    route = models.CharField(max_length=100)
+    Flight_CHOICES = [
+        ('IN_UZB','In_uzb'),
+        ('OUT','Out'),
+    ]
+
+    flight_type = models.CharField(
+        max_length=10,
+        choices=Flight_CHOICES,
+        default='IN_UZB',
+    )
+
     car = models.ForeignKey("cars.Car", on_delete=models.CASCADE, related_name="flights")
     driver = models.ForeignKey("employee.Employee", on_delete=models.CASCADE, related_name="flights")
 

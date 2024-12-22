@@ -16,7 +16,15 @@ class Employee(models.Model):
     phone = models.CharField(max_length=20)
     passport = models.CharField(max_length=20, help_text="Passport number",null=True,blank=True)
     license = models.CharField(max_length=20, help_text="Prava number",null=True,blank=True)
-    flight = models.ForeignKey('flight.flight', on_delete=models.SET_NULL, null=True)
+    Flight_CHOICES = [
+        ('IN_UZB', 'In_uzb'),
+        ('OUT', 'Out'),
+    ]
+    flight_type = models.CharField(
+        max_length=10,
+        choices=Flight_CHOICES,
+        default='IN_UZB',
+    )
     balance = models.DecimalField(max_digits=10, decimal_places=5, null=True,blank=True)
 
     created_at = models.DateField(auto_now_add=True, null=True, blank=True)

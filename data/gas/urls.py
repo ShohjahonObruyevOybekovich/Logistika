@@ -5,7 +5,7 @@ urlpatterns = [
     path("update/<uuid:id>",GasPurchaseUpdateAPIView.as_view(), name="update"),
     path("list/",GasPurchaseListAPIView.as_view(), name="list"),
     path('list-no-pg/',GasPurchasenopgListAPIView.as_view(), name="list-no-pg"),
-    path('total/<str:pk>/', GasStationAPI.as_view(), name='gas_station_api'),
+    path('total/<uuid:pk>/', GasStationAPI.as_view(), name='gas_total'),
 
 
     #

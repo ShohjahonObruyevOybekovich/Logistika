@@ -155,9 +155,13 @@ class GasStationAPI(APIView):
         """
         if pk:
             try:
-                # Retrieve totals for the given station by pk
+                # Retrieve totals for the given station by station ID
                 totals = GasPurchase.get_totals(pk)
-                purchases = GasPurchase.objects.filter(station=pk)  # Filter by station, not by id
+
+                # Filter purchases by station ID
+                purchases = GasPurchase.objects.filter(station_id=pk)
+
+                # Serialize purchase details
                 serializer = GasPurchaseListseralizer(purchases, many=True)
 
                 return Response({
@@ -172,4 +176,64 @@ class GasStationAPI(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({"error": "Station ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, pk=None):
+        """
+        Update a specific gas purchase record by ID.
+        """
+        if not pk:
+            return Response({"error": "Station ID is required."}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            purchase = GasPurchase.objects.get(id=pk)
+        except GasPurchase.DoesNotExist:
+            raise NotFound("Gas purchase not found.")
+
+        # Use the serializer to validate and update the record
+        serializer = GasPurchaseCreateseralizer(purchase, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Gas purchase updated successfully.",
+                "purchase": serializer.data,
+            }, status=status.HTTP_200_OK)
+
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk=None):
+        """
+        Partially update a specific gas purchase record by ID.
+        """
+        if not pk:
+            return Response({"error": "Station ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            purchase = GasPurchase.objects.get(id=pk)
+        except GasPurchase.DoesNotExist:
+            raise NotFound("Gas purchase not found.")
+
+        # Use the serializer to validate and partially update the record
+        serializer = GasPurchaseCreateseralizer(purchase, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Gas purchase partially updated successfully.",
+                "purchase": serializer.data,
+            }, status=status.HTTP_200_OK)
+
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        """
+        Delete a specific gas purchase record by ID.
+        """
+        if not pk:
+            return Response({"error": "Station ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            purchase = GasPurchase.objects.get(id=pk)
+            purchase.delete()
+            return Response({
+                "message": "Gas purchase deleted successfully.",
+            }, status=status.HTTP_204_NO_CONTENT)
+        except GasPurchase.DoesNotExist:
+            raise NotFound("Gas purchase not found.")
