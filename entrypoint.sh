@@ -2,8 +2,8 @@
 
 
 
-echo "Apply database migrations"
-python manage.py migrate
+#echo "Apply database migrations"
+#python manage.py migrate
 
 
 echo "Create Super User"

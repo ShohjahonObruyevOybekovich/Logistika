@@ -2,7 +2,7 @@ services:
 
     postgres:
         image: postgres:latest
-        container_name: "postgres"
+        container_name: "postgres_l"
         environment:
             - POSTGRES_DB=${POSTGRES_DB}
             - POSTGRES_USER=${POSTGRES_USER}
@@ -10,11 +10,11 @@ services:
         volumes:
             - "../app_data:/var/lib/postgresql/data"
         ports:
-            - "5433:5432"
+            - "5434:5432"
         command: postgres -c max_connections=1500
 
     django:
-        container_name: django
+        container_name: django_l
         build:
             context: ./
         command: python manage.py runserver 0.0.0.0:8000
@@ -26,7 +26,7 @@ services:
             - ./employee:/usr/src/app/employee
 
         ports:
-            - 8000:8000
+            - 8001:8000
         env_file:
             - .env
         depends_on:
