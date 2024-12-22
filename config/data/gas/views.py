@@ -2,7 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 
 from rest_framework.exceptions import NotFound
 
-from data.gas.models import GasPurchase, GasStation
+from data.gas.models import GasPurchase, GasSale, GasStation
 from data.gas.serializers import (
     GasPurchaseListseralizer,
     GasSaleListseralizer,
@@ -56,7 +56,7 @@ class GasSalesListAPIView(ListCreateAPIView):
         station = GasStation.objects.filter(pk=self.kwargs["pk"]).first()
 
         if not station:
-            return GasPurchase.objects.none()
+            return GasSale.objects.none()
 
         return station.sales.all()
 
