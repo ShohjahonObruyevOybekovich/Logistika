@@ -50,11 +50,11 @@ class FlightCreateAPIView(CreateAPIView):
 class FlightListAPIView(ListAPIView):
     queryset = Flight.objects.all()
     serializer_class = FlightListserializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes: tuple[type[IsAuthenticated]] = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['region',"city","car","driver","departure_date","arrival_date"]
+    filterset_fields = ['region',"car","driver","departure_date","arrival_date"]
     ordering_fields = ['car']
-    search_fields = ['region',"city","car","driver","departure_date","arrival_date"]
+    search_fields = ['region',"car","driver","departure_date","arrival_date"]
 
 class FlightUpdateAPIView(UpdateAPIView):
     queryset = Flight.objects.all()

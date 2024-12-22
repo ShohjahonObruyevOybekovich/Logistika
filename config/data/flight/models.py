@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 
     from config.data.cars.models import Car
-    from config.data.city.models import Region
+    from config.data.region.models import Region
     from config.employee.models import Employee
 
 
 class Flight(models.Model):
     region: "Region" = models.ForeignKey(
-        "city.Region", on_delete=models.CASCADE, related_name="flights"
+        "region.Region", on_delete=models.CASCADE, related_name="flights"
     )
 
     Flight_CHOICES = [

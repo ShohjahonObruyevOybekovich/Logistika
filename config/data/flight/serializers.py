@@ -25,7 +25,6 @@ class FlightListserializer(serializers.ModelSerializer):
         fields = [
             "id",
             'region',
-            'city',
             'flight_type',
             'car',
             'driver',
@@ -46,7 +45,6 @@ class FlightCreateserializer(serializers.ModelSerializer):
         fields = [
             "id",
             'region',
-            'city',
             'flight_type',
             'car',
             'driver',

@@ -43,7 +43,7 @@ urlpatterns = [
     path('auth/',include('account.urls')),
     path('cars/',include('data.cars.urls')),
     path('employees/',include('employee.urls')),
-    path('city/',include('data.city.urls')),
+    path('region/',include('data.region.urls')),
     path('gas/',include('data.gas.urls')),
     path('oil/',include('data.oil.urls')),
     path('salarka/',include('data.salarka.urls')),

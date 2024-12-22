@@ -3,11 +3,6 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 from django.db import models
-from account.managers import UserManager
-from account.models import CustomUser
-
-if TYPE_CHECKING:
-    from data.city.models import City
     # from data.flight.models import flight
 
 

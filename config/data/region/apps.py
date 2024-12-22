@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CityConfig(AppConfig):
+class RegionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'data.city'
+    name = 'data.region'

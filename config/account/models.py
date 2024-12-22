@@ -4,9 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from account.managers import UserManager
 
-if TYPE_CHECKING:
-    from data.city.models import City
-    # from data.flight.models import flight
 
 
 class CustomUser(AbstractUser):

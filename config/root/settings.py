@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     "data.oil",
     "data.gas",
     "data.salarka",
-    "data.city",
+    "data.region",
     "data.flight",
     "data.upload",
 ]
