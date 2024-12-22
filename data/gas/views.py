@@ -89,13 +89,35 @@ class GasStationCreateAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
+        name = request.data.get("name")  # Get the name from the request data
+        if not name:
+            return Response(
+                {"error": "Name is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if a gas station with the same name exists
+        existing_station = GasStation.objects.filter(name=name).first()
+        if existing_station:
+            # If the station exists, return its data
+            response_serializer = GasStationCreateserializer(existing_station)
+            return Response(
+                {
+                    "message": "A station with this name already exists.",
+                    "existing_station": response_serializer.data,
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # If no station with the same name exists, proceed with creation
         serializer = GasStationCreateserializer(data=request.data)
         if serializer.is_valid():
-            gas_station = serializer.save()  # Save the object to the database
-            # Serialize the saved object and return all fields in the response
+            gas_station = serializer.save()  # Save the new gas station
             response_serializer = GasStationCreateserializer(gas_station)
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GasStationUpdateAPIView(UpdateAPIView):
     queryset = GasStation.objects.all()
