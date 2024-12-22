@@ -39,4 +39,16 @@ class Remaining_oil_quantity(TimeStampModel):
 
 
 class Recycled_oil(TimeStampModel):
-    oil_volume = models.FloatField(max_length=100, help_text="Oil volume litr")
+    quantity_utilized = models.PositiveIntegerField(default=0)
+
+    price_uzs = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    price_usd = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    remaining_quantity = models.PositiveIntegerField(default=0,null=True,blank=True)
