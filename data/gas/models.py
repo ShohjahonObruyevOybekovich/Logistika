@@ -6,7 +6,7 @@ from data.cars.models import Car
 from data.command.models import TimeStampModel
 
 
-class GasStaion(TimeStampModel):
+class GasStation(TimeStampModel):
 
     name = models.CharField(max_length=100, help_text="Name of gas station")
 
