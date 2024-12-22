@@ -34,8 +34,6 @@ class FlightListserializer(serializers.ModelSerializer):
             "price_usd",
             "driver_expenses_uzs",
             "driver_expenses_usd",
-            "created_at",
-            "updated_at",
             "file",
             "cargo_info",
             "upload",
