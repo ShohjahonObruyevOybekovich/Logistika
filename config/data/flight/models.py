@@ -64,7 +64,7 @@ class Flight(models.Model):
 
     cargo_info = models.TextField(blank=True, null=True)
 
-    upload = models.ForeignKey(
+    file = models.ForeignKey(
         "upload.File",
         on_delete=models.CASCADE,
         related_name="flights",
