@@ -12,7 +12,7 @@ class GasStationListSerializer(serializers.ModelSerializer):
 
 class GasPurchaseListseralizer(serializers.ModelSerializer):
 
-    station = GasStationListSerializer()
+    station = GasStationListSerializer(read_only=True)
 
     class Meta:
         model = GasPurchase

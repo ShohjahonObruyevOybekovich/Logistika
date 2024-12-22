@@ -41,4 +41,3 @@ class GasPurchasesListAPIView(ListCreateAPIView):
             raise NotFound("Gas station not found.")
 
         serializer.save(station=station)
-
