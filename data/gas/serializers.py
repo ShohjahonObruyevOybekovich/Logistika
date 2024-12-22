@@ -44,6 +44,8 @@ class GasAnotherListserializer(serializers.ModelSerializer):
 
 
 class GasPurchaseCreateseralizer(serializers.ModelSerializer):
+    # station_uuid = serializers.UUIDField(source='station.id', read_only=True)  # Assuming 'station' has a UUID field
+
     class Meta:
         model = GasPurchase
         fields = [

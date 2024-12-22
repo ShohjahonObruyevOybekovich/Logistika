@@ -25,6 +25,13 @@ class GasPurchaseCreateAPIView(CreateAPIView):
     serializer_class = GasPurchaseCreateseralizer
     permission_classes = (IsAuthenticated,)
 
+    def perform_create(self, serializer):
+        # Any custom logic when creating a GasPurchase, if needed
+        serializer.save()
+
+    def get_serializer_class(self):
+        # Optionally override to handle different serializers
+        return GasPurchaseCreateseralizer
 
 class StationNameFilter(BaseFilterBackend):
     """
@@ -219,7 +226,7 @@ class GasStationAPI(APIView):
                 serializer = GasPurchaseListseralizer(purchases, many=True)
 
                 return Response({
-                    "station_id": pk,
+                    "station_name": serializer.data[0],
                     "message": "Gas volume and prices retrieved successfully.",
                     "total_volume": totals["total_volume"],
                     "total_price_uzs": totals["total_price_uzs"],
