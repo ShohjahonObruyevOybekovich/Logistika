@@ -15,7 +15,7 @@ class GasStation(TimeStampModel):
 
 class GasPurchase(TimeStampModel):
 
-    station = models.ForeignKey("GasStation", on_delete=models.CASCADE, null=True)
+    station = models.ForeignKey("gas.GasStation", on_delete=models.CASCADE, null=True)
 
     remaining_gas = models.FloatField(help_text="Volume of gas purchased in m³")
 
