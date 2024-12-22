@@ -12,6 +12,7 @@ class GasStation(TimeStampModel):
     remaining_gas = models.FloatField(default=0)
 
     purchases: "models.QuerySet[GasPurchase]"
+    sales: "models.QuerySet[GasSale]"
 
 
 class GasPurchase(TimeStampModel):
@@ -43,6 +44,41 @@ class GasPurchase(TimeStampModel):
         blank=True,
     )
     price_usd = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+
+
+class GasSale(TimeStampModel):
+
+    station: "GasStation" = models.ForeignKey(
+        "gas.GasStation",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="sales",
+    )
+
+    car = models.ForeignKey(
+        "cars.Car", on_delete=models.CASCADE, related_name="gas_sales"
+    )
+
+    amount = models.FloatField(help_text="Volume of gas purchased in m³")
+
+    payed_price_uzs = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+
+    payed_price_usd = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+
+    price_uzs = models.FloatField(
         max_length=150,
         null=True,
         blank=True,

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from config.data.cars.models import Car
 from data.gas.models import GasPurchase, GasStation
 
 
@@ -30,10 +31,31 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def to_representation(self, instance: "GasPurchase"):
+    # def to_representation(self, instance: "GasPurchase"):
 
-        res = super().to_representation(instance)
+    #     res = super().to_representation(instance)
 
-        res["station"] = GasStationListSerializer(instance.station).data
+    #     res["station"] = GasStationListSerializer(instance.station).data
 
-        return res
+    #     return res
+
+
+class GasSaleListseralizer(serializers.ModelSerializer):
+
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+
+    station = GasStationListSerializer(read_only=True)
+
+    class Meta:
+        model = GasPurchase
+        fields = [
+            "id",
+            "station",
+            "car",
+            "amount",
+            "payed_price_uzs",
+            "payed_price_usd",
+            "price_uzs",
+            "price_usd",
+            "created_at",
+        ]
