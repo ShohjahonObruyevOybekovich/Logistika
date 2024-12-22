@@ -9,6 +9,9 @@ class GasStationListSerializer(serializers.ModelSerializer):
         model = GasStation
         fields = ["id", "name", "remaining_gas"]
 
+        # make remaining_gas field read only
+        read_only_fields = ["remaining_gas"]
+
 
 class GasPurchaseListseralizer(serializers.ModelSerializer):
 
