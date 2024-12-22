@@ -1,61 +1,51 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from config.data.region.models import Region
+from config.data.upload.serializers import FileUploadSerializer
+from config.employee.models import Employee
+
 from .models import Flight
 
 User = get_user_model()
 
-#
-# class RouteSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Route
-#         fields = '__all__'
-#
-#
-# class RouteCreateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Route
-#         fields = 'start','end'
-
-
 
 class FlightListserializer(serializers.ModelSerializer):
+
+    region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())
+
+    car = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all())
+
+    driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
+
+    upload = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all())
+
     class Meta:
         model = Flight
         fields = [
             "id",
-            'region',
-            'flight_type',
-            'car',
-            'driver',
-            'departure_date',
-            'arrival_date',
-            'price_uzs',
+            "region",
+            "flight_type",
+            "car",
+            "driver",
+            "departure_date",
+            "arrival_date",
+            "price_uzs",
             "price_usd",
             "driver_expenses_uzs",
-            'driver_expenses_usd',
-            'cargo_info',
-            'upload',
-            'status',
+            "driver_expenses_usd" "created_at",
+            "updated_at",
+            "file",
+            "cargo_info",
+            "upload",
         ]
 
-class FlightCreateserializer(serializers.ModelSerializer):
-    class Meta:
-        model = Flight
-        fields = [
-            "id",
-            'region',
-            'flight_type',
-            'car',
-            'driver',
-            'departure_date',
-            'arrival_date',
-            'price_uzs',
-            "price_usd",
-            "driver_expenses_uzs",
-            'driver_expenses_usd',
-            'cargo_info',
-            'upload',
-            'status',
-        ]
+    def to_representation(self, instance):
 
+        res = super().to_representation(instance)
+
+        res["upload"] = (
+            FileUploadSerializer(instance.upload, context=self.context).data
+            if instance.upload
+            else None
+        )

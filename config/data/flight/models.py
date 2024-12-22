@@ -30,6 +30,7 @@ class Flight(models.Model):
     car: "Car" = models.ForeignKey(
         "cars.Car", on_delete=models.CASCADE, related_name="flights"
     )
+
     driver: "Employee" = models.ForeignKey(
         "employee.Employee", on_delete=models.CASCADE, related_name="flights"
     )
