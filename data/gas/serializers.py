@@ -12,7 +12,6 @@ class GasStationListserializer(serializers.ModelSerializer):
         fields = [
             "id",
             'name',
-
         ]
 class GasStationCreateserializer(serializers.ModelSerializer):
     class Meta:
@@ -55,11 +54,14 @@ class GasPurchaseCreateseralizer(serializers.ModelSerializer):
             'price_usd',
             'station'
         ]
+
 class GasPurchaseListseralizer(serializers.ModelSerializer):
+    station_name = serializers.CharField(source='station.name', read_only=True)
     class Meta:
         model = GasPurchase
         fields = [
-            'id',
+            "id",
+            'station_name',
             'purchased_volume',
             'payed_price_uzs',
             'payed_price_usd',
@@ -67,4 +69,20 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             'price_usd',
             'station',
             'updated_at',
+        ]
+from django_filters import rest_framework as filters
+
+class GasPurchaseFilter(filters.FilterSet):
+    station_name = filters.CharFilter(field_name='station__name', lookup_expr='icontains')  # Filter by station name (case-insensitive)
+
+    class Meta:
+        model = GasPurchase
+        fields = [
+            'station',  # Filter by station ID
+            'station_name',  # Filter by station name (via station relation)
+            'purchased_volume',
+            'payed_price_uzs',
+            'payed_price_usd',
+            'price_uzs',
+            'price_usd',
         ]

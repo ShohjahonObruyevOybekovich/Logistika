@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import NotFound
-from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.filters import OrderingFilter, SearchFilter, BaseFilterBackend
 from rest_framework.generics import (
     ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
 )
@@ -15,8 +15,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import (
     GasPurchaseCreateseralizer,
-    GasAnotherStationCreateseralizer, GasPurchaseListseralizer, GasAnotherListserializer, GasStationListserializer,
-    GasStationCreateserializer)
+    GasAnotherStationCreateseralizer, GasAnotherListserializer, GasStationListserializer,
+    GasStationCreateserializer, GasPurchaseFilter, GasPurchaseListseralizer)
 from .models import GasPurchase, Gas_another_station, GasStation
 
 
@@ -26,24 +26,32 @@ class GasPurchaseCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
+class StationNameFilter(BaseFilterBackend):
+    """
+    Custom filter to allow filtering by station_name (derived field).
+    """
+    def filter_queryset(self, request, queryset, view):
+        station_name = request.query_params.get('station_name')
+        if station_name:
+            queryset = queryset.filter(station__name__icontains=station_name)
+        return queryset
+
+
 class GasPurchaseListAPIView(ListAPIView):
     queryset = GasPurchase.objects.all()
     serializer_class = GasPurchaseListseralizer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = [
+    filterset_class = GasPurchaseFilter  # Use the custom filterset
+    ordering_fields = ['purchased_volume']
+    search_fields = [
         'purchased_volume',
         'payed_price_uzs',
         'payed_price_usd',
-        'price_uzs',
-        'price_usd',
-        "station",
     ]
-    ordering_fields = ['purchased_volume']
-    search_fields = ['purchased_volume',
-                     'payed_price_uzs',
-            'payed_price_usd'
-                     ]
+
+
+
 
 class GasPurchasenopgListAPIView(ListAPIView):
     queryset = GasPurchase.objects.all()
@@ -84,6 +92,23 @@ class GasInventoryListAPIView(ListAPIView):
     ordering_fields = ['name']
     search_fields = ['name']
 
+    def get_paginated_response(self, data):
+        return Response(data)
+
+
+class GasStationByIDAPIView(RetrieveAPIView):
+    queryset = GasStation.objects.all()
+    serializer_class = GasStationListserializer
+    permission_classes = (IsAuthenticated,)
+
+
+    def get_object(self):
+        try:
+            obj = self.get_queryset().get(pk=self.kwargs.get('pk'))  # Use 'pk' here
+            self.check_object_permissions(self.request, obj)
+            return obj
+        except GasStation.DoesNotExist:
+            raise NotFound("Car not found.")
 
 class GasStationCreateAPIView(APIView):
     permission_classes = (IsAuthenticated,)

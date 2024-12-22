@@ -11,6 +11,7 @@ urlpatterns = [
     #
     path("station-create/",GasStationCreateAPIView.as_view(), name="station-create"),
     path("station-list/",GasInventoryListAPIView.as_view(), name="station-list"),
+    path("station-by-id/<uuid:pk>",GasStationByIDAPIView.as_view(), name="station-by-id"),
     path("station-update/<uuid:pk>",GasStationUpdateAPIView.as_view(), name="station-update"),
     path("station-delete/<uuid:pk>",GasStationDeleteAPIView.as_view(), name="inventory-delete"),
 

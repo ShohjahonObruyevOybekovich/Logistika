@@ -56,8 +56,6 @@ class CarByIDAPIView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
-
     def get_object(self):
         try:
             obj = self.get_queryset().get(pk=self.kwargs.get('pk'))  # Use 'pk' here

@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.views import APIView
 
-from .models import Salarka,Remaining_salarka_quantity
+from .models import Salarka
 
 User = get_user_model()
 
@@ -11,7 +12,7 @@ class SalarkaListserializer(serializers.ModelSerializer):
         model = Salarka
         fields = [
             "id",
-            'oil_volume',
+            'purchased_volume',
             'price_uzs',
             'price_usd'
         ]
@@ -20,15 +21,21 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
     class Meta:
         model = Salarka
         fields = [
-            'oil_volume',
+            'purchased_volume',
             'price_usd',
             'price_uzs',
         ]
+class SalarkaStatsSerializer(serializers.ModelSerializer):
+    car_name = serializers.CharField(source="car.name", read_only=True)  # Add car name for readability
 
-class Remaining_salarka_quantityserializer(serializers.Serializer):
     class Meta:
-        model = Remaining_salarka_quantity
+        model = Salarka
         fields = [
-            'oil_volume'
+            "id",
+            "purchased_volume",
+            "car_name",
+            "price_uzs",
+            "price_usd",
+            "created_at",
+            "updated_at",
         ]
-
