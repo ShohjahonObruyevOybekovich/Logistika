@@ -12,4 +12,4 @@ COPY r.txt .
 RUN pip install -r r.txt
 
 
-COPY . .
+COPY . /usr/src/app/
