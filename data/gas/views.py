@@ -204,6 +204,11 @@ class GasAnotherStationDeleteAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
+from rest_framework.response import Response
+from rest_framework import status
+from .models import GasPurchase, GasStation
+from .serializers import GasPurchaseListseralizer
+
 class GasStationAPI(APIView):
     """
     API for managing and retrieving gas purchase data for a station.
@@ -216,26 +221,39 @@ class GasStationAPI(APIView):
         """
         if pk:
             try:
+                # Retrieve the station name for the given station ID (pk)
+                station = GasStation.objects.filter(pk=pk).first()
+
+                # If no station is found, return an error response
+                if not station:
+                    return Response({"error": "Station not found."}, status=status.HTTP_404_NOT_FOUND)
+
                 # Retrieve totals for the given station by station ID
                 totals = GasPurchase.get_totals(pk)
 
                 # Filter purchases by station ID
                 purchases = GasPurchase.objects.filter(station_id=pk)
 
-                # Serialize purchase details
-                serializer = GasPurchaseListseralizer(purchases, many=True)
+                if purchases.exists():
+                    # Serialize purchase details
+                    serializer = GasPurchaseListseralizer(purchases, many=True)
 
-                return Response({
-                    "station_name": serializer.data[0],
-                    "message": "Gas volume and prices retrieved successfully.",
-                    "total_volume": totals["total_volume"],
-                    "total_price_uzs": totals["total_price_uzs"],
-                    "total_price_usd": totals["total_price_usd"],
-                    "purchases": serializer.data,
-                }, status=status.HTTP_200_OK)
+                    return Response({
+                        "station_name": station.name,  # Access the station name
+                        "message": "Gas volume and prices retrieved successfully.",
+                        "total_volume": totals["total_volume"],
+                        "total_price_uzs": totals["total_price_uzs"],
+                        "total_price_usd": totals["total_price_usd"],
+                        "purchases": serializer.data,
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        "station_name": station.name,  # Include station name even when no purchases found
+                        "message": "No purchases found for the specified station."
+                    }, status=status.HTTP_404_NOT_FOUND)
+
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
         return Response({"error": "Station ID is required."}, status=status.HTTP_400_BAD_REQUEST)
     def put(self, request, pk=None):
         """
