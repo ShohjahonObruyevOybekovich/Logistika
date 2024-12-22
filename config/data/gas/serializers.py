@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from data.cars.models import Car
-from data.gas.models import GasPurchase, GasStation
+from data.gas.models import GasPurchase, GasSale, GasStation
 
 
 class GasStationListSerializer(serializers.ModelSerializer):
@@ -47,7 +47,7 @@ class GasSaleListseralizer(serializers.ModelSerializer):
     station = GasStationListSerializer(read_only=True)
 
     class Meta:
-        model = GasPurchase
+        model = GasSale
         fields = [
             "id",
             "station",
