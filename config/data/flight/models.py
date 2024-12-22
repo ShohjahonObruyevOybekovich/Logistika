@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 
-    from config.data.cars.models import Car
-    from config.data.region.models import Region
-    from config.employee.models import Employee
+    from data.cars.models import Car
+    from data.region.models import Region
+    from employee.models import Employee
 
 
 class Flight(models.Model):

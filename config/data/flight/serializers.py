@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from config.data.region.models import Region
-from config.data.upload.serializers import FileUploadSerializer
-from config.employee.models import Employee
+from data.region.models import Region
+from data.upload.serializers import FileUploadSerializer
+from employee.models import Employee
 
 from .models import Flight
 
