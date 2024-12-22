@@ -10,7 +10,6 @@ class RegionListAPIVIew(ListCreateAPIView):
 
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-    # permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = [
         "name",
@@ -23,5 +22,3 @@ class RegionDetailAPIView(RetrieveUpdateDestroyAPIView):
 
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-
-    # permission_classes = (IsAuthenticated,)
