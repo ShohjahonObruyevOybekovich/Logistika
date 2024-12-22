@@ -18,7 +18,6 @@ services:
         build:
             context: ./
         command: python manage.py runserver 0.0.0.0:8000
-        # --noreload
         volumes: &shared_volumes
             - ./:/usr/src/app
             - ./data:/usr/src/app/data
@@ -31,8 +30,6 @@ services:
             - .env
         depends_on:
             - postgres
-
-
 
 volumes:
     postgres:
