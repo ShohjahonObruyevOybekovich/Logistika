@@ -31,14 +31,6 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    # def to_representation(self, instance: "GasPurchase"):
-
-    #     res = super().to_representation(instance)
-
-    #     res["station"] = GasStationListSerializer(instance.station).data
-
-    #     return res
-
 
 class GasSaleListseralizer(serializers.ModelSerializer):
 
