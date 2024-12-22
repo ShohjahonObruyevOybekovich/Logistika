@@ -9,10 +9,10 @@ urlpatterns = [
 
 
     #
-    # path("station-create/",GasStationCreateAPIView.as_view(), name="station-create"),
-    # path("station-list/",GasInventoryListAPIView.as_view(), name="station-list"),
-    # path("station-update/<uuid:pk>",GasStationUpdateAPIView.as_view(), name="station-update"),
-    # path("station-delete/<uuid:pk>",GasStationDeleteAPIView.as_view(), name="inventory-delete"),
+    path("station-create/",GasStationCreateAPIView.as_view(), name="station-create"),
+    path("station-list/",GasInventoryListAPIView.as_view(), name="station-list"),
+    path("station-update/<uuid:pk>",GasStationUpdateAPIView.as_view(), name="station-update"),
+    path("station-delete/<uuid:pk>",GasStationDeleteAPIView.as_view(), name="inventory-delete"),
 
     path('another-station-create/',GasAnotherStationCreateAPIView.as_view(), name='another-station-create'),
     path("another-station-update/<uuid:pk>",GasAnotherStationUpdateAPIView.as_view(), name="update"),

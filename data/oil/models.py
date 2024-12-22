@@ -38,3 +38,5 @@ class Remaining_oil_quantity(TimeStampModel):
         return self.oil_volume
 
 
+class Recycled_oil(TimeStampModel):
+    oil_volume = models.FloatField(max_length=100, help_text="Oil volume litr")
