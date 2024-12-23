@@ -1,4 +1,7 @@
+from uuid import UUID
+
 from django.contrib.admin.templatetags.admin_list import pagination
+from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -63,7 +66,6 @@ class OilPurchasesListAPIView(ListCreateAPIView):
 
 
 
-
 class OilDetailAPIView(APIView):
     """
     API view to fetch oil details including purchases, recycling, utilization history,
@@ -84,6 +86,27 @@ class OilDetailAPIView(APIView):
         }
 
         return Response(data)
+
+class RecycleListAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')  # Retrieve 'pk' from kwargs
+        oil = get_object_or_404(Oil, id=pk)
+        recycles = OilREcycles.objects.filter(oil=oil)
+        data = {
+            "oil_name": oil.oil_name,
+            "recycles": [
+                {
+                    "id": recycle.id,
+                    "amount": recycle.amount,
+                    "car": recycle.car.id,  # Include car ID or other fields
+                    "remaining_oil": recycle.remaining_oil,
+                }
+                for recycle in recycles
+            ],
+        }
+        return Response(data)
+
 
 
 class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
