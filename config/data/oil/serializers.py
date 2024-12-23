@@ -67,6 +67,7 @@ class OilPurchaseSerializer(serializers.ModelSerializer):
 
 
 class Utilized_oilSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Utilized_oil
         fields = [

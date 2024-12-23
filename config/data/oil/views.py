@@ -12,10 +12,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Oil, Remaining_oil_quantity, OilREcycles, OilPurchase
+from .models import Oil, Remaining_oil_quantity, OilREcycles, OilPurchase, Utilized_oil
 from .serializers import (
     OilCreateseralizer,
-    Remaining_oil_quantityserializer, RecycledOilSerializer, OilPurchaseSerializer
+    Remaining_oil_quantityserializer, RecycledOilSerializer, OilPurchaseSerializer, Utilized_oilSerializer
 )
 
 
@@ -100,7 +100,18 @@ class OilPurchaseListAPIView(ListAPIView):
         return super().handle_exception(exc)
 
 
-# class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
-#     queryset = OilPurchase.objects.all()
+# class UtilizedCreateApiView(CreateAPIView):
+#     queryset = Utilized_oil.objects.all()
 #     serializer_class = OilPurchaseSerializer
-#
+#     permission_classes = (IsAuthenticated,)
+
+class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
+    queryset = Utilized_oil.objects.all()
+    serializer_class = Utilized_oilSerializer
+    permission_classes = [IsAuthenticated]
+
+class UtilizedOilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
+    queryset = Utilized_oil.objects.all()
+    serializer_class = Utilized_oilSerializer
+    permission_classes = [IsAuthenticated]
+

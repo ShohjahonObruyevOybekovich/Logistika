@@ -44,8 +44,7 @@ class Remaining_oil_quantity(TimeStampModel):
         return cls.objects.first() or cls.objects.create()
 
 class Utilized_oil(TimeStampModel):
-    quantity_utilized = models.PositiveIntegerField(default=0)
-
+    quantity_utilized = models.FloatField(default=0)
     price_uzs = models.FloatField(null=True, blank=True)
     price_usd = models.FloatField(null=True, blank=True)
 
