@@ -2,12 +2,14 @@ from django.db import models
 from data.command.models import TimeStampModel
 from employee.models import Employee
 
+class Model(TimeStampModel):
+    name = models.CharField(max_length=100)
 
 
 class Car(TimeStampModel):
     name = models.CharField(max_length=100, help_text='Name of car')
     number = models.CharField(max_length=10, help_text='Number of car')
-    model = models.CharField(max_length=30, help_text='Model car')
+    model = models.ForeignKey("Model", on_delete=models.CASCADE)
     TYPE_OF_PAYMENT_CHOICES = [
         ("LEASING", "Leasing"),
         ("CASH", "Cash"),

@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import *
-from .models import Car
+from .models import Car, Model
 
 
 class CarCreateAPIView(CreateAPIView):
@@ -85,3 +85,40 @@ class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarListserializer
     permission_classes = (IsAuthenticated,)
+
+
+class ModelCarCreateAPIView(CreateAPIView):
+    queryset = Model.objects.all()
+    serializer_class = ModelSerializer
+    permission_classes = (IsAuthenticated,)
+
+class ModelCarListAPIView(ListAPIView):
+    queryset = Model.objects.all()
+    serializer_class = ModelSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        'name'
+    ]
+    ordering_fields = ["name"]
+    search_fields = ["name"]
+
+
+class ModelCarList_no_pg_APIView(ListAPIView):
+    queryset = Model.objects.all()
+    serializer_class = ModelSerializer
+    permission_classes = (IsAuthenticated,)
+    def get_paginated_response(self, data):
+        return Response(data)
+
+class ModelCarUpdateAPIView(UpdateAPIView):
+    queryset = Model.objects.all()
+    serializer_class = ModelSerializer
+    permission_classes = (IsAuthenticated,)
+
+class ModelCarDeleteAPIView(DestroyAPIView):
+    queryset = Model.objects.all()
+    serializer_class = ModelSerializer
+    permission_classes = (IsAuthenticated,)
+
+

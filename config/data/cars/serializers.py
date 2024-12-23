@@ -22,5 +22,8 @@ class CarListserializer(serializers.ModelSerializer):
 
 
 
-
-
+class ModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = ["id", 'name']
+        read_only_fields = ["id"]
