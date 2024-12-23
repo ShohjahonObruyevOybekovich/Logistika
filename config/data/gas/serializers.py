@@ -3,6 +3,8 @@ from rest_framework import serializers
 from data.cars.models import Car
 from data.gas.models import GasPurchase, GasSale, GasStation
 
+from data.gas.models import Gas_another_station
+
 
 class GasStationListSerializer(serializers.ModelSerializer):
 
@@ -47,3 +49,15 @@ class GasSaleListseralizer(serializers.ModelSerializer):
             "amount",
             "created_at",
         ]
+
+
+class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
+    class Meta:
+        model = Gas_another_station
+        fields = ["car", "purchased_volume", "payed_price_uzs", "payed_price_usd"]
+
+
+class GasAnotherListserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gas_another_station
+        fields = ["id", "car", "purchased_volume", "payed_price_uzs", "payed_price_usd"]
