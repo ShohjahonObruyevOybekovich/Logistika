@@ -8,7 +8,7 @@ from rest_framework.exceptions import NotFound
 from data.gas.models import GasPurchase, GasSale, GasStation
 from data.gas.serializers import (
     GasPurchaseListseralizer,
-    GasSaleListseralizer,
+    GasSaleListSerializer,
     GasStationListSerializer,)
 
 
@@ -59,7 +59,7 @@ class GasPurchasesListAPIView(ListCreateAPIView):
 
 class GasSalesListAPIView(ListCreateAPIView):
 
-    serializer_class = GasSaleListseralizer
+    serializer_class = GasSaleListSerializer
 
     def get_queryset(self):
 

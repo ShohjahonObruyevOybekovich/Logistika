@@ -35,11 +35,9 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
         ]
 
 
-class GasSaleListseralizer(serializers.ModelSerializer):
-
-    car = CarListserializer(read_only=True)
-
-    station = GasStationListSerializer(read_only=True)
+class GasSaleListSerializer(serializers.ModelSerializer):
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    station = serializers.PrimaryKeyRelatedField(queryset=GasStation.objects.all())
 
     class Meta:
         model = GasSale
@@ -50,6 +48,15 @@ class GasSaleListseralizer(serializers.ModelSerializer):
             "amount",
             "created_at",
         ]
+
+    def to_representation(self, instance):
+        """Customize the representation of the 'car' field."""
+        representation = super().to_representation(instance)
+        representation['car'] = CarListserializer(instance.car).data
+        return representation
+
+
+
 
 
 class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
