@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Oil, Remaining_oil_quantity, OilREcycles, OilPurchase
+from .models import Oil, Remaining_oil_quantity, OilREcycles, OilPurchase, Utilized_oil
 
 User = get_user_model()
 
@@ -64,3 +64,15 @@ class OilPurchaseSerializer(serializers.ModelSerializer):
             "oil_volume": instance.oil.oil_volume
         }
         return representation
+
+
+class Utilized_oilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Utilized_oil
+        fields = [
+            "id",
+            "quantity_utilized",
+            "price_uzs",
+            "price_usd",
+        ]
+

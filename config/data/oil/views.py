@@ -98,3 +98,9 @@ class OilPurchaseListAPIView(ListAPIView):
         if isinstance(exc, NotFound):
             return Response({'error': 'Oil not found'}, status=404)
         return super().handle_exception(exc)
+
+
+# class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
+#     queryset = OilPurchase.objects.all()
+#     serializer_class = OilPurchaseSerializer
+#
