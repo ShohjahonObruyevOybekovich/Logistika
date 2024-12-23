@@ -49,6 +49,7 @@ class DetailCreateSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "id_detail",
             "car",
             "price_uzs",
             "price_usd",
