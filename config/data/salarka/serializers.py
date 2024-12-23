@@ -12,7 +12,6 @@ class SalarkaListserializer(serializers.ModelSerializer):
         model = Salarka
         fields = [
             "id",
-            'purchased_volume',
             'price_uzs',
             'price_usd'
         ]
@@ -21,7 +20,6 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
     class Meta:
         model = Salarka
         fields = [
-            'purchased_volume',
             'price_usd',
             'price_uzs',
         ]
@@ -32,7 +30,6 @@ class SalarkaStatsSerializer(serializers.ModelSerializer):
         model = Salarka
         fields = [
             "id",
-            "purchased_volume",
             "car_name",
             "price_uzs",
             "price_usd",

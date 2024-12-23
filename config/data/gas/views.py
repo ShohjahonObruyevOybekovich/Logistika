@@ -27,6 +27,13 @@ class GasStationListCreateAPIView(ListCreateAPIView):
     queryset = GasStation.objects.all()
     pagination_class = GlobalPagination
 
+class GasListAPIView(ListAPIView):
+    serializer_class = GasStationListSerializer
+    queryset = GasStation.objects.all()
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
 
 class RetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 

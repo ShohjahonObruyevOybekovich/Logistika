@@ -11,10 +11,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Oil, Remaining_oil_quantity, OilREcycles
+from .models import Oil, Remaining_oil_quantity, OilREcycles, OilPurchase
 from .serializers import (
     OilCreateseralizer,
-    Remaining_oil_quantityserializer, RecycledOilSerializer
+    Remaining_oil_quantityserializer, RecycledOilSerializer, OilPurchaseSerializer
 )
 
 
@@ -68,3 +68,14 @@ class RecycledOilAPIView(APIView):
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class OilPurchaseAPIView(ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = OilPurchaseSerializer
+    queryset = OilPurchase.objects.all()
+
+
+class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
+    queryset = OilPurchase.objects.all()
+    serializer_class = OilPurchaseSerializer
+    permission_classes = (IsAuthenticated,)
