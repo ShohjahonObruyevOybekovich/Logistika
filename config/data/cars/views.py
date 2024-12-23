@@ -1,6 +1,7 @@
 # from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -122,9 +123,17 @@ class ModelCarDeleteAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
+class DetailsCreateView(generics.ListCreateAPIView):
+    queryset = Details.objects.all()
+    serializer_class = DetailCreateListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # The serializer will automatically call create method of ListSerializer
+        serializer.save()
 
 
-class DetailsView(ListCreateAPIView):
+class DetailsView(ListAPIView):
     queryset = Details.objects.all()
     serializer_class = DetailCreateSerializer
     permission_classes = [IsAuthenticated]

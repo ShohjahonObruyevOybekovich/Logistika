@@ -61,3 +61,10 @@ class DetailCreateSerializer(serializers.ModelSerializer):
         representation['car'] = CarListserializer(instance.car).data
         return representation
 
+
+class DetailCreateListSerializer(serializers.ListSerializer):
+    child = DetailCreateSerializer()
+
+    def create(self, validated_data):
+        details = [Details(**data) for data in validated_data]
+        return Details.objects.bulk_create(details)
