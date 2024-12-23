@@ -47,6 +47,7 @@ class RecycledOilListAPIView(ListCreateAPIView):
     serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
 
+
 class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
     queryset = OilREcycles.objects.all()
     serializer_class = RecycledOilSerializer

@@ -13,7 +13,7 @@ urlpatterns = [
     path("list/",OilCreateAPIView.as_view(), name="list"),
 
     path('recycle/',RecycledOilListAPIView.as_view(), name='recycle'),
-    path('recycled-oils/<uuid:oil_id>/', RecycledOilUpdateAPIView.as_view(), name='recycled-oil-list'),
+    path('recycled-oils/<uuid:pk>/', RecycledOilUpdateAPIView.as_view(), name='recycled-oil-list'),
 
     path('list-pg/',OilListAPIView.as_view(), name='list-pg'),
 
