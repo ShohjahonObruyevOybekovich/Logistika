@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Oil, Remaining_oil_quantity, OilREcycles, OilPurchase, Utilized_oil
+from ..cars.models import Car
+from ..cars.serializers import CarListserializer
 
 User = get_user_model()
 
@@ -27,24 +29,34 @@ class Remaining_oil_quantityserializer(serializers.Serializer):
         model = Remaining_oil_quantity
         fields = [
             "id",
-            'oil_volume',
+            'oil_volume'
         ]
 
 
 class RecycledOilSerializer(serializers.ModelSerializer):
+    oil = serializers.PrimaryKeyRelatedField(queryset=Oil.objects.all())
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    remaining_oil_quantity = serializers.SerializerMethodField()
     class Meta:
         model = OilREcycles
         fields = [
             "id",
-            'oil',
+            "oil",
             'amount',
             'car',
-            'remaining_oil'
+            'remaining_oil',
+            "remaining_oil_quantity",
         ]
 
     def get_remaining_oil_quantity(self, obj):
         remaining_oil = Remaining_oil_quantity.get()
         return remaining_oil.oil_volume
+
+    def to_representation(self, instance):
+        """Customize the representation of the 'car' field."""
+        representation = super().to_representation(instance)
+        representation['car'] = CarListserializer(instance.car).data
+        return representation
 
 
 
@@ -70,7 +82,7 @@ class OilPurchaseSerializer(serializers.ModelSerializer):
 
 
 class Utilized_oilSerializer(serializers.ModelSerializer):
-
+    remaining_oil_quantity = serializers.SerializerMethodField()
     class Meta:
         model = Utilized_oil
         fields = [
@@ -78,7 +90,9 @@ class Utilized_oilSerializer(serializers.ModelSerializer):
             "quantity_utilized",
             "price_uzs",
             "price_usd",
+            "remaining_oil_quantity"
         ]
+
     def get_remaining_oil_quantity(self, obj):
         remaining_oil = Remaining_oil_quantity.get()
         return remaining_oil.oil_volume

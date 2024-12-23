@@ -4,7 +4,9 @@ from .models import Salarka , Remaining_volume
 
 @receiver(post_save, sender=Salarka)
 def on_oil_purchased(sender, instance: Salarka, created, **kwargs):
+    remaining_volume = Remaining_volume.volume
     if created:
-        instance.volume += Salarka
+        remaining_volume += instance.volume
         instance.volume.save()
+
 

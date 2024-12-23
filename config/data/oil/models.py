@@ -52,3 +52,9 @@ class Utilized_oil(TimeStampModel):
 
     def __str__(self):
         return f"Utilized {self.quantity_utilized} L"
+
+    @classmethod
+    def get(cls):
+        """Retrieve the first instance or create a new one."""
+        return cls.objects.first() or cls.objects.create()
+

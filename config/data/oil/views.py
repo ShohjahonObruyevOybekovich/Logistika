@@ -33,16 +33,6 @@ class OilUpdateAPIView(RetrieveUpdateDestroyAPIView):
 
 
 
-
-class Remaining_oil_quantityListAPIView(ListAPIView):
-    queryset = Remaining_oil_quantity.objects.all()
-    serializer_class = Remaining_oil_quantityserializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ['oil_volume']
-    ordering_fields = ['oil_volume']
-    search_fields = ["oil_volume"]
-
 class OilListAPIView(ListAPIView):
     queryset = Oil.objects.all()
     serializer_class = OilCreateseralizer
@@ -52,52 +42,15 @@ class OilListAPIView(ListAPIView):
         return Response(data)
 
 
-class RecycledOilAPIView(APIView):
+class RecycledOilListAPIView(ListCreateAPIView):
+    queryset = OilREcycles.objects.all()
+    serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
-        # Fetch all recycled oil records
-        oil_data = OilREcycles.objects.all().order_by('-created_at')
-
-        # Apply pagination
-        paginator = PageNumberPagination()
-        paginator.page_size = 10  # Optional: Override default page size
-        paginated_data = paginator.paginate_queryset(oil_data, request)
-
-        # Serialize the paginated data
-        serializer = RecycledOilSerializer(paginated_data, many=True)
-        return paginator.get_paginated_response(serializer.data)
-
-    def post(self, request):
-        # Process utilization of oil
-        serializer = RecycledOilSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Recycled oil processed successfully.",
-                             "data": serializer.data},
-                            status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class RecycledOilListAPIView(APIView):
+class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = OilREcycles.objects.all()
+    serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
-
-    def get(self, request, oil_id, *args, **kwargs):
-        # Validate oil existence
-        oil = get_object_or_404(Oil, id=oil_id)
-
-        # Fetch and order recycled oil data for the specified oil
-        oil_data = OilREcycles.objects.filter(oil=oil).order_by('-created_at')
-
-        # Apply pagination
-        paginator = PageNumberPagination()
-        paginator.page_size = 10  # Customize the page size as needed
-        paginated_data = paginator.paginate_queryset(oil_data, request)
-
-        # Serialize the data
-        serialized_data = RecycledOilSerializer(paginated_data, many=True).data
-
-        # Return paginated response
-        return paginator.get_paginated_response(serialized_data)
 
 
 
@@ -105,25 +58,9 @@ class OilPurchasesListAPIView(ListCreateAPIView):
 
     serializer_class = OilPurchaseSerializer
     permission_classes = [IsAuthenticated]
+    queryset = OilPurchase.objects.all()
 
 
-    def get_queryset(self):
-        oil = Oil.objects.filter(pk=self.kwargs["pk"]).first()
-        if not oil:
-            return OilPurchase.objects.none()
-        return oil.purchases.all()
-
-    def perform_create(self, serializer):
-        oil = Oil.objects.filter(pk=self.kwargs["pk"]).first()
-        if not oil:
-            raise NotFound("Oil not found.")
-
-        oil_purchase = serializer.save(oil=oil)
-
-        # Update remaining oil quantity
-        remaining_oil = Remaining_oil_quantity.get()
-        remaining_oil.oil_volume += oil_purchase.oil_volume
-        remaining_oil.save()
 
 
 class OilDetailAPIView(APIView):
@@ -148,11 +85,12 @@ class OilDetailAPIView(APIView):
         return Response(data)
 
 
-
 class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     queryset = OilPurchase.objects.all()
     serializer_class = OilPurchaseSerializer
     permission_classes = (IsAuthenticated,)
+
+
 
 
 
@@ -161,11 +99,7 @@ class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
     serializer_class = Utilized_oilSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        oil = Oil.objects.filter(pk=self.kwargs["pk"]).first()
-        if not oil:
-            return OilPurchase.objects.none()
-        return oil.purchases.all()
+
 
 
 
@@ -174,3 +108,15 @@ class UtilizedOilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = Utilized_oilSerializer
     permission_classes = [IsAuthenticated]
 
+
+class RemainingOilPurchaseListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # You can modify this method to filter or get data dynamically
+        return Remaining_oil_quantity.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = Remaining_oil_quantityserializer(queryset, many=True)
+        return Response(serializer.data)

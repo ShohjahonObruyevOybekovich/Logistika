@@ -3,21 +3,21 @@ from django.urls import path
 
 from data.oil.views import (
     OilCreateAPIView,
-    OilUpdateAPIView,
-    Remaining_oil_quantityListAPIView, RecycledOilAPIView, OilPurchasesListAPIView, OilPurchaseUpdateAPIView,
+    OilUpdateAPIView, OilPurchasesListAPIView, OilPurchaseUpdateAPIView,
     UtilizedOilPurchaseListAPIView, UtilizedOilPurchaseUpdateAPIView, OilListAPIView, OilDetailAPIView,
-    RecycledOilListAPIView,
+    RecycledOilListAPIView, RemainingOilPurchaseListAPIView, RecycledOilUpdateAPIView,
 )
 
 urlpatterns = [
     path("/<uuid:pk>",OilUpdateAPIView.as_view(), name="update"),
     path("list/",OilCreateAPIView.as_view(), name="list"),
-    path('recycle/',RecycledOilAPIView.as_view(), name='recycle'),
-    path('recycled-oils/<uuid:oil_id>/', RecycledOilListAPIView.as_view(), name='recycled-oil-list'),
+
+    path('recycle/',RecycledOilListAPIView.as_view(), name='recycle'),
+    path('recycled-oils/<uuid:oil_id>/', RecycledOilUpdateAPIView.as_view(), name='recycled-oil-list'),
 
     path('list-pg/',OilListAPIView.as_view(), name='list-pg'),
 
-    path('remaining-quantiry/',Remaining_oil_quantityListAPIView.as_view(), name='remaining-quantiry'),
+    path('remaining/',RemainingOilPurchaseListAPIView.as_view(), name='remaining-quantiry'),
 
     path("purchase/<uuid:pk>/",OilPurchasesListAPIView.as_view(), name="purchase"),
     path("purchase/<uuid:pk>/",OilPurchaseUpdateAPIView.as_view(), name="purchase"),
