@@ -3,16 +3,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
-    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView
+    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView, RetrieveAPIView
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Salarka, Sale
+from .models import Salarka, Sale, Remaining_volume
 from .serializers import (
-    SalarkaCreateseralizer,
-    SalarkaListserializer, SalarkaStatsSerializer
+    SalarkaCreateseralizer, SalarkaStatsSerializer, SaleSerializer, SalarkaListSerializer
 )
 
 
@@ -22,11 +21,12 @@ class SalarkaCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
+
 class SalarkaListAPIView(ListAPIView):
     queryset = Salarka.objects.all()
-    serializer_class = SalarkaListserializer
+    serializer_class = SalarkaListSerializer
     permission_classes = (IsAuthenticated,)
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+
 
 
 
@@ -39,6 +39,7 @@ class SalarkaUpdateAPIView(UpdateAPIView):
 class SalarkaDeleteAPIView(DestroyAPIView):
     queryset = Salarka.objects.all()
     permission_classes = (IsAuthenticated,)
+
 
 
 
@@ -94,7 +95,11 @@ class SalarkaStatsAPIView(APIView):
 
 class SaleCreateAPIView(ListCreateAPIView):
     queryset = Sale.objects.all()
-    serializer_class = SalarkaCreateseralizer
+    serializer_class = SaleSerializer
     permission_classes = (IsAuthenticated,)
 
-# class
+class SaleRetrieveAPIView(RetrieveAPIView):
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
+
+

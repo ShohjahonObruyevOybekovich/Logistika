@@ -2,14 +2,16 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.views import APIView
 
-from .models import Salarka, Sale
+from .models import Salarka, Sale, Remaining_volume
 from ..cars.models import Car
 from ..cars.serializers import CarListserializer
 
 User = get_user_model()
 
 
-class SalarkaListserializer(serializers.ModelSerializer):
+class SalarkaListSerializer(serializers.ModelSerializer):
+    remaining_volume = serializers.SerializerMethodField()
+
     class Meta:
         model = Salarka
         fields = [
@@ -18,7 +20,14 @@ class SalarkaListserializer(serializers.ModelSerializer):
             "volume",
             'price_usd',
             'price_uzs',
+            "remaining_volume",
         ]
+
+    def get_remaining_volume(self, obj):
+        # Get the current remaining volume
+        remaining_volume = Remaining_volume.objects.first()
+        return remaining_volume.volume if remaining_volume else 0
+
     def to_representation(self, instance):
         """Customize the representation of the 'car' field."""
         representation = super().to_representation(instance)
@@ -26,6 +35,7 @@ class SalarkaListserializer(serializers.ModelSerializer):
         return representation
 
 class SalarkaCreateseralizer(serializers.ModelSerializer):
+    # remaining_volume = Remaining_volume.objects.all()
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
     class Meta:
         model = Salarka
@@ -35,6 +45,7 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
             "volume",
             'price_usd',
             'price_uzs',
+
         ]
 
     def to_representation(self, instance):
@@ -66,4 +77,13 @@ class SaleSerializer(serializers.ModelSerializer):
             "id",
             "car",
             "volume"
+        ]
+
+
+class RemainingSalesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Remaining_volume
+        fields = [
+            "id",
+            "volume",
         ]
