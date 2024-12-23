@@ -1,8 +1,11 @@
 from django.urls import path
+
+
 from data.oil.views import (
     OilCreateAPIView,
     OilUpdateAPIView,
     Remaining_oil_quantityListAPIView, RecycledOilAPIView, OilPurchaseAPIView, OilPurchaseUpdateAPIView,
+    OilPurchaseListAPIView,
 )
 
 urlpatterns = [
@@ -14,4 +17,6 @@ urlpatterns = [
 
     path("purchase/",OilPurchaseAPIView.as_view(), name="purchase"),
     path("purchase/<uuid:pk>/",OilPurchaseUpdateAPIView.as_view(), name="purchase"),
+    path('oil-purchases/<uuid:pk>/', OilPurchaseListAPIView.as_view(), name='oil-purchases-list'),
+
 ]

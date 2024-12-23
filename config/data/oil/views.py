@@ -1,10 +1,11 @@
 from django.contrib.admin.templatetags.admin_list import pagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
     ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateDestroyAPIView, get_object_or_404
 )
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -79,3 +80,21 @@ class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     queryset = OilPurchase.objects.all()
     serializer_class = OilPurchaseSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class OilPurchaseListAPIView(ListAPIView):
+    """
+    API view to list oil purchases filtered by oil UUID.
+    """
+    serializer_class = OilPurchaseSerializer
+    permission_classes = [IsAuthenticated]  # Optional: Only allow authenticated users
+
+    def get_queryset(self):
+        oil_uuid = self.kwargs.get('pk')  # Get the oil UUID from the URL
+        oil = get_object_or_404(Oil, id=oil_uuid)  # Validate that the oil exists
+        return OilPurchase.objects.filter(oil=oil)  # Filter purchases by the oil
+
+    def handle_exception(self, exc):
+        if isinstance(exc, NotFound):
+            return Response({'error': 'Oil not found'}, status=404)
+        return super().handle_exception(exc)
