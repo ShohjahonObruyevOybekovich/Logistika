@@ -23,6 +23,7 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
             'price_usd',
             'price_uzs',
         ]
+
 class SalarkaStatsSerializer(serializers.ModelSerializer):
     car_name = serializers.CharField(source="car.name", read_only=True)  # Add car name for readability
 
