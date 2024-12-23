@@ -77,6 +77,26 @@ class RecycledOilAPIView(APIView):
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class RecycledOilListAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, oil_id, *args, **kwargs):
+        # Validate oil existence
+        oil = get_object_or_404(Oil, id=oil_id)
+
+        # Fetch and order recycled oil data for the specified oil
+        oil_data = OilREcycles.objects.filter(oil=oil).order_by('-created_at')
+
+        # Apply pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # Customize the page size as needed
+        paginated_data = paginator.paginate_queryset(oil_data, request)
+
+        # Serialize the data
+        serialized_data = RecycledOilSerializer(paginated_data, many=True).data
+
+        # Return paginated response
+        return paginator.get_paginated_response(serialized_data)
 
 class OilPurchasesListAPIView(ListCreateAPIView):
 
@@ -93,12 +113,43 @@ class OilPurchasesListAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
 
-        oil = Oil.objects.filter(pk=self.kwargs["pk"]).first()
+        oil = OilPurchase.objects.filter(pk=self.kwargs["pk"]).first()
+        remaining_oil = Remaining_oil_quantity.get()
 
         if not oil:
             raise NotFound("Oil not found.")
 
         serializer.save(oil=oil)
+        return Response(serializer.data + remaining_oil, status=status.HTTP_201_CREATED)
+
+
+
+class OilDetailAPIView(APIView):
+    """
+    API view to fetch oil details including purchases, recycling, utilization history,
+    and remaining oil quantity.
+    """
+    permission_classes = [IsAuthenticated]  # Optional: Only allow authenticated users
+
+    def get(self, request, pk, *args, **kwargs):
+        oil = get_object_or_404(Oil, id=pk)
+        purchases = OilPurchase.objects.filter(oil=oil)
+        recycles = OilREcycles.objects.filter(oil=oil)
+        utilizations = Utilized_oil.objects.all()
+        remaining_oil = Remaining_oil_quantity.get()
+
+        data = {
+            "oil_name": oil.oil_name,
+            "oil_volume": oil.oil_volume,
+            "remaining_oil_quantity": remaining_oil.oil_volume,
+            "purchases": OilPurchaseSerializer(purchases, many=True).data,
+            "recycles": RecycledOilSerializer(recycles, many=True).data,
+            "utilizations": Utilized_oilSerializer(utilizations, many=True).data,
+        }
+
+        return Response(data)
+
+
 
 class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     queryset = OilPurchase.objects.all()
@@ -107,22 +158,6 @@ class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
 
 
 
-class OilPurchaseListView(ListAPIView):
-    """
-    API view to list oil purchases filtered by oil UUID.
-    """
-    serializer_class = OilPurchaseSerializer
-    permission_classes = [IsAuthenticated]  # Optional: Only allow authenticated users
-
-    def get_queryset(self):
-        oil_uuid = self.kwargs.get('pk')  # Get the oil UUID from the URL
-        oil = get_object_or_404(Oil, id=oil_uuid)  # Validate that the oil exists
-        return OilPurchase.objects.filter(oil=oil)  # Filter purchases by the oil
-
-    def handle_exception(self, exc):
-        if isinstance(exc, NotFound):
-            return Response({'error': 'Oil not found'}, status=404)
-        return super().handle_exception(exc)
 
 
 # class UtilizedCreateApiView(CreateAPIView):
