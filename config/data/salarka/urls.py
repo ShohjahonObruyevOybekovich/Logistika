@@ -6,8 +6,9 @@ urlpatterns = [
     path("list/",SalarkaListAPIView.as_view(), name="list"),
     path("delete/<uuid:pk>",SalarkaDeleteAPIView.as_view(), name="delete"),
 
-    path("salarka-total/<uuid:id>",SalarkaStatsAPIView.as_view(), name="salarka_total"),
-    # path('remaining/',RemainingApiList.as_view(), name='remaining'),
 
-    # path('remaining/',Remaining_salarka_quantityListAPIView.as_view(), name='remaining-salarka-list'),
+    path('sale',SaleCreateAPIView.as_view(), name='create'),
+    path('sale/<uuid:pk>',SaleRetrieveAPIView.as_view(), name='retrieve'),
+
+    path("salarka-total/<uuid:id>",SalarkaStatsAPIView.as_view(), name="salarka_total"),
 ]

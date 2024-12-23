@@ -89,6 +89,7 @@ class OilDetailAPIView(ListAPIView):
 
 class RecycleListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
+    # serializer_class = RecycledOilSerializer
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')  # Retrieve 'pk' from kwargs
         oil = get_object_or_404(Oil, id=pk)

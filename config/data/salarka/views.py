@@ -103,3 +103,5 @@ class SaleRetrieveAPIView(RetrieveAPIView):
     serializer_class = SaleSerializer
 
 
+
+
