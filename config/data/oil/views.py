@@ -42,6 +42,14 @@ class Remaining_oil_quantityListAPIView(ListAPIView):
     ordering_fields = ['oil_volume']
     search_fields = ["oil_volume"]
 
+class OilListAPIView(ListAPIView):
+    queryset = Oil.objects.all()
+    serializer_class = OilCreateseralizer
+    permission_classes = (IsAuthenticated,)
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
 
 class RecycledOilAPIView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -70,11 +78,27 @@ class RecycledOilAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class OilPurchaseAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = OilPurchaseSerializer
-    queryset = OilPurchase.objects.all()
+class OilPurchasesListAPIView(ListCreateAPIView):
 
+    serializer_class = OilPurchaseSerializer
+
+    def get_queryset(self):
+
+        oil = Oil.objects.filter(pk=self.kwargs["pk"]).first()
+
+        if not oil:
+            return OilPurchase.objects.none()
+
+        return oil.purchases.all()
+
+    def perform_create(self, serializer):
+
+        oil = Oil.objects.filter(pk=self.kwargs["pk"]).first()
+
+        if not oil:
+            raise NotFound("Oil not found.")
+
+        serializer.save(oil=oil)
 
 class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     queryset = OilPurchase.objects.all()
@@ -82,7 +106,8 @@ class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-class OilPurchaseListAPIView(ListAPIView):
+
+class OilPurchaseListView(ListAPIView):
     """
     API view to list oil purchases filtered by oil UUID.
     """

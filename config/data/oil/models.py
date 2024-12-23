@@ -4,14 +4,16 @@ from data.command.models import TimeStampModel
 
 class Oil(TimeStampModel):
     oil_name = models.CharField(max_length=100, help_text="Oil name")
-    oil_volume = models.CharField(max_length=100, help_text="Oil volume in liters")
+    oil_volume = models.FloatField(help_text="Oil volume in liters")
+
+    purchases: "models.QuerySet[OilPurchase]"
 
     def __str__(self):
         return self.oil_name
 
 
 class OilPurchase(TimeStampModel):
-    oil = models.ForeignKey("Oil", on_delete=models.CASCADE)
+    oil = models.ForeignKey("Oil", on_delete=models.CASCADE, related_name="purchases")
     price_uzs = models.DecimalField(decimal_places=2, max_digits=10)
     price_usd = models.DecimalField(decimal_places=2, max_digits=10)
     amount_uzs = models.DecimalField(decimal_places=2, max_digits=10)
