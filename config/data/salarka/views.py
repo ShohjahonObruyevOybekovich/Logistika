@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Salarka
+from .models import Salarka, Sale
 from .serializers import (
     SalarkaCreateseralizer,
     SalarkaListserializer, SalarkaStatsSerializer
@@ -93,4 +93,8 @@ class SalarkaStatsAPIView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 class SaleCreateAPIView(ListCreateAPIView):
-    pass
+    queryset = Sale.objects.all()
+    serializer_class = SalarkaCreateseralizer
+    permission_classes = (IsAuthenticated,)
+
+# class
