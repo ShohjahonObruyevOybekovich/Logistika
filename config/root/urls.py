@@ -47,6 +47,7 @@ urlpatterns = [
     path("oil/", include("data.oil.urls")),
     path("salarka/", include("data.salarka.urls")),
     path("flight/", include("data.flight.urls")),
+    path("finance/", include("data.finans.urls")),
     path("upload/", include("data.upload.urls")),
 
     path("docs<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"),

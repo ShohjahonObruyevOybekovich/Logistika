@@ -66,7 +66,9 @@ INSTALLED_APPS = [
     "data.salarka",
     "data.region",
     "data.flight",
+    "data.finans",
     "data.upload",
+
 ]
 
 MIDDLEWARE = [
