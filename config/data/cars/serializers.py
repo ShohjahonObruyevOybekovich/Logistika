@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Car
+from .models import Car, Model
+
 User = get_user_model()
 
 class CarCreateSerializer(serializers.ModelSerializer):
@@ -24,6 +25,5 @@ class CarListserializer(serializers.ModelSerializer):
 
 class ModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Car
-        fields = ["id", 'name']
-        read_only_fields = ["id"]
+        model = Model
+        fields = ['id','name']

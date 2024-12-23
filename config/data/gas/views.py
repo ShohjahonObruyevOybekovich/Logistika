@@ -9,14 +9,16 @@ from data.gas.models import GasPurchase, GasSale, GasStation
 from data.gas.serializers import (
     GasPurchaseListseralizer,
     GasSaleListseralizer,
-    GasStationListSerializer,
-)
+    GasStationListSerializer,)
+
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from root.pagination import GlobalPagination
 
 from data.gas.models import Gas_another_station
 from data.gas.serializers import GasAnotherStationCreateseralizer, GasAnotherListserializer
+
 
 
 class GasStationListCreateAPIView(ListCreateAPIView):
@@ -79,22 +81,23 @@ class GasSalesListAPIView(ListCreateAPIView):
 
 
 
-class GasAnotherStationCreateAPIView(CreateAPIView):
+class GasAnotherStationCreateAPIView(ListCreateAPIView):
     queryset = Gas_another_station.objects.all()
     serializer_class = GasAnotherStationCreateseralizer
     permission_classes = (IsAuthenticated,)
 
 
-class GasAnotherStationListAPIView(ListAPIView):
-    queryset = Gas_another_station.objects.all()
-    serializer_class = GasAnotherListserializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ["car",'purchased_volume','payed_price_uzs',
-            'payed_price_usd',]
-    search_fields = ['purchased_volume','payed_price_uzs',
-            'payed_price_usd']
-    ordering_fields = ['purchased_volume']
+
+# class GasAnotherStationListAPIView(ListAPIView):
+#     queryset = Gas_another_station.objects.all()
+#     serializer_class = GasAnotherListserializer
+#     permission_classes = (IsAuthenticated,)
+#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+#     filterset_fields = ["car",'purchased_volume','payed_price_uzs',
+#             'payed_price_usd',]
+#     search_fields = ['purchased_volume','payed_price_uzs',
+#             'payed_price_usd']
+#     ordering_fields = ['purchased_volume']
 
 class GasAnotherStationnopgListAPIView(ListAPIView):
     queryset = Gas_another_station.objects.all()
