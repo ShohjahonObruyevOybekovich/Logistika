@@ -41,8 +41,16 @@ class RecycledOilSerializer(serializers.ModelSerializer):
             'car',
             'remaining_oil'
         ]
+
+    def get_remaining_oil_quantity(self, obj):
+        remaining_oil = Remaining_oil_quantity.get()
+        return remaining_oil.oil_volume
+
+
+
 class OilPurchaseSerializer(serializers.ModelSerializer):
-    oil  = serializers.PrimaryKeyRelatedField(queryset=Oil.objects.all())
+    remaining_oil_quantity = serializers.SerializerMethodField()
+
     class Meta:
         model = OilPurchase
         fields = [
@@ -53,17 +61,12 @@ class OilPurchaseSerializer(serializers.ModelSerializer):
             "amount_uzs",
             "amount_usd",
             "oil_volume",
+            "remaining_oil_quantity",
         ]
 
-    def to_representation(self, instance):
-        """Customize the representation of the 'oil' field."""
-        representation = super().to_representation(instance)
-        representation['oil'] = {
-            "id": instance.oil.id,
-            "oil_name": instance.oil.oil_name,
-            "oil_volume": instance.oil.oil_volume
-        }
-        return representation
+    def get_remaining_oil_quantity(self, obj):
+        remaining_oil = Remaining_oil_quantity.get()
+        return remaining_oil.oil_volume
 
 
 class Utilized_oilSerializer(serializers.ModelSerializer):
@@ -76,4 +79,7 @@ class Utilized_oilSerializer(serializers.ModelSerializer):
             "price_uzs",
             "price_usd",
         ]
+    def get_remaining_oil_quantity(self, obj):
+        remaining_oil = Remaining_oil_quantity.get()
+        return remaining_oil.oil_volume
 
