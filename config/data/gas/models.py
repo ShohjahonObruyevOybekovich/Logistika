@@ -88,6 +88,7 @@ class GasSale(TimeStampModel):
 
 class Gas_another_station(TimeStampModel):
     car: "Car" = models.ForeignKey("cars.Car", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, help_text="Name of gas station")
     purchased_volume = models.FloatField(help_text="Volume of gas purchased in m³")
     payed_price_uzs = models.FloatField(
         max_length=150,

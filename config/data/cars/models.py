@@ -5,6 +5,10 @@ from employee.models import Employee
 class Model(TimeStampModel):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
+
 
 class Car(TimeStampModel):
     name = models.CharField(max_length=100, help_text='Name of car')

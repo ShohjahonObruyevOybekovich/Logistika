@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from data.cars.models import Car
+from data.cars.serializers import CarListserializer
 from data.gas.models import GasPurchase, GasSale, GasStation
 
 from data.gas.models import Gas_another_station
@@ -36,7 +37,7 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
 
 class GasSaleListseralizer(serializers.ModelSerializer):
 
-    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    car = CarListserializer(read_only=True)
 
     station = GasStationListSerializer(read_only=True)
 
