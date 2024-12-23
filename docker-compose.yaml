@@ -16,23 +16,14 @@ services:
     django:
         container_name: django_l
         build:
-            context: ./
+            context: ./config
         command: python manage.py runserver 0.0.0.0:8000
-        # --noreload
-        volumes: &shared_volumes
-            - ./:/usr/src/app
-            - ./data:/usr/src/app/data
-            - ./account:/usr/src/app/account
-            - ./employee:/usr/src/app/employee
 
+        volumes: &shared_volumes
+            - ./config:/usr/src/app
         ports:
             - 8001:8000
         env_file:
             - .env
         depends_on:
             - postgres
-
-
-
-volumes:
-    postgres:

@@ -1,0 +1,10 @@
+from django.urls import path
+from .views import *
+
+
+urlpatterns = [
+    path("", GasStationListCreateAPIView.as_view(), name="list"),
+    path("<uuid:pk>", RetrieveUpdateDestroyAPIView.as_view(), name="list"),
+    path("<uuid:pk>/purchases", GasPurchasesListAPIView.as_view(), name="list"),
+    path("<uuid:pk>/sales", GasSalesListAPIView.as_view(), name="list"),
+]
