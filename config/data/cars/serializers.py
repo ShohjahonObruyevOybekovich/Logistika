@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Car, Model
+from .models import Car, Model, Details
 
 User = get_user_model()
 
@@ -37,3 +37,26 @@ class ModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Model
         fields = ['id','name']
+
+
+
+
+class DetailCreateSerializer(serializers.ModelSerializer):
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+
+    class Meta:
+        model = Details
+        fields = [
+            "id",
+            "name",
+            "car",
+            "price_uzs",
+            "price_usd",
+        ]
+
+    def to_representation(self, instance):
+        """Customize the representation of the 'car' field."""
+        representation = super().to_representation(instance)
+        representation['car'] = CarListserializer(instance.car).data
+        return representation
+

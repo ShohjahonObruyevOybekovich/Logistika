@@ -8,7 +8,7 @@ from rest_framework.generics import (
     ListAPIView,
     UpdateAPIView,
     DestroyAPIView,
-    CreateAPIView,
+    CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -122,3 +122,14 @@ class ModelCarDeleteAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
+
+
+class DetailsView(ListCreateAPIView):
+    queryset = Details.objects.all()
+    serializer_class = DetailCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+class DetailRetriveView(RetrieveUpdateDestroyAPIView):
+    queryset = Details.objects.all()
+    serializer_class = DetailCreateSerializer
+    permission_classes = [IsAuthenticated]

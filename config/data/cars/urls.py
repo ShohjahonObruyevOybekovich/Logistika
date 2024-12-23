@@ -12,4 +12,7 @@ urlpatterns = [
     path('model-create/', ModelCarCreateAPIView.as_view(), name='model'),
     path('model-update/<uuid:pk>', ModelCarUpdateAPIView.as_view(), name='model-update'),
     path('model-delete/<uuid:pk>', ModelCarDeleteAPIView.as_view(), name='model-delete'),
+
+    path("detail/<uuid:pk>", DetailRetriveView.as_view(), name="update"),
+    path("detail/", DetailsView.as_view(), name="list"),
 ]
