@@ -53,12 +53,24 @@ class GasSaleListseralizer(serializers.ModelSerializer):
 
 
 class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
     class Meta:
         model = Gas_another_station
         fields = ["id","car", "name","purchased_volume", "payed_price_uzs", "payed_price_usd"]
 
 
+    def to_representation(self, instance):
+
+        res = super().to_representation(instance)
+
+
+        res['car'] = CarListserializer(instance.car).data
+
+        return res
+
+
 class GasAnotherListserializer(serializers.ModelSerializer):
+    car = CarListserializer(read_only=True)
     class Meta:
         model = Gas_another_station
         fields = ["id", "car", "name","purchased_volume", "payed_price_uzs", "payed_price_usd"]
