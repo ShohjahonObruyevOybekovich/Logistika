@@ -18,6 +18,11 @@ class Salarka(TimeStampModel):
         blank=True,
     )
 
+class Sale(TimeStampModel):
+    car = models.ForeignKey("cars.Car", on_delete=models.PROTECT, help_text="Sale car")
+    volume = models.PositiveIntegerField(help_text="Volume of the sale")
+
+
 
 class Remaining_volume(TimeStampModel):
     volume = models.FloatField(max_length=150,help_text="Remaining volume")

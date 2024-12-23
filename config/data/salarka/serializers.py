@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.views import APIView
 
-from .models import Salarka
+from .models import Salarka, Sale
+from ..cars.models import Car
 
 User = get_user_model()
 
@@ -36,4 +37,14 @@ class SalarkaStatsSerializer(serializers.ModelSerializer):
             "price_usd",
             "created_at",
             "updated_at",
+        ]
+
+class SaleSerializer(serializers.ModelSerializer):
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    class Meta:
+        model = Sale
+        fields = [
+            "id",
+            "car",
+            "volume"
         ]

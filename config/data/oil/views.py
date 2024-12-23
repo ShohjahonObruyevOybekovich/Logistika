@@ -65,18 +65,18 @@ class OilPurchasesListAPIView(ListCreateAPIView):
     queryset = OilPurchase.objects.all()
 
 
-
-class OilDetailAPIView(APIView):
+class OilDetailAPIView(ListAPIView):
     """
     API view to fetch oil details including purchases, recycling, utilization history,
     and remaining oil quantity.
     """
-    permission_classes = [IsAuthenticated]  # Optional: Only allow authenticated users
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk, *args, **kwargs):
-        oil = get_object_or_404(Oil, id=pk)
+    def get(self, **kwargs,):
+        oil = get_object_or_404(Oil, id=kwargs['id'])
         utilizations = Utilized_oil.objects.all()
         remaining_oil = Remaining_oil_quantity.get()
+
 
         data = {
             "oil_name": oil.oil_name,
@@ -84,8 +84,8 @@ class OilDetailAPIView(APIView):
             "remaining_oil_quantity": remaining_oil.oil_volume,
             "utilizations": Utilized_oilSerializer(utilizations, many=True).data,
         }
-
         return Response(data)
+
 
 class RecycleListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -99,8 +99,9 @@ class RecycleListAPIView(ListAPIView):
                 {
                     "id": recycle.id,
                     "amount": recycle.amount,
-                    "car": recycle.car.id,  # Include car ID or other fields
+                    "car": recycle.car.name,  # Include car ID or other fields
                     "remaining_oil": recycle.remaining_oil,
+                    "updated_at" : recycle.updated_at,
                 }
                 for recycle in recycles
             ],
