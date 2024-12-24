@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models.fields import UUIDField
 from rest_framework import serializers
 
 from data.region.models import Region
@@ -11,6 +12,37 @@ from ..region.serializers import RegionSerializer
 
 User = get_user_model()
 
+
+class FlightSerializer(serializers.ModelSerializer):
+    upload = serializers.UUIDField()
+    # cars = UUIDField()
+    class Meta:
+        model = Flight
+        fields = [
+            "id",
+            "region",
+            "flight_type",
+            'route',
+            "car",
+            "driver",
+            "departure_date",
+            "arrival_date",
+            "price_uzs",
+            "price_usd",
+            "driver_expenses_uzs",
+            "driver_expenses_usd",
+            "cargo_info",
+            "upload",
+        ]
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+
+        res["upload"] = (
+            FileUploadSerializer(instance.upload, context=self.context).data
+            if instance.upload
+            else None
+        )
 
 class FlightListserializer(serializers.ModelSerializer):
 

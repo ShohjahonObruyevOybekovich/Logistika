@@ -31,3 +31,13 @@ def handle_flight_completion(sender, instance:Flight, created, **kwargs):
                     flight=instance,
                     employee=instance.driver,
                 )
+            if instance.driver_expenses_uzs > 0:
+                Logs.objects.create(
+                    action="OUTCOME",
+                    amount_uzs=instance.driver_expenses_uzs,
+                    amount_usd=instance.driver_expenses_usd,
+                    kind="FLIGHT",
+                    comment=f"Outcome for flight ID {instance.id}",
+                    flight=instance,
+                    employee=instance.driver,
+                )
