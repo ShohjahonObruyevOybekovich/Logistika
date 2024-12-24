@@ -8,8 +8,6 @@ from .models import Logs
 @receiver(post_save, sender=Logs)
 def on_employee_balance(sender, instance:Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind=="PAY_SALARY" and instance.employee is not None:
-        driver = Employee.objects.get(id=instance.employee.id)
-        driver.balance += instance.amount
-        driver.save()
-
+        instance.employee.balance += instance.amount_uzs
+        instance.employee.save()
 

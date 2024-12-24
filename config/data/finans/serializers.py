@@ -21,7 +21,7 @@ class FinansListserializer(serializers.ModelSerializer):
 
     flight = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all(),allow_null=True)
 
-    driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(),allow_null=True)
+    employee = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(),allow_null=True)
 
 
     class Meta:
@@ -32,7 +32,7 @@ class FinansListserializer(serializers.ModelSerializer):
             "amount_uzs",
             "amount_usd",
             "car",
-            "driver",
+            "employee",
             "flight",
             "kind",
             "comment",
@@ -46,8 +46,8 @@ class FinansListserializer(serializers.ModelSerializer):
         representation['car'] = CarListserializer(instance.car).data
         return representation
 
-    def to_representation_driver(self, instance):
-        """Customize the representation of the 'driver' field."""
+    def to_representation_employee(self, instance):
+        """Customize the representation of the 'employee' field."""
         representation = super().to_representation(instance)
-        representation['driver'] = RegionSerializer(instance.full_name).data
+        representation['employee'] = RegionSerializer(instance.full_name).data
         return representation

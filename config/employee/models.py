@@ -22,8 +22,10 @@ class Employee(models.Model):
         choices=Flight_CHOICES,
         default='IN_UZB',
     )
-    balance = models.DecimalField(max_digits=10, decimal_places=5,
+    balance_uzs = models.DecimalField(max_digits=10, decimal_places=5,
                                   null=True,blank=True)
+    # balance_usd = models.DecimalField(max_digits=10, decimal_places=5,
+    #                                   null=True, blank=True)
 
     created_at = models.DateField(auto_now_add=True,
                                   null=True, blank=True)

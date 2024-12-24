@@ -15,7 +15,7 @@ def handle_flight_completion(sender, instance:Flight, created, **kwargs):
                     amount_uzs=instance.price_uzs,
                     amount_usd=instance.price_usd,
                     kind="FLIGHT",
-                    comment=f"Income from flight ID {instance.id}",
+                    comment=f"Income from flight ID {instance}",
                     flight=instance,
                     employee=instance.driver,
                 )
@@ -27,7 +27,7 @@ def handle_flight_completion(sender, instance:Flight, created, **kwargs):
                     amount_uzs=instance.driver_expenses_uzs,
                     amount_usd=instance.driver_expenses_usd,
                     kind="FLIGHT",
-                    comment=f"Outcome for flight ID {instance.id}",
+                    comment=f"Outcome for flight ID {instance}",
                     flight=instance,
                     employee=instance.driver,
                 )
@@ -37,7 +37,7 @@ def handle_flight_completion(sender, instance:Flight, created, **kwargs):
                     amount_uzs=instance.driver_expenses_uzs,
                     amount_usd=instance.driver_expenses_usd,
                     kind="FLIGHT",
-                    comment=f"Outcome for flight ID {instance.id}",
+                    comment=f"Outcome for flight ID {instance}",
                     flight=instance,
                     employee=instance.driver,
                 )
