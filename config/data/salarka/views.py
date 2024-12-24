@@ -42,57 +42,6 @@ class SalarkaDeleteAPIView(DestroyAPIView):
 
 
 
-
-# class Remaining_salarka_quantityListAPIView(ListAPIView):
-#     queryset = Remaining_salarka_quantity.objects.all()
-#     serializer_class = Remaining_salarka_quantityserializer
-#     permission_classes = (IsAuthenticated,)
-#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-#     filterset_fields = ['purchased_volume
-#     ']
-#     ordering_fields = ['purchased_volume
-#     ']
-#     search_fields = ["purchased_volume
-#     "]
-#
-
-
-
-
-class SalarkaStatsAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request, *args, **kwargs):
-        car_id = request.query_params.get("car_id")  # Get car ID from query params
-
-        if not car_id:
-            return Response(
-                {"error": "car_id is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Fetch all records for the given car ID
-        salarka_data = Salarka.objects.filter(car_id=car_id)
-        if not salarka_data.exists():
-            return Response(
-                {"message": "No data found for the specified car ID."},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Calculate totals using the model's get_totals method
-        totals = Salarka.get_totals(car_id)
-
-        # Serialize the list of Salarka records
-        serializer = SalarkaStatsSerializer(salarka_data, many=True)
-
-        # Construct the response with detailed records and totals
-        response_data = {
-            "totals": totals,
-            "details": serializer.data
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
 class SaleCreateAPIView(ListCreateAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
@@ -101,6 +50,31 @@ class SaleCreateAPIView(ListCreateAPIView):
 class SaleRetrieveAPIView(RetrieveAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+
+
+import django_filters
+
+class SalarkaFilter(django_filters.FilterSet):
+    car_id = django_filters.UUIDFilter(field_name='car__id', lookup_expr='exact')
+
+    class Meta:
+        model = Salarka
+        fields = ['car_id']
+
+class SalarkaStatsAPIView(ListAPIView):
+    serializer_class = SalarkaCreateseralizer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = SalarkaFilter  # Use the filter class
+
+    def get_queryset(self):
+        # Retrieve the 'pk' (car_id) from the URL kwargs
+        car_id = self.kwargs.get('pk')
+        if car_id:
+            # Filter the queryset by car_id
+            return Salarka.objects.filter(car__id=car_id)
+        return Salarka.objects.none()
+
 
 
 
