@@ -29,7 +29,8 @@ class FinansListserializer(serializers.ModelSerializer):
         fields = [
             "id",
             "action",
-            "amount",
+            "amount_uzs",
+            "amount_usd",
             "car",
             "driver",
             "flight",

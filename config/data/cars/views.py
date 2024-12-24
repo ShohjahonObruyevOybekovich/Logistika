@@ -142,3 +142,7 @@ class DetailRetriveView(RetrieveUpdateDestroyAPIView):
     queryset = Details.objects.all()
     serializer_class = DetailCreateSerializer
     permission_classes = [IsAuthenticated]
+
+
+class DetailDeleteView(DestroyAPIView):
+    queryset = Details.objects.all()

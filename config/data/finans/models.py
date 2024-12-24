@@ -10,7 +10,8 @@ class Logs(TimeStampModel):
         ]
         ,max_length=20,
     )
-    amount = models.FloatField()
+    amount_uzs = models.FloatField()
+    amount_usd = models.FloatField()
 
     car = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
 

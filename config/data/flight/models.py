@@ -26,6 +26,11 @@ class Flight(models.Model):
         choices=Flight_CHOICES,
         default="IN_UZB",
     )
+    Route_CHOICES = [
+        ("GONE_TO","GONE_TO"),
+        ("BEEN_TO","BEEN_TO"),
+    ]
+    route = models.CharField(choices=Route_CHOICES, max_length=10, default="GONE_TO")
 
     car: "Car" = models.ForeignKey(
         "cars.Car", on_delete=models.CASCADE, related_name="flights"

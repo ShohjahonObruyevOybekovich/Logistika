@@ -20,7 +20,7 @@ class FlightListserializer(serializers.ModelSerializer):
 
     driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
 
-    upload = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all())
+    upload = serializers.UUIDField()
 
     class Meta:
         model = Flight
@@ -36,7 +36,6 @@ class FlightListserializer(serializers.ModelSerializer):
             "price_usd",
             "driver_expenses_uzs",
             "driver_expenses_usd",
-            "file",
             "cargo_info",
             "upload",
         ]

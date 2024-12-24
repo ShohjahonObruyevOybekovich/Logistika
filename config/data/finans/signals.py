@@ -11,3 +11,5 @@ def on_employee_balance(sender, instance:Logs, created, **kwargs):
         driver = Employee.objects.get(id=instance.employee.id)
         driver.balance += instance.amount
         driver.save()
+
+
