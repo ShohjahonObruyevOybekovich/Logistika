@@ -218,10 +218,10 @@ CORS_ALLOW_CREDENTIALS = True
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-# SECURE_SSL_REDIRECT = True  # Force all traffic to HTTPS
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# CSRF_COOKIE_SECURE = True  # Ensure CSRF cookie is sent over HTTPS only
-# SESSION_COOKIE_SECURE = True  # Ensure session cookie is sent over HTTPS only
+SECURE_SSL_REDIRECT = True  # Force all traffic to HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True  # Ensure CSRF cookie is sent over HTTPS only
+SESSION_COOKIE_SECURE = True  # Ensure session cookie is sent over HTTPS only
 
 
 LANGUAGE_CODE = "en-us"
