@@ -60,3 +60,11 @@ class EmployeeListAPIView(ListAPIView):
 class EmployeeDeleteAPIView(DestroyAPIView):
     queryset = Employee.objects.all()
     permission_classes = (IsAuthenticated,)
+
+class EmployeeListCreateAPIView(ListAPIView):
+    queryset = Employee.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EmployeeListserializer
+
+    def get_paginated_response(self, data):
+        return Response(data)
