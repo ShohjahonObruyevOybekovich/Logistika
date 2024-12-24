@@ -5,7 +5,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
-    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
+    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView
 )
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated

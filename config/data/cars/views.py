@@ -13,6 +13,7 @@ from rest_framework.generics import (
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .serializers import *
 from .models import Car, Model
@@ -139,63 +140,47 @@ class DetailsView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class DetailDeleteOrUpdateAPIView(GenericAPIView):
-    """
-    API view to delete a detail and add its price as income,
-    or create/update records based on UUIDs.
-    """
-    queryset = Details.objects.all()
-    serializer_class = DetailCreateListSerializer
 
-    def delete(self, request, uuid,amount_uzs,amount_usd, *args, **kwargs):
-        """
-        Delete a detail by UUID and add its price to income.
-        """
-        detail = get_object_or_404(Details, uuid=uuid)
 
-        # Add price to income
-        Logs.objects.create(
-            action="INCOME",
-            amount_uzs=amount_uzs,
-            amount_usd=amount_usd,
+class BulkUpdateAPIView(APIView):
+    def patch(self, request, *args, **kwargs):
+        updates = request.data  # Directly assign request.data as it is a list
+        if not updates:
+            return Response({"detail": "No updates provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        )
+        updated_count = 0
+        for update in updates:
+            try:
+                obj = Details.objects.get(id=update.get("id"))
+                for field, value in update.items():
+                    if field != "id":
+                        if field == "car" and isinstance(value, str):  # Check if 'car' field is UUID
+                            try:
+                                car_instance = Car.objects.get(id=value)  # Convert UUID to Car instance
+                                setattr(obj, field, car_instance)
+                            except Car.DoesNotExist:
+                                return Response({"detail": f"Car with id {value} not found."}, status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            setattr(obj, field, value)
+                obj.save()
+                updated_count += 1
+            except Details.DoesNotExist:
+                continue
 
-        # Delete the detail
-        detail.delete()
-        return Response({"message": "Detail deleted and price added to income."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": f"{updated_count} items updated successfully"}, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
-        """
-        Handle incoming data: Create or update details based on UUID.
-        """
-        incoming_data = request.data  # Expected to be a list of details
-        results = {"created": 0, "updated": 0}
+    def delete(self, request, *args, **kwargs):
+        ids_to_delete = request.data
+        if not isinstance(ids_to_delete, list) or not ids_to_delete:
+            return Response({"detail": "A list of IDs is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        for data in incoming_data:
-            uuid = data.get("uuid")
-            if not uuid:
-                return Response({"error": "UUID is required for each detail."}, status=status.HTTP_400_BAD_REQUEST)
+        deleted_count = 0
+        for obj_id in ids_to_delete:
+            try:
+                obj = Details.objects.get(id=obj_id)
+                obj.delete()
+                deleted_count += 1
+            except Details.DoesNotExist:
+                continue
 
-            # Check if detail exists, update if yes, create if no
-            detail, created = Details.objects.update_or_create(
-                id=uuid,
-                defaults={
-                    "car": data.get("car"),
-                    "name": data.get("name"),
-                    "id_detail": data.get("id_detail"),
-                    "price_uzs": data.get("price_uzs"),
-                    "price_usd": data.get("price_usd"),
-                },
-            )
-
-            if created:
-                results["created"] += 1
-            else:
-                results["updated"] += 1
-
-        return Response(
-            {"message": "Details processed successfully.", "results": results},
-            status=status.HTTP_200_OK,
-        )
-
+        return Response({"detail": f"{deleted_count} items deleted successfully"})
