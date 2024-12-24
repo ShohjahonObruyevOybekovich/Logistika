@@ -28,6 +28,7 @@ class FlightListserializer(serializers.ModelSerializer):
             "id",
             "region",
             "flight_type",
+            'route',
             "car",
             "driver",
             "departure_date",
