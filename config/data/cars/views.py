@@ -173,11 +173,19 @@ class BulkUpdateAPIView(APIView):
 
         return Response({"detail": f"{updated_count} items updated successfully"}, status=status.HTTP_200_OK)
 
-    def delete(self, request, *args, **kwargs):
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle the deletion of details and log the income.
+        """
         items_to_delete = request.data
 
+        # Validate input: Ensure it's a non-empty list
         if not isinstance(items_to_delete, list) or not items_to_delete:
-            return Response({"detail": "A list of items with IDs and prices is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "A list of items with IDs and prices is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         deleted_count = 0
         errors = []
@@ -187,8 +195,14 @@ class BulkUpdateAPIView(APIView):
             price_uzs = Decimal(item.get("price_uzs", "0.00"))
             price_usd = Decimal(item.get("price_usd", "0.00"))
 
+            if not obj_id:
+                errors.append({"detail": "ID is required for each item."})
+                continue
+
             try:
                 obj = Details.objects.get(id=obj_id)
+
+                # Log the income
                 Logs.objects.create(
                     action="INCOME",
                     amount_uzs=price_uzs,
@@ -196,15 +210,19 @@ class BulkUpdateAPIView(APIView):
                     kind="OTHER",
                     comment=f"Details sold for {price_usd} $",
                 )
+
+                # Delete the object
                 obj.delete()
                 deleted_count += 1
+
             except Details.DoesNotExist:
                 errors.append({"id": obj_id, "detail": "Object not found"})
                 continue
 
+        # Prepare the response
         response_data = {
             "detail": f"{deleted_count} items deleted successfully",
-            "errors": errors
+            "errors": errors,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
