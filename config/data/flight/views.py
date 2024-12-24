@@ -3,7 +3,7 @@ from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveAP
     ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from data.flight.serializers import FlightListserializer
+from data.flight.serializers import FlightListserializer, FlightListCReateserializer
 
 from .models import Flight
 
@@ -34,7 +34,7 @@ class FlightFilter(django_filters.FilterSet):
         fields = ['car_id']
 
 class FlightStatsAPIView(ListAPIView):
-    serializer_class = FlightListserializer
+    serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FlightFilter  # Use the filter class
