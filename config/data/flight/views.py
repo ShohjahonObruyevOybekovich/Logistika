@@ -8,7 +8,6 @@ from .models import Flight
 
 
 class FlightListAPIView(ListCreateAPIView):
-
     queryset = Flight.objects.all()
     serializer_class = FlightListserializer
     permission_classes = [IsAuthenticated]

@@ -9,5 +9,5 @@ urlpatterns = [
     path('sale',SaleCreateAPIView.as_view(), name='create'),
     path('sale/<uuid:pk>',SaleRetrieveAPIView.as_view(), name='retrieve'),
 
-    path("Salarka/<uuid:pk>",SalarkaStatsAPIView.as_view(), name='stats'),
+    path("salarka/<uuid:pk>",SalarkaStatsAPIView.as_view(), name='stats'),
   ]
