@@ -16,7 +16,7 @@ class EmployeeListserializer(serializers.ModelSerializer):
             'passport',
             'license',
             'flight_type',
-            'balance',
+            'balance_uzs',
         ]
 
 class EmployeeCreateSerializer(serializers.ModelSerializer):
@@ -28,5 +28,5 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
             'passport',
             'license',
             'flight_type',
-            'balance',
+            'balance_uzs',
         ]
