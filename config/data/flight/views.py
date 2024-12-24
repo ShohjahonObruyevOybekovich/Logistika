@@ -47,3 +47,13 @@ class FlightStatsAPIView(ListAPIView):
             return Flight.objects.filter(car__id=car_id)
         return Flight.objects.none()
 
+class FlightHistoryAPIView(ListAPIView):
+    serializer_class = FlightListCReateserializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = FlightFilter
+    def get_queryset(self):
+        driver_id = self.kwargs.get('pk')
+        if driver_id:
+            return Flight.objects.filter(driver__id=driver_id)
+        return Flight.objects.none()
