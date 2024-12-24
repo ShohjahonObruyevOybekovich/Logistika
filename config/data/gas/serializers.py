@@ -53,6 +53,7 @@ class GasSaleListSerializer(serializers.ModelSerializer):
         """Customize the representation of the 'car' field."""
         representation = super().to_representation(instance)
         representation['car'] = CarListserializer(instance.car).data
+        representation['station'] = GasStationListSerializer(instance.station).data  # Include station details
         return representation
 
 

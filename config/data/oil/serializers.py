@@ -21,6 +21,7 @@ class OilCreateseralizer(serializers.ModelSerializer):
             "id",
             'oil_name',
             'oil_volume',
+            'updated_at',
         ]
 
 

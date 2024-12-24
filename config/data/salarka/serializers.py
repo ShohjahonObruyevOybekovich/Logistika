@@ -78,6 +78,11 @@ class SaleSerializer(serializers.ModelSerializer):
             "car",
             "volume"
         ]
+    def to_representation(self, instance):
+        """Customize the representation of the 'car' field."""
+        representation = super().to_representation(instance)
+        representation['car'] = CarListserializer(instance.car).data
+        return representation
 
 
 class RemainingSalesSerializer(serializers.ModelSerializer):
