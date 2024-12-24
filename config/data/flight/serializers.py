@@ -13,7 +13,7 @@ class FlightListserializer(serializers.ModelSerializer):
     region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())  # Ensure this uses the Car model
     driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
-    upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all())
+    upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
 
     class Meta:
         model = Flight

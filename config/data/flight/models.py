@@ -71,7 +71,7 @@ class Flight(models.Model):
 
     upload = models.ForeignKey(
         "upload.File",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="flights",
         null=True,
         blank=True,
