@@ -19,6 +19,7 @@ class EmployeeListserializer(serializers.ModelSerializer):
             'balance_uzs',
         ]
 
+
 class EmployeeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee

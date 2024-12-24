@@ -3,6 +3,7 @@ from django.db import models
 
 from typing import TYPE_CHECKING
 
+from data.command.models import TimeStampModel
 
 if TYPE_CHECKING:
 
@@ -11,7 +12,7 @@ if TYPE_CHECKING:
     from employee.models import Employee
 
 
-class Flight(models.Model):
+class Flight(TimeStampModel):
     region: "Region" = models.ForeignKey(
         "region.Region", on_delete=models.CASCADE, related_name="flights"
     )
