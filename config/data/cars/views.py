@@ -1,4 +1,6 @@
 # from rest_framework import generics
+from decimal import Decimal
+
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
@@ -143,6 +145,8 @@ class DetailsView(ListAPIView):
 
 
 class BulkUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def patch(self, request, *args, **kwargs):
         updates = request.data  # Directly assign request.data as it is a list
         if not updates:
@@ -170,17 +174,37 @@ class BulkUpdateAPIView(APIView):
         return Response({"detail": f"{updated_count} items updated successfully"}, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
-        ids_to_delete = request.data
-        if not isinstance(ids_to_delete, list) or not ids_to_delete:
-            return Response({"detail": "A list of IDs is required"}, status=status.HTTP_400_BAD_REQUEST)
+        items_to_delete = request.data
+
+        if not isinstance(items_to_delete, list) or not items_to_delete:
+            return Response({"detail": "A list of items with IDs and prices is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         deleted_count = 0
-        for obj_id in ids_to_delete:
+        errors = []
+
+        for item in items_to_delete:
+            obj_id = item.get("id")
+            price_uzs = Decimal(item.get("price_uzs", "0.00"))
+            price_usd = Decimal(item.get("price_usd", "0.00"))
+
             try:
                 obj = Details.objects.get(id=obj_id)
+                Logs.objects.create(
+                    action="INCOME",
+                    amount_uzs=price_uzs,
+                    amount_usd=price_usd,
+                    kind="OTHER",
+                    comment=f"Details sold for {price_usd} $",
+                )
                 obj.delete()
                 deleted_count += 1
             except Details.DoesNotExist:
+                errors.append({"id": obj_id, "detail": "Object not found"})
                 continue
 
-        return Response({"detail": f"{deleted_count} items deleted successfully"})
+        response_data = {
+            "detail": f"{deleted_count} items deleted successfully",
+            "errors": errors
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
