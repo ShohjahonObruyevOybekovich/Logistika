@@ -43,3 +43,4 @@ class FlightListserializer(serializers.ModelSerializer):
         representation['region'] = RegionSerializer(instance.region).data
         representation['upload'] = FileUploadSerializer(instance.upload).data
         return representation
+

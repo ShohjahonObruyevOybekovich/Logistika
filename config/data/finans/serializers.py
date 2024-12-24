@@ -17,11 +17,11 @@ User = get_user_model()
 
 class FinansListserializer(serializers.ModelSerializer):
 
-    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all(),allow_null=True)
 
-    flight = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all())
+    flight = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all(),allow_null=True)
 
-    driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
+    driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(),allow_null=True)
 
 
     class Meta:

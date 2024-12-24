@@ -9,9 +9,11 @@ class Logs(TimeStampModel):
             ("OUTCOME", "OUTCOME"),
         ]
         ,max_length=20,
+        null=True,
+        blank=True
     )
-    amount_uzs = models.FloatField()
-    amount_usd = models.FloatField()
+    amount_uzs = models.FloatField(null=True,blank=True)
+    amount_usd = models.FloatField(null=True,blank=True)
 
     car = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -29,10 +31,12 @@ class Logs(TimeStampModel):
             ("FIX_CAR", "Avtomobil tuzatish"),
             ("PAY_SALARY", "Oylik berish"),
             ("FLIGHT", "FLIGHT"),
-        ], max_length=20
+        ], max_length=20,
+        null=True,
+        blank=True
     )
 
-    comment = models.TextField()
+    comment = models.TextField(null=True,blank=True)
 
     @classmethod
     def create_income(self, amount: float, comment: str):
