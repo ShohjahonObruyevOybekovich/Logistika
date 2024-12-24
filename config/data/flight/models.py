@@ -69,7 +69,7 @@ class Flight(models.Model):
 
     cargo_info = models.TextField(blank=True, null=True)
 
-    file = models.ForeignKey(
+    upload = models.ForeignKey(
         "upload.File",
         on_delete=models.CASCADE,
         related_name="flights",
@@ -81,7 +81,7 @@ class Flight(models.Model):
         ("ACTIVE", "Active"),
         ("INACTIVE", "Inactive"),
     )
-    status = models.BooleanField(
+    status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
         default="Active",
