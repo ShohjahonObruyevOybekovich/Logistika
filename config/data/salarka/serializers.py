@@ -45,8 +45,9 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
             "volume",
             'price_usd',
             'price_uzs',
-
+            "created_at",
         ]
+        read_only_fields = ['created_at']
 
     def to_representation(self, instance):
         """Customize the representation of the 'car' field."""
