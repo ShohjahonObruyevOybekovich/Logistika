@@ -31,5 +31,15 @@ class FinansDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = FinansListserializer
     permission_classes = [IsAuthenticated]
 
+class FinansDriver(ListCreateAPIView):
+    # queryset = Logs.objects.all()
+    serializer_class = FinansListserializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        driver_id = self.kwargs.get('pk')
+        if driver_id:
+            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY")
+        return Logs.objects.none()
 
 

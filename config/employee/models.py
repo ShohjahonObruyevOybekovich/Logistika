@@ -22,7 +22,7 @@ class Employee(models.Model):
         choices=Flight_CHOICES,
         default='IN_UZB',
     )
-    balance_uzs = models.DecimalField(max_digits=10, decimal_places=5,
+    balance_uzs = models.DecimalField(max_digits=10, decimal_places=2,
                                   null=True,blank=True)
     # balance_usd = models.DecimalField(max_digits=10, decimal_places=5,
     #                                   null=True, blank=True)
