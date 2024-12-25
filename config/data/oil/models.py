@@ -15,9 +15,9 @@ class Oil(TimeStampModel):
 
 class OilPurchase(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE, related_name="purchases")
-    price_uzs = models.DecimalField(decimal_places=2, max_digits=10)
+    price_uzs = models.DecimalField(decimal_places=2, max_digits=20)
     # price_usd = models.DecimalField(decimal_places=2, max_digits=10)
-    amount_uzs = models.DecimalField(decimal_places=2, max_digits=10)
+    amount_uzs = models.DecimalField(decimal_places=2, max_digits=20)
     # amount_usd = models.DecimalField(decimal_places=2, max_digits=10)
     oil_volume = models.FloatField(help_text="Oil volume in liters")
 

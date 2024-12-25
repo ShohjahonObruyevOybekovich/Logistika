@@ -32,3 +32,5 @@ def handle_flight_completion(sender, instance: Flight, created, **kwargs):
                     flight=instance,
                     employee=instance.driver,
                 )
+
+
