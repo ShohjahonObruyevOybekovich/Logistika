@@ -6,7 +6,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticated
 
 from data.flight.serializers import FlightListserializer, FlightListCReateserializer
-from .models import Flight
+from .models import Flight, Ordered
 
 
 class FlightListAPIView(ListCreateAPIView):
@@ -77,3 +77,16 @@ class FlightListNOPg(ListAPIView):
         Customize the paginated response. Ensure it returns a DRF Response.
         """
         return Response(data)
+
+
+class FlightOrderedListAPIView(ListCreateAPIView):
+    serializer_class = FlightListCReateserializer
+    queryset = Ordered.objects.all()
+    permission_classes = (IsAuthenticated,)
+
+
+class FlightOrderedRetrieveAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Ordered.objects.all()
+    serializer_class = FlightListCReateserializer
+    permission_classes = (IsAuthenticated,)
+

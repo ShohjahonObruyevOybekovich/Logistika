@@ -10,4 +10,7 @@ urlpatterns = [
     path("history/<uuid:pk>", FlightHistoryAPIView.as_view(), name="flight-history"),
 
     path("list-pg",FlightListNOPg.as_view(), name="flight-list-pg"),
+
+    path("ordered",FlightOrderedListAPIView.as_view(), name="flight-list-ordered"),
+    path("ordered/<uuid:pk>", FlightOrderedRetrieveAPIView.as_view(), name="flight-list-ordered"),
                ]

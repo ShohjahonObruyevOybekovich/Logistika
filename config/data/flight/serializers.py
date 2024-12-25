@@ -3,7 +3,7 @@ from rest_framework import serializers
 from data.cars.models import Car  # Ensure you import the Car model
 from employee.models import Employee
 from employee.serializers import EmployeeListserializer
-from .models import Flight
+from .models import Flight, Ordered
 from ..cars.serializers import CarListserializer  # Import your CarListSerializer
 from ..region.models import Region
 from ..region.serializers import RegionSerializer
@@ -12,9 +12,9 @@ from ..upload.serializers import FileUploadSerializer
 
 
 class FlightListserializer(serializers.ModelSerializer):
-    region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())
-    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())  # Ensure this uses the Car model
-    driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
+    region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all(),allow_null=True)
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all(),allow_null=True)  # Ensure this uses the Car model
+    driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(),allow_null=True)
     upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
 
     class Meta:
@@ -79,4 +79,34 @@ class FlightListCReateserializer(serializers.ModelSerializer):
         representation['region'] = RegionSerializer(instance.region).data
         representation['upload'] = FileUploadSerializer(instance.upload).data
         representation['driver'] = EmployeeListserializer(instance.driver).data
+        return representation
+
+
+class FlightOrderedListserializer(serializers.ModelSerializer):
+    region = serializers.PrimaryKeyRelatedField(
+        queryset=Region.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = Ordered
+        fields = [
+            "id",
+            "region",
+            "flight_type",
+            "departure_date",
+            "price_uzs",
+            "driver_expenses_uzs",
+            "cargo_info",
+            "driver_name",
+            "driver_number",
+            "car_number",
+            "status",
+        ]
+
+    def to_representation(self, instance):
+        """Customize the representation of fields."""
+        representation = super().to_representation(instance)
+        representation['region'] = RegionSerializer(instance.car).data
         return representation

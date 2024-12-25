@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import Flight
+from .models import Flight, Ordered
 from ..finans.models import Logs
 
 
@@ -32,5 +32,6 @@ def handle_flight_completion(sender, instance: Flight, created, **kwargs):
                     flight=instance,
                     employee=instance.driver,
                 )
+
 
 
