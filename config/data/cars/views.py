@@ -207,6 +207,65 @@ class BulkCreateUpdateAPIView(APIView):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
+class BulkDeleteWithSellPriceAPIView(APIView):
+    """
+    Handle bulk deletion of `Details` objects with logging of a common sell price.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        """
+        Delete multiple `Details` objects and log the sell price as income.
+        """
+        data = request.data  # Expecting a dict with 'ids' and 'sell_price'
+        ids = data.get("id")  # List of IDs to delete
+        sell_price = data.get("sell_price")  # Common sell price
+
+        # Validate input
+        if not ids or not isinstance(ids, list):
+            return Response(
+                {"detail": "A non-empty list of IDs is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not sell_price:
+            return Response(
+                {"detail": "Sell price is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if sell_price:
+            # Log the income for the sell_price
+            sell_price = Decimal(sell_price)
+            Logs.objects.create(
+                action="INCOME",
+                amount_uzs=sell_price,
+                kind="OTHER",
+                comment=f"Details sold for {sell_price} UZS."
+            )
+
+        deleted_count = 0
+        errors = []
+
+        for obj_id in ids:
+            try:
+                # Fetch the Details object by ID
+                detail = Details.objects.get(id=obj_id)
+                detail.delete()
+                deleted_count += 1
+            except Details.DoesNotExist:
+                errors.append({"id": obj_id, "detail": "Details object not found."})
+            except Exception as e:
+                errors.append({"id": obj_id, "detail": str(e)})
+
+        # Prepare the response
+        response_data = {
+            "deleted_count": deleted_count,
+            "errors": errors,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
 
 class DeleteCarAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -270,3 +329,4 @@ class DeleteCarAPIView(APIView):
             {"detail": f"Car {car.name} successfully deleted and sell price logged."},
             status=status.HTTP_200_OK
         )
+

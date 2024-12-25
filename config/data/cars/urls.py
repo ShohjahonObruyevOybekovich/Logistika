@@ -17,6 +17,6 @@ urlpatterns = [
 
     path("bulk/", BulkCreateUpdateAPIView.as_view(), name="update"),
     path("detail/", DetailsView.as_view(), name="list"),
-    path("detail-create/", DetailsCreateView.as_view(), name="create"),
+    path("detail-delete/",BulkDeleteWithSellPriceAPIView.as_view(), name="delete"),
 
 ]
