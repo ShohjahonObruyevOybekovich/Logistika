@@ -208,19 +208,12 @@ class BulkCreateUpdateAPIView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-
 class DeleteCarAPIView(APIView):
-    """
-    API endpoint to delete a car. Logs the car's sell price before deletion.
-    """
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, *args, **kwargs):
-        """
-        Handle the deletion of a car and log the sell price.
-        """
+    def post(self, request, *args, **kwargs):
         car_id = kwargs.get('uuid')  # Car UUID from URL
-        sell_price = request.data.get('sell_price')  # Sell price from request data
+        sell_price = request.data.get('sell_price')
 
         if not sell_price:
             return Response(
@@ -229,29 +222,16 @@ class DeleteCarAPIView(APIView):
             )
 
         try:
-            # Convert sell price to Decimal
             sell_price_uzs = Decimal(sell_price)
+        except Exception as e:
+            return Response(
+                {"detail": f"Invalid sell price: {e}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
+        try:
             # Get the car by its UUID
             car = Car.objects.get(id=car_id)
-
-            # Log the sell price in the Logs model
-            Logs.objects.create(
-                action="INCOME",
-                amount_uzs=sell_price_uzs,
-                car=car,
-                kind="OTHER",
-                comment=f"Car {car.name} - {car.number} sold for {sell_price_uzs} UZS."
-            )
-
-            # Delete the car
-            car.delete()
-
-            return Response(
-                {"detail": f"Car {car.name} successfully deleted and sell price logged."},
-                status=status.HTTP_200_OK
-            )
-
         except Car.DoesNotExist:
             return Response(
                 {"detail": "Car not found."},
@@ -259,6 +239,34 @@ class DeleteCarAPIView(APIView):
             )
         except Exception as e:
             return Response(
-                {"detail": str(e)},
+                {"detail": f"Error fetching car: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+        try:
+            # Log the sell price in the Logs model
+            Logs.objects.create(
+                action="INCOME",
+                amount_uzs=sell_price_uzs,
+                kind="OTHER",
+                comment=f"Car {car.name} - {car.number} sold for {sell_price_uzs} UZS."
+            )
+        except Exception as e:
+            return Response(
+                {"detail": f"Error logging sell price: {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        try:
+            # Delete the car
+            car.delete()
+        except Exception as e:
+            return Response(
+                {"detail": f"Error deleting car: {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response(
+            {"detail": f"Car {car.name} successfully deleted and sell price logged."},
+            status=status.HTTP_200_OK
+        )
