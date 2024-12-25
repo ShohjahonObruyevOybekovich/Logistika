@@ -84,7 +84,7 @@ class ExportLogsToExcelAPIView(APIView):
         for row_num, log in enumerate(logs, 2):
             sheet.cell(row=row_num, column=1).value = log.action
             sheet.cell(row=row_num, column=2).value = log.amount_uzs
-            sheet.cell(row=row_num, column=3).value = log.car.number
+            sheet.cell(row=row_num, column=3).value = log.car
             sheet.cell(row=row_num, column=4).value = log.employee.phone
             sheet.cell(row=row_num, column=5).value = log.flight.cargo_info
             sheet.cell(row=row_num, column=6).value = log.kind
