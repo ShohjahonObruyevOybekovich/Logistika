@@ -53,6 +53,12 @@ class FinansDriver(ListCreateAPIView):
             return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY")
         return Logs.objects.none()
 
+from django.http import HttpResponse
+from openpyxl import Workbook
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from .models import Logs
 
 class ExportLogsToExcelAPIView(APIView):
     @swagger_auto_schema(
@@ -70,13 +76,13 @@ class ExportLogsToExcelAPIView(APIView):
         else:
             logs = Logs.objects.all().order_by("action", "id")
 
-        workbook = openpyxl.Workbook()
+        workbook = Workbook()
         sheet = workbook.active
         sheet.title = "Logs"
         headers = [
-            "Action", "Miqdori (UZS)","Mashina", "Haydovchi" , "Reyis" ,
+            "Action", "Miqdori (UZS)", "Mashina", "Haydovchi", "Reyis",
             "Turi", "Sababi", "Comment", "Yaratilgan vaqti"
-                   ]
+        ]
         for col_num, header in enumerate(headers, 1):
             cell = sheet.cell(row=1, column=col_num)
             cell.value = header
@@ -84,13 +90,15 @@ class ExportLogsToExcelAPIView(APIView):
         for row_num, log in enumerate(logs, 2):
             sheet.cell(row=row_num, column=1).value = log.action
             sheet.cell(row=row_num, column=2).value = log.amount_uzs
-            sheet.cell(row=row_num, column=3).value = log.car
-            sheet.cell(row=row_num, column=4).value = log.employee
-            sheet.cell(row=row_num, column=5).value = log.flight
-            sheet.cell(row=row_num, column=6).value = log.kind
-            sheet.cell(row=row_num, column=7).value = log.reason
-            sheet.cell(row=row_num, column=8).value = log.comment
-            sheet.cell(row=row_num, column=9).value = log.created_at.strftime('%d-%m-%Y   %H:%M')
+            sheet.cell(row=row_num, column=3).value = log.car.number if log.car else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=4).value = log.employee.phone if log.employee else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=5).value = log.flight.departure_date if log.flight else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=6).value = log.kind if log.kind else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=7).value = log.reason if log.reason else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=8).value = log.comment if log.comment else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=9).value = (
+                log.created_at.strftime('%d-%m-%Y   %H:%M') if log.created_at else "N/A"
+            )
 
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
