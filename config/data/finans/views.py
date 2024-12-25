@@ -7,12 +7,12 @@ from openpyxl.styles import Font
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from data.finans.models import Logs
-from data.finans.serializers import FinansListserializer
+from data.finans.serializers import FinansListserializer, LogsFilter
 
 
 class Finans(ListCreateAPIView):
@@ -34,6 +34,18 @@ class Finans(ListCreateAPIView):
     ]
     ordering_fields = ["action","created_at"]
     search_fields = ["action", "reason","employee", "flight","created_at"]
+
+
+
+class FinansList(ListAPIView):
+    queryset = Logs.objects.all().order_by("-created_at")
+    serializer_class = FinansListserializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_class = LogsFilter  # Ensure this is set
+    ordering_fields = ["action", "created_at"]
+    search_fields = ["action", "reason", "employee", "flight", "created_at"]
+
 
 
 class FinansDetail(RetrieveUpdateDestroyAPIView):

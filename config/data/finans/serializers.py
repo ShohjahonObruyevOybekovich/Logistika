@@ -46,3 +46,30 @@ class FinansListserializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['employee'] = RegionSerializer(instance.full_name).data
         return representation
+
+
+
+from django_filters import rest_framework as filters
+
+class LogsFilter(filters.FilterSet):
+    start_date = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
+    end_date = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset
+
+    class Meta:
+        model = Logs
+        fields = [
+            "action",
+            "amount_uzs",
+            "car",
+            "employee",
+            "flight",
+            "reason",
+            "kind",
+            "comment",
+            "created_at",
+        ]
+
