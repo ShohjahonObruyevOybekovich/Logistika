@@ -5,7 +5,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
     ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from data.flight.serializers import FlightListserializer, FlightListCReateserializer
+from data.flight.serializers import FlightListserializer, FlightListCReateserializer, FlightOrderedListserializer
 from .models import Flight, Ordered
 
 
@@ -80,13 +80,13 @@ class FlightListNOPg(ListAPIView):
 
 
 class FlightOrderedListAPIView(ListCreateAPIView):
-    serializer_class = FlightListCReateserializer
+    serializer_class = FlightOrderedListserializer
     queryset = Ordered.objects.all()
     permission_classes = (IsAuthenticated,)
 
 
 class FlightOrderedRetrieveAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Ordered.objects.all()
-    serializer_class = FlightListCReateserializer
+    serializer_class = FlightOrderedListserializer
     permission_classes = (IsAuthenticated,)
 
