@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from rest_framework import serializers
 
 from employee.models import Employee
@@ -55,10 +56,6 @@ class LogsFilter(filters.FilterSet):
     start_date = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
     end_date = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
 
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        return queryset
-
     class Meta:
         model = Logs
         fields = [
@@ -73,3 +70,43 @@ class LogsFilter(filters.FilterSet):
             "created_at",
         ]
 
+
+
+class FinansUserListserializer(serializers.ModelSerializer):
+    income_sum = serializers.SerializerMethodField()
+    outcome_sum = serializers.SerializerMethodField()
+    win = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Logs
+        fields = [
+            "id",
+            "action",
+            "amount_uzs",
+            "car",
+            "employee",
+            "flight",
+            "reason",
+            "kind",
+            "comment",
+            "created_at",
+            "income_sum",
+            "outcome_sum",
+            "win",
+        ]
+
+    def get_income_sum(self, obj):
+        # Get the filtered queryset from the context
+        queryset = self.context.get('filtered_queryset', Logs.objects.all())
+        return queryset.filter(action="INCOME").aggregate(total_income=Sum('amount_uzs'))['total_income'] or 0
+
+    def get_outcome_sum(self, obj):
+        # Get the filtered queryset from the context
+        queryset = self.context.get('filtered_queryset', Logs.objects.all())
+        return queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome'] or 0
+
+    def get_win(self, obj):
+        # Calculate win as income - outcome
+        income = self.get_income_sum(obj)
+        outcome = self.get_outcome_sum(obj)
+        return income - outcome

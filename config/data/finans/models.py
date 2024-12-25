@@ -32,7 +32,9 @@ class Logs(TimeStampModel):
             ("FIX_CAR", "Avtomobil tuzatish"),
             ("PAY_SALARY", "Oylik berish"),
             ("FLIGHT", "FLIGHT"),
-        ], max_length=20,
+            ("LEASING","Leasing"),
+        ],
+        max_length=20,
         null=True,
         blank=True
     )

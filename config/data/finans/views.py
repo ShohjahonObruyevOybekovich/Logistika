@@ -9,10 +9,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from data.finans.models import Logs
-from data.finans.serializers import FinansListserializer, LogsFilter
+from data.finans.serializers import FinansListserializer, LogsFilter, FinansUserListserializer
 
 
 class Finans(ListCreateAPIView):
@@ -39,12 +40,27 @@ class Finans(ListCreateAPIView):
 
 class FinansList(ListAPIView):
     queryset = Logs.objects.all().order_by("-created_at")
-    serializer_class = FinansListserializer
+    serializer_class = FinansUserListserializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = LogsFilter  # Ensure this is set
     ordering_fields = ["action", "created_at"]
     search_fields = ["action", "reason", "employee", "flight", "created_at"]
+
+    def list(self, request, *args, **kwargs):
+        # Filter the queryset using LogsFilter
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Pass the filtered queryset to the serializer context
+        serializer = self.get_serializer(queryset, many=True, context={'filtered_queryset': queryset})
+
+        # Paginate the results if pagination is enabled
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            paginated_serializer = self.get_serializer(page, many=True, context={'filtered_queryset': queryset})
+            return self.get_paginated_response(paginated_serializer.data)
+
+        return Response(serializer.data)
 
 
 

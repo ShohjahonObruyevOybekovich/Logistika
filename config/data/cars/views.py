@@ -82,6 +82,19 @@ class CarByIDAPIView(RetrieveAPIView):
         except Car.DoesNotExist:
             raise NotFound("Car not found.")
 
+class DetailbyCarIDAPIView(RetrieveAPIView):
+    queryset = Details.objects.all().order_by("-created_at")
+    serializer_class = DetailCreateListSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        try:
+            obj = self.get_queryset().get(car__id=self.kwargs.get("pk"))
+            self.check_object_permissions(self.request, obj)
+            return obj
+        except Car.DoesNotExist:
+            raise NotFound("Car not found.")
+
 
 class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()
@@ -150,7 +163,6 @@ class DetailsView(ListAPIView):
     ]
     ordering_fields = ["in_sklad"]
     search_fields = ["name"]
-
 
 
 
