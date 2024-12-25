@@ -108,5 +108,5 @@ class FlightOrderedListserializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Customize the representation of fields."""
         representation = super().to_representation(instance)
-        representation['region'] = RegionSerializer(instance.car).data
+        representation['region'] = RegionSerializer(instance.region).data
         return representation
