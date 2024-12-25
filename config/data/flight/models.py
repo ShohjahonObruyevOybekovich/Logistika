@@ -137,3 +137,6 @@ class Ordered(TimeStampModel):
         choices=Flight_CHOICES,
         default="IN_UZB",
     )
+
+    def __str__(self):
+        return f"Ordered Flight - {self.status} and {self.departure_date}"

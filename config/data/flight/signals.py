@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
-from .models import Flight
+from .models import Flight, Ordered
 from ..finans.models import Logs
 
 
@@ -44,3 +44,27 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
         except Exception as e:
             # Log error or handle as needed
             print(f"Error handling flight status update signal: {e}")
+
+
+@receiver(post_save, sender=Ordered)
+def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
+    # The signal should only work during updates (not creation)
+    if created:
+        return
+
+    if instance.status == "INACTIVE":
+        try:
+            with transaction.atomic():
+                # Log income if applicable
+                if instance.price_uzs > 0:
+                    Logs.objects.create(
+                        action="INCOME",
+                        amount_uzs=instance.price_uzs,
+                        kind="ORDERED_FLIGHT",
+                        comment=f"Income from Ordered flight ID {instance}",
+                        flight=instance,
+                    )
+
+        except Exception as e:
+            # Log error or handle as needed
+            print(f"Error handling ordered flight status update signal: {e}")
