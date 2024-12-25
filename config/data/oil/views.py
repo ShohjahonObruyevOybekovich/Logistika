@@ -64,11 +64,26 @@ class RecycleOilCARListAPIView(ListAPIView):
         return queryset
 
 
-class OilPurchasesListAPIView(ListCreateAPIView):
+class OilPurchasesListAPIView(CreateAPIView):
     serializer_class = OilPurchaseSerializer
     permission_classes = [IsAuthenticated]
     queryset = OilPurchase.objects.all().order_by("-created_at")
 
+class OilPurchaseReadAPIView(ListAPIView):
+    serializer_class = OilPurchaseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the `car_id` from query parameters
+        oil_id = self.request.query_params.get("oil_id")
+
+        # Base queryset
+        queryset = OilPurchase.objects.all().order_by("-created_at")
+
+        if oil_id:
+            queryset = queryset.filter(oil__id=oil_id)
+
+        return queryset
 
 class OilDetailAPIView(ListAPIView):
     """
