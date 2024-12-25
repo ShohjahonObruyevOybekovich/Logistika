@@ -141,7 +141,18 @@ class DetailsCreateView(generics.ListCreateAPIView):
 class DetailsView(ListAPIView):
     queryset = Details.objects.all()
     serializer_class = DetailCreateSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        "in_sklad",
+        "id_detail",
+        "name",
+    ]
+    ordering_fields = ["in_sklad"]
+    search_fields = ["name"]
+
+
+
 
 
 
@@ -264,7 +275,6 @@ class BulkDeleteWithSellPriceAPIView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
-
 
 
 class DeleteCarAPIView(APIView):
