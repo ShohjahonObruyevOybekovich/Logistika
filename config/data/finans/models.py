@@ -52,3 +52,6 @@ class Logs(TimeStampModel):
         Logs.objects.create(
             action="OUTCOME", amount=amount, kind="OTHER", comment=comment
         )
+
+    def __str__(self):
+        return f"{self.action} - {self.amount_uzs}"
