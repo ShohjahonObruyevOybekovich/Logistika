@@ -9,9 +9,10 @@ User = get_user_model()
 class CarCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ["id", 'name', 'number', 'model', 'type_of_payment'
-            , 'leasing_period', 'with_trailer', 'fuel_type', 'price_uzs',
-                                                             'distance_travelled', "trailer_number"]
+        fields = ["id", 'name', 'number', 'model', 'type_of_payment',
+            'leasing_period', 'with_trailer', 'fuel_type', 'price_uzs',
+            'distance_travelled', "trailer_number","created_at", "updated_at"]
+
 
 
 class CarListserializer(serializers.ModelSerializer):
@@ -21,7 +22,7 @@ class CarListserializer(serializers.ModelSerializer):
         model = Car
         fields = ["id", 'name', 'number', 'model', 'type_of_payment'
             , 'leasing_period', 'with_trailer', 'fuel_type', "price_uzs",
-                                                             'distance_travelled', "trailer_number"]
+                'distance_travelled', "trailer_number","created_at", "updated_at"]
 
     def to_representation(self, instance):
         res = super(CarListserializer, self).to_representation(instance)
@@ -48,6 +49,7 @@ class DetailCreateSerializer(serializers.ModelSerializer):
             "id_detail",
             "car",
             "price_uzs",
+            "created_at", "updated_at",
         ]
 
     def to_representation(self, instance):

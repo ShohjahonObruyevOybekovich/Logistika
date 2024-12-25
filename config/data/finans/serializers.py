@@ -31,6 +31,7 @@ class FinansListserializer(serializers.ModelSerializer):
             "reason",
             "kind",
             "comment",
+            "created_at",
 
         ]
 

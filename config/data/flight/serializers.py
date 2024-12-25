@@ -35,6 +35,7 @@ class FlightListserializer(serializers.ModelSerializer):
             # "driver_expenses_usd",
             "cargo_info",
             "upload",
+            "created_at",
         ]
 
     def to_representation(self, instance):
@@ -70,6 +71,7 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             # "driver_expenses_usd",
             "cargo_info",
             "upload",
+            "created_at",
         ]
 
     def to_representation(self, instance):
@@ -103,6 +105,7 @@ class FlightOrderedListserializer(serializers.ModelSerializer):
             "driver_number",
             "car_number",
             "status",
+            "created_at",
         ]
 
     def to_representation(self, instance):

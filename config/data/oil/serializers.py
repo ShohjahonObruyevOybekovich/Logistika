@@ -15,6 +15,7 @@ class OilCreateseralizer(serializers.ModelSerializer):
             "id",
             'oil_name',
             'oil_volume',
+            "created_at",
             'updated_at',
         ]
 
@@ -24,7 +25,8 @@ class Remaining_oil_quantityserializer(serializers.Serializer):
         model = Remaining_oil_quantity
         fields = [
             "id",
-            'oil_volume'
+            'oil_volume',
+            "updated_at",
         ]
 
 
@@ -42,6 +44,7 @@ class RecycledOilSerializer(serializers.ModelSerializer):
             'car',
             'remaining_oil',
             "remaining_oil_quantity",
+            "created_at",
         ]
 
     def get_remaining_oil_quantity(self, obj):
@@ -69,6 +72,7 @@ class OilPurchaseSerializer(serializers.ModelSerializer):
             # "amount_usd",
             "oil_volume",
             "remaining_oil_quantity",
+            "created_at",
         ]
 
     def get_remaining_oil_quantity(self, obj):
@@ -86,7 +90,8 @@ class Utilized_oilSerializer(serializers.ModelSerializer):
             "quantity_utilized",
             "price_uzs",
             # "price_usd",
-            "remaining_oil_quantity"
+            "remaining_oil_quantity",
+            "created_at",
         ]
 
     def get_remaining_oil_quantity(self, obj):

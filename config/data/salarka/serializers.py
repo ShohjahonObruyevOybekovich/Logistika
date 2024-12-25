@@ -20,6 +20,7 @@ class SalarkaListSerializer(serializers.ModelSerializer):
             # 'price_usd',
             'price_uzs',
             "remaining_volume",
+            "created_at",
         ]
 
     def get_remaining_volume(self, obj):
@@ -80,7 +81,8 @@ class SaleSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "car",
-            "volume"
+            "volume",
+            "created_at",
         ]
 
     def to_representation(self, instance):
@@ -96,4 +98,6 @@ class RemainingSalesSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "volume",
+            "created_at",
+
         ]

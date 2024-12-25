@@ -9,7 +9,7 @@ from data.gas.models import Gas_another_station
 class GasStationListSerializer(serializers.ModelSerializer):
     class Meta:
         model = GasStation
-        fields = ["id", "name", "remaining_gas"]
+        fields = ["id", "name", "remaining_gas","created_at","updated_at"]
 
         # make remaining_gas field read only
         read_only_fields = ["remaining_gas"]
@@ -29,6 +29,7 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             "price_uzs",
             # "price_usd",
             "created_at",
+            "updated_at",
         ]
 
 
@@ -59,7 +60,7 @@ class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
 
     class Meta:
         model = Gas_another_station
-        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs",
+        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs","created_at",
                   # "payed_price_usd"
                   ]
 
@@ -76,6 +77,6 @@ class GasAnotherListserializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gas_another_station
-        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs",
+        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs","created_at",
                   #                   "payed_price_usd"
                   ]
