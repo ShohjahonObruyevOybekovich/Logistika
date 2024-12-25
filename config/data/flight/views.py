@@ -1,10 +1,10 @@
+import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView, \
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, \
     ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from data.flight.serializers import FlightListserializer, FlightListCReateserializer
-
 from .models import Flight
 
 
@@ -13,17 +13,11 @@ class FlightListAPIView(ListCreateAPIView):
     serializer_class = FlightListserializer
     permission_classes = [IsAuthenticated]
 
+
 class FlightRetrieveAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Flight.objects.all()
     serializer_class = FlightListserializer
     permission_classes = [IsAuthenticated]
-
-#
-# class FlightCreateAPIView(CreateAPIView):
-#     queryset = Flight.objects.all()
-#     serializer_class = FlightSerializer
-#     permission_classes = [IsAuthenticated]
-import django_filters
 
 
 class FlightFilter(django_filters.FilterSet):
@@ -33,6 +27,7 @@ class FlightFilter(django_filters.FilterSet):
         model = Flight
         fields = ['car_id']
 
+
 class FlightStatsAPIView(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
@@ -40,18 +35,19 @@ class FlightStatsAPIView(ListAPIView):
     filterset_class = FlightFilter  # Use the filter class
 
     def get_queryset(self):
-        # Retrieve the 'pk' (car_id) from the URL kwargs
         car_id = self.kwargs.get('pk')
         if car_id:
             # Filter the queryset by car_id
             return Flight.objects.filter(car__id=car_id)
         return Flight.objects.none()
 
+
 class FlightHistoryAPIView(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FlightFilter
+
     def get_queryset(self):
         driver_id = self.kwargs.get('pk')
         if driver_id:

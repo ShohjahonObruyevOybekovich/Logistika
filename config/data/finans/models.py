@@ -1,19 +1,20 @@
-from data.command.models import TimeStampModel
 from django.db import models
 
-class Logs(TimeStampModel):
+from data.command.models import TimeStampModel
 
+
+class Logs(TimeStampModel):
     action = models.CharField(
         choices=[
             ("INCOME", "INCOME"),
             ("OUTCOME", "OUTCOME"),
         ]
-        ,max_length=20,
+        , max_length=20,
         null=True,
         blank=True
     )
-    amount_uzs = models.FloatField(null=True,blank=True)
-    amount_usd = models.FloatField(null=True,blank=True)
+    amount_uzs = models.FloatField(null=True, blank=True)
+    # amount_usd = models.FloatField(null=True,blank=True)
 
     car = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -36,18 +37,16 @@ class Logs(TimeStampModel):
         blank=True
     )
 
-    comment = models.TextField(null=True,blank=True)
+    comment = models.TextField(null=True, blank=True)
 
     @classmethod
     def create_income(self, amount: float, comment: str):
-
         Logs.objects.create(
             action="INCOME", amount=amount, kind="OTHER", comment=comment
         )
 
     @classmethod
     def create_outcome(self, amount: float, comment: str):
-
         Logs.objects.create(
             action="OUTCOME", amount=amount, kind="OTHER", comment=comment
         )

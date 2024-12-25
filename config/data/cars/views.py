@@ -1,7 +1,6 @@
 # from rest_framework import generics
 from decimal import Decimal
 
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound
@@ -10,15 +9,14 @@ from rest_framework.generics import (
     ListAPIView,
     UpdateAPIView,
     DestroyAPIView,
-    CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView,
-)
+    CreateAPIView, )
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import *
 from .models import Car, Model
+from .serializers import *
 from ..finans.models import Logs
 
 
@@ -41,7 +39,7 @@ class CarsListAPIView(ListAPIView):
         "with_trailer",
         "fuel_type",
         "price_uzs",
-        "price_usd",
+        # "price_usd",
         "distance_travelled",
     ]
     ordering_fields = ["number"]
@@ -61,7 +59,7 @@ class CarsList_no_pg_APIView(ListAPIView):
         "with_trailer",
         "fuel_type",
         "price_uzs",
-        "price_usd",
+        # "price_usd",
         "distance_travelled",
     ]
     ordering_fields = ["number"]
@@ -96,6 +94,7 @@ class ModelCarCreateAPIView(CreateAPIView):
     serializer_class = ModelSerializer
     permission_classes = (IsAuthenticated,)
 
+
 class ModelCarListAPIView(ListAPIView):
     queryset = Model.objects.all()
     serializer_class = ModelSerializer
@@ -112,13 +111,16 @@ class ModelCarList_no_pg_APIView(ListAPIView):
     queryset = Model.objects.all()
     serializer_class = ModelSerializer
     permission_classes = (IsAuthenticated,)
+
     def get_paginated_response(self, data):
         return Response(data)
+
 
 class ModelCarUpdateAPIView(UpdateAPIView):
     queryset = Model.objects.all()
     serializer_class = ModelSerializer
     permission_classes = (IsAuthenticated,)
+
 
 class ModelCarDeleteAPIView(DestroyAPIView):
     queryset = Model.objects.all()
@@ -142,8 +144,6 @@ class DetailsView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-
-
 class BulkUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -163,7 +163,8 @@ class BulkUpdateAPIView(APIView):
                                 car_instance = Car.objects.get(id=value)  # Convert UUID to Car instance
                                 setattr(obj, field, car_instance)
                             except Car.DoesNotExist:
-                                return Response({"detail": f"Car with id {value} not found."}, status=status.HTTP_400_BAD_REQUEST)
+                                return Response({"detail": f"Car with id {value} not found."},
+                                                status=status.HTTP_400_BAD_REQUEST)
                         else:
                             setattr(obj, field, value)
                 obj.save()
@@ -172,7 +173,6 @@ class BulkUpdateAPIView(APIView):
                 continue
 
         return Response({"detail": f"{updated_count} items updated successfully"}, status=status.HTTP_200_OK)
-
 
     def post(self, request, *args, **kwargs):
         """
@@ -193,7 +193,7 @@ class BulkUpdateAPIView(APIView):
         for item in items_to_delete:
             obj_id = item.get("id")
             price_uzs = Decimal(item.get("price_uzs", "0.00"))
-            price_usd = Decimal(item.get("price_usd", "0.00"))
+            # price_usd = Decimal(item.get("price_usd", "0.00"))
 
             if not obj_id:
                 errors.append({"detail": "ID is required for each item."})
@@ -206,9 +206,9 @@ class BulkUpdateAPIView(APIView):
                 Logs.objects.create(
                     action="INCOME",
                     amount_uzs=price_uzs,
-                    amount_usd=price_usd,
+                    # amount_usd=price_usd,
                     kind="OTHER",
-                    comment=f"Details sold for {price_usd} $",
+                    comment=f"Details sold for {price_uzs} $",
                 )
 
                 # Delete the object

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from data.cars.models import Car  # Ensure you import the Car model
 from employee.models import Employee
 from employee.serializers import EmployeeListserializer
@@ -14,7 +15,7 @@ class FlightListserializer(serializers.ModelSerializer):
     region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())  # Ensure this uses the Car model
     driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
-    upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
+    upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
 
     class Meta:
         model = Flight
@@ -35,7 +36,6 @@ class FlightListserializer(serializers.ModelSerializer):
             "cargo_info",
             "upload",
         ]
-
 
     def to_representation(self, instance):
         """Customize the representation of fields."""
@@ -45,11 +45,12 @@ class FlightListserializer(serializers.ModelSerializer):
         representation['upload'] = FileUploadSerializer(instance.upload).data
         return representation
 
+
 class FlightListCReateserializer(serializers.ModelSerializer):
     region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())  # Ensure this uses the Car model
     driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
-    upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
+    upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
 
     class Meta:
         model = Flight
@@ -64,13 +65,12 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "departure_date",
             "arrival_date",
             "price_uzs",
-            "price_usd",
+            # "price_usd",
             "driver_expenses_uzs",
-            "driver_expenses_usd",
+            # "driver_expenses_usd",
             "cargo_info",
             "upload",
         ]
-
 
     def to_representation(self, instance):
         """Customize the representation of fields."""

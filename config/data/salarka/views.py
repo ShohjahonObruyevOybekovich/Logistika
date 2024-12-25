@@ -1,17 +1,12 @@
-
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
     ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView, RetrieveAPIView
 )
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from .models import Salarka, Sale, Remaining_volume
+from .models import Salarka, Sale
 from .serializers import (
-    SalarkaCreateseralizer, SalarkaStatsSerializer, SaleSerializer, SalarkaListSerializer
+    SalarkaCreateseralizer, SaleSerializer, SalarkaListSerializer
 )
 
 
@@ -21,13 +16,10 @@ class SalarkaCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
 class SalarkaListAPIView(ListAPIView):
     queryset = Salarka.objects.all()
     serializer_class = SalarkaListSerializer
     permission_classes = (IsAuthenticated,)
-
-
 
 
 class SalarkaUpdateAPIView(UpdateAPIView):
@@ -41,11 +33,11 @@ class SalarkaDeleteAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
 class SaleCreateAPIView(ListCreateAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = (IsAuthenticated,)
+
 
 class SaleRetrieveAPIView(RetrieveAPIView):
     queryset = Sale.objects.all()
@@ -54,12 +46,14 @@ class SaleRetrieveAPIView(RetrieveAPIView):
 
 import django_filters
 
+
 class SalarkaFilter(django_filters.FilterSet):
     car_id = django_filters.UUIDFilter(field_name='car__id', lookup_expr='exact')
 
     class Meta:
         model = Salarka
         fields = ['car_id']
+
 
 class SalarkaStatsAPIView(ListAPIView):
     serializer_class = SalarkaCreateseralizer
@@ -74,8 +68,3 @@ class SalarkaStatsAPIView(ListAPIView):
             # Filter the queryset by car_id
             return Salarka.objects.filter(car__id=car_id)
         return Salarka.objects.none()
-
-
-
-
-

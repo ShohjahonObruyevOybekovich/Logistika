@@ -1,17 +1,7 @@
-from uuid import UUID
-
-from django.contrib.admin.templatetags.admin_list import pagination
-from django.http import Http404
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.exceptions import NotFound
-from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
-    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateAPIView,
+    ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView, get_object_or_404
 )
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -35,7 +25,6 @@ class OilUpdateAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
 class OilListAPIView(ListAPIView):
     queryset = Oil.objects.all()
     serializer_class = OilCreateseralizer
@@ -57,9 +46,7 @@ class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
 class OilPurchasesListAPIView(ListCreateAPIView):
-
     serializer_class = OilPurchaseSerializer
     permission_classes = [IsAuthenticated]
     queryset = OilPurchase.objects.all()
@@ -88,6 +75,7 @@ class OilDetailAPIView(ListAPIView):
 
 class RecycleListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
+
     # serializer_class = RecycledOilSerializer
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')  # Retrieve 'pk' from kwargs
@@ -101,13 +89,12 @@ class RecycleListAPIView(ListAPIView):
                     "amount": recycle.amount,
                     "car": recycle.car.name,  # Include car ID or other fields
                     "remaining_oil": recycle.remaining_oil,
-                    "updated_at" : recycle.updated_at,
+                    "updated_at": recycle.updated_at,
                 }
                 for recycle in recycles
             ],
         }
         return Response(data)
-
 
 
 class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
@@ -116,16 +103,10 @@ class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
-
-
 class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
     queryset = Utilized_oil.objects.all()
     serializer_class = Utilized_oilSerializer
     permission_classes = [IsAuthenticated]
-
-
-
 
 
 class UtilizedOilPurchaseUpdateAPIView(RetrieveUpdateAPIView):

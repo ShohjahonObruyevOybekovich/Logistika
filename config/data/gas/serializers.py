@@ -3,12 +3,10 @@ from rest_framework import serializers
 from data.cars.models import Car
 from data.cars.serializers import CarListserializer
 from data.gas.models import GasPurchase, GasSale, GasStation
-
 from data.gas.models import Gas_another_station
 
 
 class GasStationListSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = GasStation
         fields = ["id", "name", "remaining_gas"]
@@ -18,7 +16,6 @@ class GasStationListSerializer(serializers.ModelSerializer):
 
 
 class GasPurchaseListseralizer(serializers.ModelSerializer):
-
     station = GasStationListSerializer(read_only=True)
 
     class Meta:
@@ -30,7 +27,7 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             "payed_price_uzs",
             "payed_price_usd",
             "price_uzs",
-            "price_usd",
+            # "price_usd",
             "created_at",
         ]
 
@@ -57,20 +54,17 @@ class GasSaleListSerializer(serializers.ModelSerializer):
         return representation
 
 
-
-
-
 class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+
     class Meta:
         model = Gas_another_station
-        fields = ["id","car", "name","purchased_volume", "payed_price_uzs", "payed_price_usd"]
-
+        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs",
+                  # "payed_price_usd"
+                  ]
 
     def to_representation(self, instance):
-
         res = super().to_representation(instance)
-
 
         res['car'] = CarListserializer(instance.car).data
 
@@ -79,6 +73,9 @@ class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
 
 class GasAnotherListserializer(serializers.ModelSerializer):
     car = CarListserializer(read_only=True)
+
     class Meta:
         model = Gas_another_station
-        fields = ["id", "car", "name","purchased_volume", "payed_price_uzs", "payed_price_usd"]
+        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs",
+                  #                   "payed_price_usd"
+                  ]

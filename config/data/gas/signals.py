@@ -27,9 +27,9 @@ def income(sender, instance: GasPurchase, created, **kwargs):
         Logs.objects.create(
             action="OUTCOME",
             amount_uzs=instance.price_uzs,
-            amount_usd=instance.price_usd,
+            # amount_usd=instance.price_usd,
             kind="OTHER",
-            comment=f"{instance.station} dan {instance.price_usd} gas sotib olindi",
+            comment=f"{instance.station} dan gas sotib olindi",
         )
 
 

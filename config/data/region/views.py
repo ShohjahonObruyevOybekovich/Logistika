@@ -2,12 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-from .serializers import *
 from .models import Region
+from .serializers import *
 
 
 class RegionListAPIVIew(ListCreateAPIView):
-
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
@@ -19,6 +18,5 @@ class RegionListAPIVIew(ListCreateAPIView):
 
 
 class RegionDetailAPIView(RetrieveUpdateDestroyAPIView):
-
     queryset = Region.objects.all()
     serializer_class = RegionSerializer

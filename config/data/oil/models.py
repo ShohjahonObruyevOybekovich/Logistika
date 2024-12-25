@@ -1,4 +1,5 @@
 from django.db import models
+
 from data.command.models import TimeStampModel
 
 
@@ -15,9 +16,9 @@ class Oil(TimeStampModel):
 class OilPurchase(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE, related_name="purchases")
     price_uzs = models.DecimalField(decimal_places=2, max_digits=10)
-    price_usd = models.DecimalField(decimal_places=2, max_digits=10)
+    # price_usd = models.DecimalField(decimal_places=2, max_digits=10)
     amount_uzs = models.DecimalField(decimal_places=2, max_digits=10)
-    amount_usd = models.DecimalField(decimal_places=2, max_digits=10)
+    # amount_usd = models.DecimalField(decimal_places=2, max_digits=10)
     oil_volume = models.FloatField(help_text="Oil volume in liters")
 
     def __str__(self):
@@ -35,20 +36,21 @@ class OilREcycles(TimeStampModel):
 
 
 class Remaining_oil_quantity(TimeStampModel):
-    oil_volume = models.FloatField(help_text="Oil volume in liters",default=0)
+    oil_volume = models.FloatField(help_text="Oil volume in liters", default=0)
+
     def __str__(self):
         return f"{self.oil_volume} L"
-
-
 
     @classmethod
     def get(cls):
         return cls.objects.first() or cls.objects.create()
 
+
 class Utilized_oil(TimeStampModel):
     quantity_utilized = models.FloatField(default=0)
     price_uzs = models.FloatField(null=True, blank=True)
-    price_usd = models.FloatField(null=True, blank=True)
+
+    # price_usd = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"Utilized {self.quantity_utilized} L"
@@ -57,4 +59,3 @@ class Utilized_oil(TimeStampModel):
     def get(cls):
         """Retrieve the first instance or create a new one."""
         return cls.objects.first() or cls.objects.create()
-

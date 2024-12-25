@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class RegionSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Region
         fields = [

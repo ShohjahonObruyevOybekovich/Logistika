@@ -1,5 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from .models import OilPurchase, OilREcycles, Utilized_oil, Remaining_oil_quantity
 from ..finans.models import Logs
 
@@ -7,7 +8,6 @@ from ..finans.models import Logs
 @receiver(post_save, sender=OilPurchase)
 def on_oil_purchased(sender, instance: OilPurchase, created, **kwargs):
     if created:
-
         instance.oil.oil_volume += instance.oil_volume
         instance.oil.save()
 
@@ -22,7 +22,6 @@ def on_oil_purchased(sender, instance: OilPurchase, created, **kwargs):
 @receiver(post_save, sender=OilREcycles)
 def on_oil_recycled(sender, instance: OilREcycles, created, **kwargs):
     if created:
-
         remaining_oil = Remaining_oil_quantity.get()
         remaining_oil.oil_volume += instance.remaining_oil
         remaining_oil.save()
@@ -48,10 +47,11 @@ def on_income(sender, instance: Utilized_oil, created, **kwargs):
         Logs.objects.create(
             action="Income",
             amount_uzs=instance.price_uzs,
-            amount_usds=instance.price_usd,
+            # amount_usds=instance.price_usd,
             kind="OTHER",
             comment=f"Income from {instance.quantity_utilized} utilized oil",
         )
+
 
 @receiver(post_save, sender=OilPurchase)
 def on_purchase(sender, instance: OilPurchase, created, **kwargs):
@@ -59,8 +59,7 @@ def on_purchase(sender, instance: OilPurchase, created, **kwargs):
         Logs.objects.create(
             action="OUTCOME",
             amount_uzs=instance.amount_uzs,
-            amount_usd=instance.amount_usd,
+            # amount_usd=instance.amount_usd,
             kind="OTHER",
-            comment=f"Outcome from {instance.amount_usd} purchased",
+            comment=f"Outcome from {instance.amount_uzs} purchased",
         )
-

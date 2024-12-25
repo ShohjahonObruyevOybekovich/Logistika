@@ -1,18 +1,16 @@
-import datetime
-from typing import TYPE_CHECKING
+from django.db import models
 
-from django.db import models
-from django.db import models
-    # from data.flight.models import flight
+
+# from data.flight.models import flight
 
 
 class Employee(models.Model):
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     passport = models.CharField(max_length=20, help_text="Passport number",
-                                null=True,blank=True)
+                                null=True, blank=True)
     license = models.CharField(max_length=20, help_text="Prava number",
-                               null=True,blank=True)
+                               null=True, blank=True)
     Flight_CHOICES = [
         ('IN_UZB', 'In_uzb'),
         ('OUT', 'Out'),
@@ -23,7 +21,7 @@ class Employee(models.Model):
         default='IN_UZB',
     )
     balance_uzs = models.DecimalField(max_digits=10, decimal_places=2,
-                                  null=True,blank=True)
+                                      null=True, blank=True)
     # balance_usd = models.DecimalField(max_digits=10, decimal_places=5,
     #                                   null=True, blank=True)
 
@@ -34,4 +32,3 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.phone
-

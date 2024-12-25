@@ -15,7 +15,7 @@ class Finans(ListCreateAPIView):
     filterset_fields = [
         "action",
         "amount_uzs",
-        "amount_usd",
+        # "amount_usd",
         "car",
         "employee",
         "flight",
@@ -23,13 +23,14 @@ class Finans(ListCreateAPIView):
         "comment",
     ]
     ordering_fields = ["action"]
-    search_fields = ["action","employee","flight"]
+    search_fields = ["action", "employee", "flight"]
 
 
 class FinansDetail(RetrieveUpdateDestroyAPIView):
     queryset = Logs.objects.all()
     serializer_class = FinansListserializer
     permission_classes = [IsAuthenticated]
+
 
 class FinansDriver(ListCreateAPIView):
     # queryset = Logs.objects.all()
@@ -41,5 +42,3 @@ class FinansDriver(ListCreateAPIView):
         if driver_id:
             return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY")
         return Logs.objects.none()
-
-
