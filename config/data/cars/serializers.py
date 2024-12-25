@@ -48,6 +48,7 @@ class DetailCreateSerializer(serializers.ModelSerializer):
             "name",
             "id_detail",
             "car",
+            "in_sklad",
             "price_uzs",
             "created_at", "updated_at",
         ]
