@@ -18,13 +18,13 @@ from root.pagination import GlobalPagination
 
 class GasStationListCreateAPIView(ListCreateAPIView):
     serializer_class = GasStationListSerializer
-    queryset = GasStation.objects.all()
+    queryset = GasStation.objects.all().order_by("-created_at")
     pagination_class = GlobalPagination
 
 
 class GasListAPIView(ListAPIView):
     serializer_class = GasStationListSerializer
-    queryset = GasStation.objects.all()
+    queryset = GasStation.objects.all().order_by("-created_at")
 
     def get_paginated_response(self, data):
         return Response(data)
@@ -32,7 +32,7 @@ class GasListAPIView(ListAPIView):
 
 class RetrieveUpdateDestroyerAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = GasStationListSerializer
-    queryset = GasStation.objects.all()
+    queryset = GasStation.objects.all().order_by("-created_at")
 
 
 class GasPurchasesListAPIView(ListCreateAPIView):
@@ -97,7 +97,7 @@ class GasAnotherStationCreateAPIView(ListCreateAPIView):
 #     ordering_fields = ['purchased_volume']
 
 class GasAnotherStationnopgListAPIView(ListAPIView):
-    queryset = Gas_another_station.objects.all()
+    queryset = Gas_another_station.objects.all().order_by("-created_at")
     serializer_class = GasAnotherListserializer
     permission_classes = (IsAuthenticated,)
 

@@ -16,7 +16,7 @@ from data.finans.serializers import FinansListserializer
 
 
 class Finans(ListCreateAPIView):
-    queryset = Logs.objects.all()
+    queryset = Logs.objects.all().order_by("-created_at")
     serializer_class = FinansListserializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]

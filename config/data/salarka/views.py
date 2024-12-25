@@ -17,7 +17,7 @@ class SalarkaCreateAPIView(CreateAPIView):
 
 
 class SalarkaListAPIView(ListAPIView):
-    queryset = Salarka.objects.all()
+    queryset = Salarka.objects.all().order_by("-created_at")
     serializer_class = SalarkaListSerializer
     permission_classes = (IsAuthenticated,)
 

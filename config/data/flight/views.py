@@ -10,7 +10,7 @@ from .models import Flight, Ordered
 
 
 class FlightListAPIView(ListCreateAPIView):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.all().order_by("-created_at")
     serializer_class = FlightListserializer
     permission_classes = [IsAuthenticated]
 

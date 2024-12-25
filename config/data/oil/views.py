@@ -26,7 +26,7 @@ class OilUpdateAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class OilListAPIView(ListAPIView):
-    queryset = Oil.objects.all()
+    queryset = Oil.objects.all().order_by("-created_at")
     serializer_class = OilCreateseralizer
     permission_classes = (IsAuthenticated,)
 
@@ -35,7 +35,7 @@ class OilListAPIView(ListAPIView):
 
 
 class RecycledOilListAPIView(ListCreateAPIView):
-    queryset = OilREcycles.objects.all()
+    queryset = OilREcycles.objects.all().order_by("-created_at")
     serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -49,7 +49,7 @@ class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
 class OilPurchasesListAPIView(ListCreateAPIView):
     serializer_class = OilPurchaseSerializer
     permission_classes = [IsAuthenticated]
-    queryset = OilPurchase.objects.all()
+    queryset = OilPurchase.objects.all().order_by("-created_at")
 
 
 class OilDetailAPIView(ListAPIView):
@@ -61,7 +61,7 @@ class OilDetailAPIView(ListAPIView):
 
     def get(self, request,*args, **kwargs):
         oil = get_object_or_404(Oil, id=kwargs['pk'])
-        utilizations = Utilized_oil.objects.all()
+        utilizations = Utilized_oil.objects.all().order_by("-created_at")
         remaining_oil = Remaining_oil_quantity.objects.first()
         # Assuming you're fetching the first object
 
@@ -92,7 +92,7 @@ class OilDetailListAPIView(ListAPIView):
 
         # Fetch remaining oil quantity
         remaining_oil = Remaining_oil_quantity.objects.first()
-        purchases = OilPurchase.objects.filter(oil=oil)
+        purchases = OilPurchase.objects.filter(oil=oil).order_by("-created_at")
 
         data = {
             "oil_name": oil.oil_name,
@@ -136,7 +136,7 @@ class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
 
 
 class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
-    queryset = Utilized_oil.objects.all()
+    queryset = Utilized_oil.objects.all().order_by("-created_at")
     serializer_class = Utilized_oilSerializer
     permission_classes = [IsAuthenticated]
 

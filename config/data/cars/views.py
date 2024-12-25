@@ -27,7 +27,7 @@ class CarCreateAPIView(CreateAPIView):
 
 
 class CarsListAPIView(ListAPIView):
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().order_by("-created_at")
     serializer_class = CarListserializer
     # permission_classes = (IsAuthenticated,)
 
@@ -47,7 +47,7 @@ class CarsListAPIView(ListAPIView):
 
 
 class CarsList_no_pg_APIView(ListAPIView):
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().order_by("-created_at")
     serializer_class = CarListserializer
     # permission_classes = (IsAuthenticated,)
 
@@ -70,7 +70,7 @@ class CarsList_no_pg_APIView(ListAPIView):
 
 
 class CarByIDAPIView(RetrieveAPIView):
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().order_by("-created_at")
     serializer_class = CarListserializer
     permission_classes = (IsAuthenticated,)
 
@@ -96,7 +96,7 @@ class ModelCarCreateAPIView(CreateAPIView):
 
 
 class ModelCarListAPIView(ListAPIView):
-    queryset = Model.objects.all()
+    queryset = Model.objects.all().order_by("-created_at")
     serializer_class = ModelSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
@@ -108,7 +108,7 @@ class ModelCarListAPIView(ListAPIView):
 
 
 class ModelCarList_no_pg_APIView(ListAPIView):
-    queryset = Model.objects.all()
+    queryset = Model.objects.all().order_by("-created_at")
     serializer_class = ModelSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -129,7 +129,7 @@ class ModelCarDeleteAPIView(DestroyAPIView):
 
 
 class DetailsCreateView(generics.ListCreateAPIView):
-    queryset = Details.objects.all()
+    queryset = Details.objects.all().order_by("-created_at")
     serializer_class = DetailCreateListSerializer
     permission_classes = [IsAuthenticated]
 
@@ -139,7 +139,7 @@ class DetailsCreateView(generics.ListCreateAPIView):
 
 
 class DetailsView(ListAPIView):
-    queryset = Details.objects.all()
+    queryset = Details.objects.all().order_by("-created_at")
     serializer_class = DetailCreateSerializer
     # permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
