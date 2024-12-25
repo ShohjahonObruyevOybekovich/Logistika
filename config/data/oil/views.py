@@ -14,7 +14,7 @@ from .serializers import (
 
 
 class OilCreateAPIView(ListCreateAPIView):
-    queryset = Oil.objects.all()
+    queryset = Oil.objects.all().order_by("-created_at")
     serializer_class = OilCreateseralizer
     permission_classes = (IsAuthenticated,)
 

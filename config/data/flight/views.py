@@ -39,7 +39,7 @@ class FlightStatsAPIView(ListAPIView):
         car_id = self.kwargs.get('pk')
         if car_id:
             # Filter the queryset by car_id
-            return Flight.objects.filter(car__id=car_id)
+            return Flight.objects.filter(car__id=car_id).order_by("-created_at")
         return Flight.objects.none()
 
 
@@ -52,7 +52,7 @@ class FlightHistoryAPIView(ListAPIView):
     def get_queryset(self):
         driver_id = self.kwargs.get('pk')
         if driver_id:
-            return Flight.objects.filter(driver__id=driver_id)
+            return Flight.objects.filter(driver__id=driver_id).order_by("-created_at")
         return Flight.objects.none()
 
 class FlightHistoryStatsAPIView(ListAPIView):
@@ -62,7 +62,7 @@ class FlightHistoryStatsAPIView(ListAPIView):
     def get_queryset(self):
         flight_id = self.kwargs.get('pk')
         if flight_id:
-            return Flight.objects.filter(id=flight_id)
+            return Flight.objects.filter(id=flight_id).order_by("-created_at")
         return Flight.objects.none()
 
 class FlightListNOPg(ListAPIView):
@@ -90,7 +90,7 @@ class FlightListNOPg(ListAPIView):
 
 class FlightOrderedListAPIView(ListCreateAPIView):
     serializer_class = FlightOrderedListserializer
-    queryset = Ordered.objects.all()
+    queryset = Ordered.objects.all().order_by("-created_at")
     permission_classes = (IsAuthenticated,)
 
 

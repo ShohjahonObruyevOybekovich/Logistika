@@ -80,7 +80,7 @@ class GasSalesListAPIView(ListCreateAPIView):
 
 
 class GasAnotherStationCreateAPIView(ListCreateAPIView):
-    queryset = Gas_another_station.objects.all()
+    queryset = Gas_another_station.objects.all().order_by("-created_at")
     serializer_class = GasAnotherStationCreateseralizer
     permission_classes = (IsAuthenticated,)
 

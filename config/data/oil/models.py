@@ -24,6 +24,9 @@ class OilPurchase(TimeStampModel):
     def __str__(self):
         return f"{self.oil.oil_name} - {self.oil_volume} L"
 
+    # class Meta:
+    #     ordering = ['-created_at']
+
 
 class OilREcycles(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE)

@@ -66,5 +66,5 @@ class SalarkaStatsAPIView(ListAPIView):
         car_id = self.kwargs.get('pk')
         if car_id:
             # Filter the queryset by car_id
-            return Salarka.objects.filter(car__id=car_id)
+            return Salarka.objects.filter(car__id=car_id).order_by("-created_at")
         return Salarka.objects.none()
