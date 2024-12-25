@@ -12,7 +12,7 @@ class Model(TimeStampModel):
 
 class Car(TimeStampModel):
     name = models.CharField(max_length=100, help_text='Name of car')
-    number = models.CharField(max_length=10, help_text='Number of car')
+    number = models.CharField(max_length=100, help_text='Number of car')
     model = models.ForeignKey("Model", on_delete=models.CASCADE)
     TYPE_OF_PAYMENT_CHOICES = [
         ("LEASING", "Leasing"),
@@ -52,7 +52,7 @@ class Car(TimeStampModel):
         default=0,
         help_text="The distance the car has traveled in kilometers"
     )
-    trailer_number = models.CharField(max_length=10, help_text='Trailer number',
+    trailer_number = models.CharField(max_length=100, help_text='Trailer number',
                                       null=True, blank=True)
 
     def __str__(self):
@@ -63,7 +63,7 @@ class Details(TimeStampModel):
     car = models.ForeignKey("Car", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=True, blank=True)
     id_detail = models.CharField(max_length=100, null=True, blank=True)
-    price_uzs = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    price_uzs = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
 
     # price_usd = models.DecimalField(decimal_places=2, max_digits=10,null=True,blank=True)
 

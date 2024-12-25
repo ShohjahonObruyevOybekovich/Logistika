@@ -46,12 +46,6 @@ class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-class OilPurchasesListAPIView(ListCreateAPIView):
-    serializer_class = OilPurchaseSerializer
-    permission_classes = [IsAuthenticated]
-    queryset = OilPurchase.objects.all()
-
-
 class OilDetailAPIView(ListAPIView):
     """
     API view to fetch oil details including purchases, recycling, utilization history,
@@ -61,16 +55,23 @@ class OilDetailAPIView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         oil = get_object_or_404(Oil, id=kwargs['pk'])
-        utilizations = Utilized_oil.objects.all()
-        remaining_oil = Remaining_oil_quantity.objects.first()  # Assuming you're fetching the first object
+
+        # Filter utilizations by oil ID
+        utilizations = Utilized_oil.objects.all()  # Adjust 'oil' to match your field name
+
+        # Fetch remaining oil quantity
+        remaining_oil = Remaining_oil_quantity.objects.first()
+        purchases = OilPurchase.objects.filter(oil=oil)
 
         data = {
             "oil_name": oil.oil_name,
             "oil_volume": oil.oil_volume,
             "remaining_oil_quantity": remaining_oil.oil_volume if remaining_oil else None,
             "utilizations": Utilized_oilSerializer(utilizations, many=True).data,
+            "purchases": OilPurchaseSerializer(purchases, many=True).data
         }
         return Response(data)
+
 
 
 class RecycleListAPIView(ListAPIView):
@@ -101,6 +102,8 @@ class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
     queryset = OilPurchase.objects.all()
     serializer_class = OilPurchaseSerializer
     permission_classes = (IsAuthenticated,)
+
+
 
 
 class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
