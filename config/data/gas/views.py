@@ -100,6 +100,7 @@ class GasAnotherStationnopgListAPIView(ListAPIView):
     queryset = Gas_another_station.objects.all()
     serializer_class = GasAnotherListserializer
     permission_classes = (IsAuthenticated,)
+
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ['purchased_volume', 'payed_price_uzs',
                          ]

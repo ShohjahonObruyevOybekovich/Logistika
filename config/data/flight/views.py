@@ -65,18 +65,27 @@ class FlightHistoryStatsAPIView(ListAPIView):
             return Flight.objects.filter(id=flight_id)
         return Flight.objects.none()
 
-
-
 class FlightListNOPg(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.all().order_by('-created_at')
 
-    def get_paginated_response(self, data):
-        """
-        Customize the paginated response. Ensure it returns a DRF Response.
-        """
-        return Response(data)
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            response = self.get_paginated_response(serializer.data)
+            print(f"Response type: {type(response)}")  # Debugging
+            return response
+
+        serializer = self.get_serializer(queryset, many=True)
+        response = Response(serializer.data)
+        print(f"Response type: {type(response)}")  # Debugging
+        return response
+
+
 
 
 class FlightOrderedListAPIView(ListCreateAPIView):
