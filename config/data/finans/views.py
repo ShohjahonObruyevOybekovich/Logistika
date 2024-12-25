@@ -19,12 +19,13 @@ class Finans(ListCreateAPIView):
         "car",
         "employee",
         "flight",
+        "reason",
         "kind",
         "comment",
         "created_at",
     ]
     ordering_fields = ["action","created_at"]
-    search_fields = ["action", "employee", "flight","created_at"]
+    search_fields = ["action", "reason","employee", "flight","created_at"]
 
 
 class FinansDetail(RetrieveUpdateDestroyAPIView):

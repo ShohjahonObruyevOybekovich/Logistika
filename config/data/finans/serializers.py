@@ -28,6 +28,7 @@ class FinansListserializer(serializers.ModelSerializer):
             "car",
             "employee",
             "flight",
+            "reason",
             "kind",
             "comment",
 

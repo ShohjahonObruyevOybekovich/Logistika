@@ -37,6 +37,8 @@ class Logs(TimeStampModel):
         blank=True
     )
 
+    reason = models.TextField(null=True, blank=True)
+
     comment = models.TextField(null=True, blank=True)
 
     @classmethod
