@@ -251,7 +251,7 @@ class BulkDeleteWithSellPriceAPIView(APIView):
                 action="INCOME",
                 amount_uzs=sell_price,
                 kind="OTHER",
-                comment=f"Details sold for {sell_price} UZS."
+                comment=f"Детали проданы за {sell_price} сум.."
             )
 
         deleted_count = 0
@@ -318,7 +318,7 @@ class DeleteCarAPIView(APIView):
                 action="INCOME",
                 amount_uzs=sell_price_uzs,
                 kind="OTHER",
-                comment=f"Car {car.name} - {car.number} sold for {sell_price_uzs} UZS."
+                comment=f"Машина {car.name} - {car.number} продана за {sell_price_uzs} сум."
             )
         except Exception as e:
             return Response(

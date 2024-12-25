@@ -29,7 +29,7 @@ def income(sender, instance: GasPurchase, created, **kwargs):
             amount_uzs=instance.price_uzs,
             # amount_usd=instance.price_usd,
             kind="OTHER",
-            comment=f"{instance.station} dan gas sotib olindi",
+            comment=f"{instance.station} Газ был закуплен",
         )
 
 

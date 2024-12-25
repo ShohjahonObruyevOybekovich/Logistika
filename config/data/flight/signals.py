@@ -20,7 +20,7 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                         action="INCOME",
                         amount_uzs=instance.price_uzs,
                         kind="FLIGHT",
-                        comment=f"Income from flight ID {instance}",
+                        comment=f"Доход от рейса с ID {instance}.",
                         flight=instance,
                         employee=instance.driver,
                     )
@@ -31,7 +31,7 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                         action="OUTCOME",
                         amount_uzs=instance.driver_expenses_uzs,
                         kind="FLIGHT",
-                        comment=f"Outcome for flight ID {instance}",
+                        comment=f"Расход на рейс с ID {instance}.",
                         flight=instance,
                         employee=instance.driver,
                     )
@@ -61,7 +61,7 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
                         action="INCOME",
                         amount_uzs=instance.price_uzs,
                         kind="ORDERED_FLIGHT",
-                        comment=f"Income from Ordered flight ID {instance}",
+                        comment=f"Доход от заказанного рейса (ID) {instance}",
                         flight=instance,
                     )
 

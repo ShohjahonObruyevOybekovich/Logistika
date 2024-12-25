@@ -34,5 +34,5 @@ def income(sender, instance: Salarka, created, **kwargs):
             amount_uzs=instance.price_uzs,
             # amount_usd=instance.price_usd,
             kind="OTHER",
-            comment=f"{instance.price_uzs} sum Salarka sotib olindi"
+            comment=f"За {instance.price_uzs} сум была закуплена солярка."
         )
