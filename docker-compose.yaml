@@ -7,6 +7,7 @@ services:
             - POSTGRES_DB=${POSTGRES_DB}
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - TZ=Asia/Tashkent
         volumes:
             - "../app_data:/var/lib/postgresql/data"
         ports:

@@ -154,8 +154,6 @@ class DetailsView(ListAPIView):
 
 
 
-
-
 class BulkCreateUpdateAPIView(APIView):
     """
     Handle bulk creation and updating of `Details` objects.
