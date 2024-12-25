@@ -1,6 +1,6 @@
 from rest_framework.generics import (
     ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView,
-    RetrieveUpdateDestroyAPIView, get_object_or_404
+    RetrieveUpdateDestroyAPIView, get_object_or_404, CreateAPIView
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -34,16 +34,34 @@ class OilListAPIView(ListAPIView):
         return Response(data)
 
 
-class RecycledOilListAPIView(ListCreateAPIView):
+class RecycledOilListAPIView(CreateAPIView):
     queryset = OilREcycles.objects.all().order_by("-created_at")
     serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
+
 
 
 class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
     queryset = OilREcycles.objects.all()
     serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
+
+class RecycleOilCARListAPIView(ListAPIView):
+    serializer_class = RecycledOilSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        # Get the `car_id` from query parameters
+        car_id = self.request.query_params.get("car_id")
+
+        # Base queryset
+        queryset = OilREcycles.objects.all().order_by("-created_at")
+
+        # Filter by car_id if provided
+        if car_id:
+            queryset = queryset.filter(car__id=car_id)
+
+        return queryset
 
 
 class OilPurchasesListAPIView(ListCreateAPIView):
