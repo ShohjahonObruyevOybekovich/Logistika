@@ -7,6 +7,8 @@ urlpatterns = [
     path('by-id/<uuid:pk>/', CarByIDAPIView.as_view(), name='id'),
     path('update/<uuid:pk>/', CarUpdateAPIView.as_view(), name='update'),
 
+    path('delete/<uuid:uuid>',DeleteCarAPIView.as_view(), name='delete'),
+
     path('model-pagination/',ModelCarListAPIView.as_view(), name='model-list'),
     path('model/', ModelCarList_no_pg_APIView.as_view(), name='model-list'),
     path('model-create/', ModelCarCreateAPIView.as_view(), name='model'),

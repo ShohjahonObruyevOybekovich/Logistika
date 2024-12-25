@@ -206,3 +206,59 @@ class BulkCreateUpdateAPIView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+
+class DeleteCarAPIView(APIView):
+    """
+    API endpoint to delete a car. Logs the car's sell price before deletion.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Handle the deletion of a car and log the sell price.
+        """
+        car_id = kwargs.get('uuid')  # Car UUID from URL
+        sell_price = request.data.get('sell_price')  # Sell price from request data
+
+        if not sell_price:
+            return Response(
+                {"detail": "Sell price is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Convert sell price to Decimal
+            sell_price_uzs = Decimal(sell_price)
+
+            # Get the car by its UUID
+            car = Car.objects.get(id=car_id)
+
+            # Log the sell price in the Logs model
+            Logs.objects.create(
+                action="INCOME",
+                amount_uzs=sell_price_uzs,
+                car=car,
+                kind="OTHER",
+                comment=f"Car {car.name} - {car.number} sold for {sell_price_uzs} UZS."
+            )
+
+            # Delete the car
+            car.delete()
+
+            return Response(
+                {"detail": f"Car {car.name} successfully deleted and sell price logged."},
+                status=status.HTTP_200_OK
+            )
+
+        except Car.DoesNotExist:
+            return Response(
+                {"detail": "Car not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
