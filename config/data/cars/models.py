@@ -48,11 +48,24 @@ class Car(TimeStampModel):
     #     null=True,
     #     blank=True,
     # )
-    distance_travelled = models.IntegerField(
+    distance_travelled = models.FloatField(
         default=0,
         help_text="The distance the car has traveled in kilometers"
     )
-    trailer_number = models.CharField(max_length=100, help_text='Trailer number',
+    oil_recycle_distance = models.FloatField(
+        default=0,
+        help_text="The oil recycle distance in kilometers",
+        null=True,
+        blank=True,
+    )
+    next_oil_recycle_distance = models.FloatField(
+        default=0,
+        help_text="Next oil recycle distance",
+        null=True,
+        blank=True
+    )
+    trailer_number = models.CharField(max_length=100,
+                                      help_text='Trailer number',
                                       null=True, blank=True)
 
     def __str__(self):

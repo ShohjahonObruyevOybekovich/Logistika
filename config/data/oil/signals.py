@@ -61,3 +61,17 @@ def on_purchase(sender, instance: OilPurchase, created, **kwargs):
             kind="OTHER",
             comment=f"Расход на покупку в размере {instance.amount_uzs} сумма..",
         )
+
+
+
+@receiver(post_save, sender=OilREcycles)
+def on_recycled(sender, instance: OilREcycles, created, **kwargs):
+    if created:
+        # Ensure next_oil_recycle_distance is initialized
+        if instance.car.next_oil_recycle_distance is None:
+            instance.car.next_oil_recycle_distance = 0
+
+        # Add oil_recycle_distance to next_oil_recycle_distance
+        instance.car.next_oil_recycle_distance += instance.car.oil_recycle_distance
+
+        instance.car.save()

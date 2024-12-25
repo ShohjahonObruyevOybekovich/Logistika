@@ -34,28 +34,54 @@ class RecycledOilSerializer(serializers.ModelSerializer):
     oil = serializers.PrimaryKeyRelatedField(queryset=Oil.objects.all())
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
     remaining_oil_quantity = serializers.SerializerMethodField()
+    oil_recycle_distance = serializers.FloatField(write_only=True, required=False)
+    next_oil_recycle_distance = serializers.FloatField(write_only=True, required=False)
 
     class Meta:
         model = OilREcycles
         fields = [
             "id",
             "oil",
-            'amount',
-            'car',
-            'remaining_oil',
+            "amount",
+            "car",
+            "oil_recycle_distance",
+            "next_oil_recycle_distance",
+            "remaining_oil",
             "remaining_oil_quantity",
             "created_at",
         ]
 
     def get_remaining_oil_quantity(self, obj):
+        """Get the remaining oil quantity."""
         remaining_oil = Remaining_oil_quantity.get()
         return remaining_oil.oil_volume
 
     def to_representation(self, instance):
         """Customize the representation of the 'car' field."""
         representation = super().to_representation(instance)
-        representation['car'] = CarListserializer(instance.car).data
+        representation["car"] = CarListserializer(instance.car).data
+        representation["oil_recycle_distance"] = instance.car.oil_recycle_distance
+        representation["next_oil_recycle_distance"] = instance.car.next_oil_recycle_distance
         return representation
+
+    def create(self, validated_data):
+        """Handle creation of OilREcycles and update related Car fields."""
+        # Extract custom fields for the Car model
+        oil_recycle_distance = validated_data.pop("oil_recycle_distance", None)
+        next_oil_recycle_distance = validated_data.pop("next_oil_recycle_distance", None)
+
+        # Create the OilREcycles instance
+        instance = super().create(validated_data)
+
+        # Update the related Car model
+        car = instance.car
+        if oil_recycle_distance is not None:
+            car.oil_recycle_distance = oil_recycle_distance
+        if next_oil_recycle_distance is not None:
+            car.next_oil_recycle_distance = next_oil_recycle_distance
+        car.save()
+
+        return instance
 
 
 class OilPurchaseSerializer(serializers.ModelSerializer):
