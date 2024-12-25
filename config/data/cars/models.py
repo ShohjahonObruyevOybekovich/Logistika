@@ -63,9 +63,9 @@ class Details(TimeStampModel):
     car = models.ForeignKey("Car", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=True, blank=True)
     id_detail = models.CharField(max_length=100, null=True, blank=True)
-    price_uzs = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
+    price_uzs = models.FloatField(max_length=100, null=True, blank=True)
 
     # price_usd = models.DecimalField(decimal_places=2, max_digits=10,null=True,blank=True)
 
     def __str__(self):
-        return self.name
+        return self.name or "Unnamed detail"
