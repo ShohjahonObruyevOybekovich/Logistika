@@ -10,7 +10,7 @@ class CarCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ["id", 'name', 'number', 'model', 'type_of_payment'
-            , 'leasing_period', 'with_trailer', 'fuel_type', 'price_uzs'
+            , 'leasing_period', 'with_trailer', 'fuel_type', 'price_uzs',
                                                              'distance_travelled', "trailer_number"]
 
 
@@ -20,7 +20,7 @@ class CarListserializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ["id", 'name', 'number', 'model', 'type_of_payment'
-            , 'leasing_period', 'with_trailer', 'fuel_type', "price_uzs"
+            , 'leasing_period', 'with_trailer', 'fuel_type', "price_uzs",
                                                              'distance_travelled', "trailer_number"]
 
     def to_representation(self, instance):

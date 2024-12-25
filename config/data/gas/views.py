@@ -91,9 +91,9 @@ class GasAnotherStationCreateAPIView(ListCreateAPIView):
 #     permission_classes = (IsAuthenticated,)
 #     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
 #     filterset_fields = ["car",'purchased_volume','payed_price_uzs',
-#             'payed_price_usd',]
+#             ]
 #     search_fields = ['purchased_volume','payed_price_uzs',
-#             'payed_price_usd']
+#
 #     ordering_fields = ['purchased_volume']
 
 class GasAnotherStationnopgListAPIView(ListAPIView):
@@ -102,9 +102,9 @@ class GasAnotherStationnopgListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ['purchased_volume', 'payed_price_uzs',
-                        'payed_price_usd', ]
-    search_fields = ['purchased_volume', 'payed_price_uzs',
-                     'payed_price_usd']
+                         ]
+    search_fields = ['purchased_volume', 'payed_price_uzs',]
+
     ordering_fields = ['purchased_volume']
 
     def get_paginated_response(self, data):

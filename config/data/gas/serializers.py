@@ -25,7 +25,7 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             "station",
             "amount",
             "payed_price_uzs",
-            "payed_price_usd",
+            # "payed_price_usd",
             "price_uzs",
             # "price_usd",
             "created_at",
