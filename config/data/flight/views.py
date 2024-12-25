@@ -1,5 +1,6 @@
 import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.openapi import Response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, \
     ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -63,3 +64,16 @@ class FlightHistoryStatsAPIView(ListAPIView):
         if flight_id:
             return Flight.objects.filter(id=flight_id)
         return Flight.objects.none()
+
+
+
+class FlightListNOPg(ListAPIView):
+    serializer_class = FlightListCReateserializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Flight.objects.all()
+
+    def get_paginated_response(self, data):
+        """
+        Customize the paginated response. Ensure it returns a DRF Response.
+        """
+        return Response(data)

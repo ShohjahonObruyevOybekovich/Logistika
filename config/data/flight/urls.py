@@ -8,4 +8,6 @@ urlpatterns = [
     path("stats/<uuid:pk>", FlightStatsAPIView.as_view(), name="flight-list"),
     path("driver/<int:pk>",FlightHistoryAPIView.as_view(), name="flight-history"),
     path("history/<uuid:pk>", FlightHistoryAPIView.as_view(), name="flight-history"),
+
+    path("list-pg",FlightListNOPg.as_view(), name="flight-list-pg"),
                ]
