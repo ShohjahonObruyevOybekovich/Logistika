@@ -3,9 +3,10 @@ from django.urls import path
 
 from data.oil.views import (
     OilCreateAPIView,
-    OilUpdateAPIView, OilPurchaseUpdateAPIView,
+    OilUpdateAPIView, OilPurchasesListAPIView, OilPurchaseUpdateAPIView,
     UtilizedOilPurchaseListAPIView, UtilizedOilPurchaseUpdateAPIView, OilListAPIView, OilDetailAPIView,
     RecycledOilListAPIView, RemainingOilPurchaseListAPIView, RecycledOilUpdateAPIView, RecycleListAPIView,
+    OilDetailListAPIView,
 )
 
 urlpatterns = [
@@ -20,9 +21,10 @@ urlpatterns = [
 
     path('remaining/',RemainingOilPurchaseListAPIView.as_view(), name='remaining-quantiry'),
 
-    path("purchase/<uuid:pk>/",OilDetailAPIView.as_view(), name="purchase"),
+    path("purchase/<uuid:pk>/",OilPurchasesListAPIView.as_view(), name="purchase"),
+    # path("test/<uuid:pk>",OilDetailListAPIView.as_view(), name="test"),
     path("purchase/<uuid:pk>/",OilPurchaseUpdateAPIView.as_view(), name="purchase"),
-    # path('oil-details/<uuid:pk>/', OilDetailAPIView.as_view(), name='oil-details'),
+    path('oil-details/<uuid:pk>/', OilDetailListAPIView.as_view(), name='oil-details'),
 
     # path("utilized/",UtilizedCreateApiView.as_view(), name="utilized"),
     path("utilized-create/",UtilizedOilPurchaseListAPIView.as_view(), name="utilized"),
