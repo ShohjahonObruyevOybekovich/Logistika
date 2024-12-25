@@ -8,10 +8,12 @@ from ..finans.models import Logs
 @receiver(post_save, sender=Salarka)
 def on_oil_purchased(sender, instance: Salarka, created, **kwargs):
     if created:
-        remaining_volume = Remaining_volume.objects.first()  # Get the instance of Remaining_volume
+        remaining_volume = Remaining_volume.objects.first()
         if remaining_volume:
+
             remaining_volume.volume += instance.volume
             remaining_volume.save()
+
 
 
 @receiver(post_save, sender=Sale)
