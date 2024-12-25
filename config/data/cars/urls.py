@@ -13,7 +13,7 @@ urlpatterns = [
     path('model-update/<uuid:pk>', ModelCarUpdateAPIView.as_view(), name='model-update'),
     path('model-delete/<uuid:pk>', ModelCarDeleteAPIView.as_view(), name='model-delete'),
 
-    path("bulk-update/", BulkUpdateAPIView.as_view(), name="update"),
+    path("bulk/", BulkCreateUpdateAPIView.as_view(), name="update"),
     path("detail/", DetailsView.as_view(), name="list"),
     path("detail-create/", DetailsCreateView.as_view(), name="create"),
 

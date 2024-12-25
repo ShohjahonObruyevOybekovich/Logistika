@@ -144,84 +144,64 @@ class DetailsView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class BulkUpdateAPIView(APIView):
+
+class BulkCreateUpdateAPIView(APIView):
+    """
+    Handle bulk creation and updating of `Details` objects.
+    """
     permission_classes = [IsAuthenticated]
-
-    def patch(self, request, *args, **kwargs):
-        updates = request.data  # Directly assign request.data as it is a list
-        if not updates:
-            return Response({"detail": "No updates provided"}, status=status.HTTP_400_BAD_REQUEST)
-
-        updated_count = 0
-        for update in updates:
-            try:
-                obj = Details.objects.get(id=update.get("id"))
-                for field, value in update.items():
-                    if field != "id":
-                        if field == "car" and isinstance(value, str):  # Check if 'car' field is UUID
-                            try:
-                                car_instance = Car.objects.get(id=value)  # Convert UUID to Car instance
-                                setattr(obj, field, car_instance)
-                            except Car.DoesNotExist:
-                                return Response({"detail": f"Car with id {value} not found."},
-                                                status=status.HTTP_400_BAD_REQUEST)
-                        else:
-                            setattr(obj, field, value)
-                obj.save()
-                updated_count += 1
-            except Details.DoesNotExist:
-                continue
-
-        return Response({"detail": f"{updated_count} items updated successfully"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
-        Handle the deletion of details and log the income.
+        Handle both creation and updating of Details objects.
         """
-        items_to_delete = request.data
-
-        # Validate input: Ensure it's a non-empty list
-        if not isinstance(items_to_delete, list) or not items_to_delete:
+        data = request.data  # Expecting a list of objects
+        if not isinstance(data, list) or not data:
             return Response(
-                {"detail": "A list of items with IDs and prices is required."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"detail": "A non-empty list of objects is required."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-        deleted_count = 0
+        created_count = 0
+        updated_count = 0
         errors = []
 
-        for item in items_to_delete:
-            obj_id = item.get("id")
-            price_uzs = Decimal(item.get("price_uzs", "0.00"))
-            # price_usd = Decimal(item.get("price_usd", "0.00"))
-
-            if not obj_id:
-                errors.append({"detail": "ID is required for each item."})
-                continue
-
+        for item in data:
+            obj_id = item.get("id")  # Extract ID if present
+            car_id = item.get("car")  # Extract car ID if present
             try:
-                obj = Details.objects.get(id=obj_id)
-
-                # Log the income
-                Logs.objects.create(
-                    action="INCOME",
-                    amount_uzs=price_uzs,
-                    # amount_usd=price_usd,
-                    kind="OTHER",
-                    comment=f"Details sold for {price_uzs} $",
-                )
-
-                # Delete the object
-                obj.delete()
-                deleted_count += 1
-
+                if obj_id:  # Update logic
+                    detail = Details.objects.get(id=obj_id)
+                    for field, value in item.items():
+                        if field == "car" and car_id:
+                            try:
+                                car_instance = Car.objects.get(id=car_id)
+                                setattr(detail, field, car_instance)
+                            except Car.DoesNotExist:
+                                errors.append({"id": obj_id, "detail": f"Car with id {car_id} not found"})
+                                continue
+                        elif field != "id":
+                            setattr(detail, field, value)
+                    detail.save()
+                    updated_count += 1
+                else:  # Create logic
+                    if car_id:  # Resolve car foreign key for new object
+                        try:
+                            item["car"] = Car.objects.get(id=car_id)
+                        except Car.DoesNotExist:
+                            errors.append({"detail": f"Car with id {car_id} not found"})
+                            continue
+                    Details.objects.create(**item)
+                    created_count += 1
             except Details.DoesNotExist:
-                errors.append({"id": obj_id, "detail": "Object not found"})
-                continue
+                errors.append({"id": obj_id, "detail": "Object not found for update"})
+            except Exception as e:
+                errors.append({"id": obj_id, "detail": str(e)})
 
         # Prepare the response
         response_data = {
-            "detail": f"{deleted_count} items deleted successfully",
+            "created_count": created_count,
+            "updated_count": updated_count,
             "errors": errors,
         }
 

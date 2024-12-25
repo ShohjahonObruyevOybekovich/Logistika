@@ -26,7 +26,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="E-commerce API",
+        title="Logistika API",
         default_version="v1",
         description="Project documentation",
     ),
