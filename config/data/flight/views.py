@@ -1,6 +1,7 @@
 import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.openapi import Response
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, \
     ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +13,19 @@ from .models import Flight, Ordered
 class FlightListAPIView(ListCreateAPIView):
     queryset = Flight.objects.all().order_by("-created_at")
     serializer_class = FlightListserializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+
+    filter_backends = (DjangoFilterBackend,SearchFilter,OrderingFilter)
+    filterset_fields = [
+        'flight_type',"route","status"
+    ]
+    ordering_fields = ('flight_type',"route","status")
+    search_fields = ('flight_type',"route","status")
+
+
+
+
+
 
 
 class FlightRetrieveAPIView(RetrieveUpdateDestroyAPIView):
@@ -34,6 +47,7 @@ class FlightStatsAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FlightFilter  # Use the filter class
+
 
     def get_queryset(self):
         car_id = self.kwargs.get('pk')
@@ -69,6 +83,7 @@ class FlightListNOPg(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
     queryset = Flight.objects.all().order_by('-created_at')
+
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
