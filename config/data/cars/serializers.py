@@ -13,7 +13,8 @@ class CarCreateSerializer(serializers.ModelSerializer):
         model = Car
         fields = ["id", 'name', 'number', 'model', 'type_of_payment',
             'leasing_period', 'with_trailer', 'fuel_type', 'price_uzs',
-            'distance_travelled', "oil_recycle_distance" ,"next_oil_recycle_distance","trailer_number","created_at", "updated_at"]
+            'distance_travelled', "oil_recycle_distance" ,"next_oil_recycle_distance","leasing_payed_amount",
+                  "trailer_number","created_at", "updated_at"]
 
 
 

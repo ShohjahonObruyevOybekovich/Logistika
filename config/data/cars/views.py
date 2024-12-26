@@ -2,6 +2,7 @@
 from decimal import Decimal
 
 from django.http import HttpResponse
+from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -428,5 +429,51 @@ class DownloadCarInfoAPIView(APIView):
         response["Content-Disposition"] = 'attachment; filename="Car_Info.xlsx"'
 
         # Save the workbook to the response
+        workbook.save(response)
+        return response
+
+
+
+class FilteredCarDetailsExportToExcelView(APIView):
+    def get(self, request, *args, **kwargs):
+        car_id = request.GET.get("car_id")  # Get the car_id from query parameters
+
+        if not car_id:
+            return HttpResponse("car_id is required", status=400)
+
+        # Filter details by car_id
+        details_queryset = Details.objects.filter(car_id=car_id)
+
+        if not details_queryset.exists():
+            return HttpResponse("No details found for the specified car_id.", status=404)
+
+        # Create an Excel workbook
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Car Details"
+
+        # Define headers
+        headers = ["Name", "ID", "Price (UZS)", "In Sklad", "Created At", "Updated At"]
+        for col_num, header in enumerate(headers, 1):
+            cell = sheet.cell(row=1, column=col_num)
+            cell.value = header
+            cell.font = Font(bold=True, size=12)
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            sheet.column_dimensions[cell.column_letter].width = 20
+
+        # Write data rows
+        for row_num, detail in enumerate(details_queryset, 2):
+            sheet.cell(row=row_num, column=1).value = detail.name or "N/A"
+            sheet.cell(row=row_num, column=2).value = detail.id_detail or "N/A"
+            sheet.cell(row=row_num, column=3).value = detail.price_uzs or "N/A"
+            sheet.cell(row=row_num, column=4).value = "Yes" if detail.in_sklad else "No"
+            sheet.cell(row=row_num, column=5).value = detail.created_at.strftime('%Y-%m-%d %H:%M:%S') if detail.created_at else ""
+            sheet.cell(row=row_num, column=6).value = detail.updated_at.strftime('%Y-%m-%d %H:%M:%S') if detail.updated_at else ""
+
+        # Prepare the response
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = f'attachment; filename="Car_Details_{car_id}.xlsx"'
         workbook.save(response)
         return response
