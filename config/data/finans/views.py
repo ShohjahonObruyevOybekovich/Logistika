@@ -2,7 +2,7 @@ from django.views import View
 import openpyxl
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Alignment
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -107,25 +107,28 @@ class ExportLogsToExcelAPIView(APIView):
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = "Logs"
-        headers = [
-            "Action", "Miqdori (UZS)", "Mashina", "Haydovchi", "Reyis",
-            "Turi", "Sababi", "Comment", "Yaratilgan vaqti"
-        ]
+        headers = ["Действие", "Сумма (UZS)", "Машина", "Водитель",
+                   "Рейс", "Тип", "Причина", "Комментарий", "Время создания"]
+
         for col_num, header in enumerate(headers, 1):
             cell = sheet.cell(row=1, column=col_num)
             cell.value = header
+            cell.font = Font(bold=True, size=12)
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            sheet.column_dimensions[cell.column_letter].width = 20
 
         for row_num, log in enumerate(logs, 2):
+            # print(log.car.number)
             sheet.cell(row=row_num, column=1).value = log.action
             sheet.cell(row=row_num, column=2).value = log.amount_uzs
-            sheet.cell(row=row_num, column=3).value = log.car.number if log.car else "N/A"  # Handle None
-            sheet.cell(row=row_num, column=4).value = log.employee.phone if log.employee else "N/A"  # Handle None
-            sheet.cell(row=row_num, column=5).value = log.flight.departure_date if log.flight else "N/A"  # Handle None
-            sheet.cell(row=row_num, column=6).value = log.kind if log.kind else "N/A"  # Handle None
-            sheet.cell(row=row_num, column=7).value = log.reason if log.reason else "N/A"  # Handle None
-            sheet.cell(row=row_num, column=8).value = log.comment if log.comment else "N/A"  # Handle None
+            sheet.cell(row=row_num, column=3).value = log.car.number if log.car else ""
+            sheet.cell(row=row_num, column=4).value = log.employee.phone if log.employee else ""
+            sheet.cell(row=row_num, column=5).value = log.flight.departure_date if log.flight else ""
+            sheet.cell(row=row_num, column=6).value = log.kind if log.kind else ""
+            sheet.cell(row=row_num, column=7).value = log.reason if log.reason else ""
+            sheet.cell(row=row_num, column=8).value = log.comment if log.comment else ""
             sheet.cell(row=row_num, column=9).value = (
-                log.created_at.strftime('%d-%m-%Y   %H:%M') if log.created_at else "N/A"
+                log.created_at.strftime('%d-%m-%Y   %H:%M') if log.created_at else ""
             )
 
         response = HttpResponse(
@@ -134,3 +137,5 @@ class ExportLogsToExcelAPIView(APIView):
         response["Content-Disposition"] = f'attachment; filename="Logs_{action_filter or "All"}.xlsx"'
         workbook.save(response)
         return response
+
+

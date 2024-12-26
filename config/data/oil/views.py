@@ -141,7 +141,7 @@ class RecycleListAPIView(ListAPIView):
 
     # serializer_class = RecycledOilSerializer
     def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')  # Retrieve 'pk' from kwargs
+        pk = kwargs.get('pk')
         oil = get_object_or_404(Oil, id=pk)
         recycles = OilREcycles.objects.filter(oil=oil)
         data = {
@@ -150,7 +150,7 @@ class RecycleListAPIView(ListAPIView):
                 {
                     "id": recycle.id,
                     "amount": recycle.amount,
-                    "car": recycle.car.name,  # Include car ID or other fields
+                    "car": recycle.car.name,
                     "remaining_oil": recycle.remaining_oil,
                     "updated_at": recycle.updated_at,
                 }

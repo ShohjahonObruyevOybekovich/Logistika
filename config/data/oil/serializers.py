@@ -59,6 +59,7 @@ class RecycledOilSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Customize the representation of the 'car' field."""
         representation = super().to_representation(instance)
+        representation["oil"] = OilCreateseralizer(instance.oil).data
         representation["car"] = CarListserializer(instance.car).data
         representation["oil_recycle_distance"] = instance.car.oil_recycle_distance
         representation["next_oil_recycle_distance"] = instance.car.next_oil_recycle_distance
