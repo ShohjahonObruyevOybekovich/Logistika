@@ -90,7 +90,7 @@ class Flight(TimeStampModel):
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
-        default="Active",
+        default="ACTIVE",
     )
 
 

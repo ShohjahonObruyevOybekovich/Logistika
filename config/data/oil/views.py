@@ -198,3 +198,107 @@ class RemainingOilPurchaseListAPIView(APIView):
         queryset = self.get_queryset()
         serializer = Remaining_oil_quantityserializer(queryset, many=True)
         return Response(serializer.data)
+
+
+
+
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from .models import Oil, OilPurchase, OilREcycles, Remaining_oil_quantity, Utilized_oil
+
+
+class ExportOilInfoAPIView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("type", openapi.IN_QUERY, description="Type of data to export (oil, purchase, recycle, utilized)", type=openapi.TYPE_STRING),
+        ],
+        responses={200: "Excel file generated"}
+    )
+    def get(self, request):
+        data_type = request.GET.get("type", "oil")  # Default to oil if not specified
+
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Oil Info"
+
+        # Handle different types of data
+        if data_type == "oil":
+            queryset = Oil.objects.all()
+            headers = ["Название масла", "Объем масла (л)", "Дата создания", "Дата обновления"]
+            sheet.append(headers)
+
+            for oil in queryset:
+                sheet.append([
+                    oil.oil_name,
+                    oil.oil_volume,
+                    oil.created_at.strftime('%Y-%m-%d %H:%M:%S') if oil.created_at else "",
+                    oil.updated_at.strftime('%Y-%m-%d %H:%M:%S') if oil.updated_at else ""
+                ])
+
+        elif data_type == "purchase":
+            queryset = OilPurchase.objects.all()
+            headers = ["Название масла", "Цена (UZS)", "Общая сумма (UZS)", "Объем масла (л)", "Дата создания", "Дата обновления"]
+            sheet.append(headers)
+
+            for purchase in queryset:
+                sheet.append([
+                    purchase.oil.oil_name if purchase.oil else "",
+                    purchase.price_uzs,
+                    purchase.amount_uzs,
+                    purchase.oil_volume,
+                    purchase.created_at.strftime('%Y-%m-%d %H:%M:%S') if purchase.created_at else "",
+                    purchase.updated_at.strftime('%Y-%m-%d %H:%M:%S') if purchase.updated_at else ""
+                ])
+
+        elif data_type == "recycle":
+            queryset = OilREcycles.objects.all()
+            headers = ["Название масла", "Объем масла (л)", "Автомобиль", "Остаток масла (л)", "Дата создания", "Дата обновления"]
+            sheet.append(headers)
+
+            for recycle in queryset:
+                sheet.append([
+                    recycle.oil.oil_name if recycle.oil else "",
+                    recycle.amount,
+                    recycle.car.name if recycle.car else "",
+                    recycle.remaining_oil,
+                    recycle.created_at.strftime('%Y-%m-%d %H:%M:%S') if recycle.created_at else "",
+                    recycle.updated_at.strftime('%Y-%m-%d %H:%M:%S') if recycle.updated_at else ""
+                ])
+
+        elif data_type == "utilized":
+            queryset = Utilized_oil.objects.all()
+            headers = ["Объем использованного масла (л)", "Цена (UZS)", "Дата создания", "Дата обновления"]
+            sheet.append(headers)
+
+            for utilized in queryset:
+                sheet.append([
+                    utilized.quantity_utilized,
+                    utilized.price_uzs or "",
+                    utilized.created_at.strftime('%Y-%m-%d %H:%M:%S') if utilized.created_at else "",
+                    utilized.updated_at.strftime('%Y-%m-%d %H:%M:%S') if utilized.updated_at else ""
+                ])
+
+        else:
+            return HttpResponse("Invalid type parameter. Must be one of: oil, purchase, recycle, utilized.", status=400)
+
+        # Apply styles to headers
+        for col_num, header in enumerate(headers, 1):
+            cell = sheet.cell(row=1, column=col_num)
+            cell.font = Font(bold=True, size=12)
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            sheet.column_dimensions[cell.column_letter].width = 20
+
+        # Generate the response
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = f'attachment; filename="Oil_Info_{data_type}.xlsx"'
+        workbook.save(response)
+        return response

@@ -1,7 +1,12 @@
 # from rest_framework import generics
 from decimal import Decimal
 
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from openpyxl.styles import Alignment, Font
+from openpyxl.workbook import Workbook
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -351,3 +356,77 @@ class DeleteCarAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
+
+from django.db import models
+
+class DownloadCarInfoAPIView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("model", openapi.IN_QUERY, description="Filter by model ID", type=openapi.TYPE_STRING),
+            openapi.Parameter("fuel_type", openapi.IN_QUERY, description="Filter by fuel type (DIESEL, GAS)", type=openapi.TYPE_STRING),
+        ],
+        responses={200: "Excel file generated"}
+    )
+    def get(self, request):
+        # Extract query parameters
+        model_filter = request.GET.get("model")
+        fuel_type_filter = request.GET.get("fuel_type")
+
+        # Base queryset
+        queryset = Car.objects.all()
+
+        # Apply filters
+        if model_filter:
+            queryset = queryset.filter(model_id=model_filter)
+        if fuel_type_filter:
+            queryset = queryset.filter(fuel_type=fuel_type_filter)
+
+        # Create an Excel workbook
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Car Info"
+
+        # Define headers
+        headers = [
+            "Название", "Номер", "Модель", "Тип оплаты", "Срок лизинга",
+            "С прицепом", "Тип топлива", "Цена (UZS)", "Пройденное расстояние",
+            "Расстояние до замены масла", "Следующее расстояние до замены масла", "Номер прицепа", "Дата создания",
+            "Дата обновления"
+        ]
+
+        # Write headers
+        for col_num, header in enumerate(headers, 1):
+            cell = sheet.cell(row=1, column=col_num)
+            cell.value = header
+            cell.font = Font(bold=True, size=12)
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            sheet.column_dimensions[cell.column_letter].width = 20
+
+        # Write car data with fallback for missing fields
+        for row_num, car in enumerate(queryset, start=2):
+            sheet.cell(row=row_num, column=1).value = car.name or ""
+            sheet.cell(row=row_num, column=2).value = car.number or ""
+            sheet.cell(row=row_num, column=3).value = car.model.name if car.model else ""
+            sheet.cell(row=row_num, column=4).value = car.type_of_payment or ""
+            sheet.cell(row=row_num, column=5).value = car.leasing_period or ""
+            sheet.cell(row=row_num, column=6).value = "Yes" if car.with_trailer else "No"
+            sheet.cell(row=row_num, column=7).value = car.fuel_type or ""
+            sheet.cell(row=row_num, column=8).value = car.price_uzs or ""
+            sheet.cell(row=row_num, column=9).value = car.distance_travelled or ""
+            sheet.cell(row=row_num, column=10).value = car.oil_recycle_distance or ""
+            sheet.cell(row=row_num, column=11).value = car.next_oil_recycle_distance or ""
+            sheet.cell(row=row_num, column=12).value = car.trailer_number or ""
+            sheet.cell(row=row_num, column=13).value = car.created_at.strftime('%Y-%m-%d %H:%M:%S') if car.created_at else ""
+            sheet.cell(row=row_num, column=14).value = car.updated_at.strftime('%Y-%m-%d %H:%M:%S') if car.updated_at else ""
+
+        # Prepare the response
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="Car_Info.xlsx"'
+
+        # Save the workbook to the response
+        workbook.save(response)
+        return response

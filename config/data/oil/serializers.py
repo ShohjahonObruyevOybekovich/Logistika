@@ -78,8 +78,6 @@ class RecycledOilSerializer(serializers.ModelSerializer):
         car = instance.car
         if oil_recycle_distance is not None:
             car.oil_recycle_distance = oil_recycle_distance
-        if next_oil_recycle_distance is not None:
-            car.next_oil_recycle_distance = next_oil_recycle_distance
         car.save()
 
         return instance

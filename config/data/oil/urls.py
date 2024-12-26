@@ -7,6 +7,7 @@ from data.oil.views import (
     UtilizedOilPurchaseListAPIView, UtilizedOilPurchaseUpdateAPIView, OilListAPIView, OilDetailAPIView,
     RecycledOilListAPIView, RemainingOilPurchaseListAPIView, RecycledOilUpdateAPIView, RecycleListAPIView,
     OilDetailListAPIView, RecycleOilCARListAPIView, OilPurchaseReadAPIView, OilRecycleListsAPIView,
+    ExportOilInfoAPIView,
 )
 
 urlpatterns = [
@@ -32,5 +33,7 @@ urlpatterns = [
     # path("utilized/",UtilizedCreateApiView.as_view(), name="utilized"),
     path("utilized-create/",UtilizedOilPurchaseListAPIView.as_view(), name="utilized"),
     path("utilized/<uuid:pk>/",UtilizedOilPurchaseUpdateAPIView.as_view(), name="utilized"),
+
+    path("oil-info/", ExportOilInfoAPIView.as_view(), name="oil-info"),
 
 ]

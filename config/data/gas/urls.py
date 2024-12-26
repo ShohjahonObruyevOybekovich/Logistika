@@ -16,4 +16,6 @@ urlpatterns = [
     path("another-list",GasAnotherStationnopgListAPIView.as_view(), name="list"),
     path("another-update/<uuid:pk>",GasAnotherStationUpdateAPIView.as_view(), name="update"),
     path("another-delete/<uuid:pk>",GasAnotherStationDeleteAPIView.as_view(), name="delete"),
+
+    path("gaz-info/",ExportGasInfoAPIView.as_view(), name="gaz-info"),
 ]

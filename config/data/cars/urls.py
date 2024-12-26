@@ -20,4 +20,6 @@ urlpatterns = [
     path("car-detail/<uuid:pk>",DetailbyCarIDAPIView.as_view(), name="car-detail"),
     path("detail-delete/",BulkDeleteWithSellPriceAPIView.as_view(), name="delete"),
 
+    path("car-info/", DownloadCarInfoAPIView.as_view(), name="car-info"),
+
 ]
