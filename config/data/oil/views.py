@@ -136,6 +136,13 @@ class OilDetailListAPIView(ListAPIView):
         }
         return Response(data)
 
+
+class OilRecycleListsAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = OilREcycles.objects.all().order_by("-created_at")
+    serializer_class = RecycledOilSerializer
+
+
 class RecycleListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
 

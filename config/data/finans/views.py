@@ -81,35 +81,72 @@ class FinansDriver(ListCreateAPIView):
             return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY")
         return Logs.objects.none()
 
+
+
 from django.http import HttpResponse
 from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .models import Logs
+from django.db.models import Q
+
 
 class ExportLogsToExcelAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter(
-                "action", openapi.IN_QUERY, description="Filter by action (INCOME, OUTCOME)", type=openapi.TYPE_STRING
-            )
+            openapi.Parameter("action", openapi.IN_QUERY, description="Filter by action (INCOME, OUTCOME)", type=openapi.TYPE_STRING),
+            openapi.Parameter("amount_uzs", openapi.IN_QUERY, description="Filter by amount in UZS", type=openapi.TYPE_NUMBER),
+            openapi.Parameter("car", openapi.IN_QUERY, description="Filter by car ID", type=openapi.TYPE_STRING),
+            openapi.Parameter("employee", openapi.IN_QUERY, description="Filter by employee ID", type=openapi.TYPE_STRING),
+            openapi.Parameter("flight", openapi.IN_QUERY, description="Filter by flight ID", type=openapi.TYPE_STRING),
+            openapi.Parameter("reason", openapi.IN_QUERY, description="Filter by reason", type=openapi.TYPE_STRING),
+            openapi.Parameter("kind", openapi.IN_QUERY, description="Filter by kind", type=openapi.TYPE_STRING),
+            openapi.Parameter("comment", openapi.IN_QUERY, description="Filter by comment", type=openapi.TYPE_STRING),
+            openapi.Parameter("start_date", openapi.IN_QUERY, description="Filter by start date (YYYY-MM-DD)", type=openapi.TYPE_STRING),
+            openapi.Parameter("end_date", openapi.IN_QUERY, description="Filter by end date (YYYY-MM-DD)", type=openapi.TYPE_STRING),
         ],
         responses={200: "Excel file generated"}
     )
     def get(self, request):
-        action_filter = request.GET.get("action", None)
-        if action_filter in ["INCOME", "OUTCOME"]:
-            logs = Logs.objects.filter(action=action_filter).order_by("id")
-        else:
-            logs = Logs.objects.all().order_by("action", "id")
+        # Extract query parameters
+        filters = {
+            "action": request.GET.get("action"),
+            "amount_uzs": request.GET.get("amount_uzs"),
+            "car_id": request.GET.get("car"),
+            "employee_id": request.GET.get("employee"),
+            "flight_id": request.GET.get("flight"),
+            "reason": request.GET.get("reason"),
+            "kind": request.GET.get("kind"),
+            "comment": request.GET.get("comment"),
+        }
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
 
+        # Build the queryset with filters
+        queryset = Logs.objects.all()
+
+        # Apply field-specific filters
+        for field, value in filters.items():
+            if value:
+                filter_kwargs = {field: value}
+                queryset = queryset.filter(**filter_kwargs)
+
+        # Apply date range filter
+        if start_date and end_date:
+            queryset = queryset.filter(
+                created_at__gte=start_date,
+                created_at__lte=end_date
+            )
+
+        # Generate Excel
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = "Logs"
-        headers = ["Действие", "Сумма (UZS)", "Машина", "Водитель",
-                   "Рейс", "Тип", "Причина", "Комментарий", "Время создания"]
 
+        # Headers
+        headers = ["Действие", "Сумма (UZS)", "Машина", "Водитель", "Рейс", "Тип", "Причина", "Комментарий", "Время создания"]
         for col_num, header in enumerate(headers, 1):
             cell = sheet.cell(row=1, column=col_num)
             cell.value = header
@@ -117,8 +154,8 @@ class ExportLogsToExcelAPIView(APIView):
             cell.alignment = Alignment(horizontal="center", vertical="center")
             sheet.column_dimensions[cell.column_letter].width = 20
 
-        for row_num, log in enumerate(logs, 2):
-            # print(log.car.number)
+        # Rows
+        for row_num, log in enumerate(queryset, 2):
             sheet.cell(row=row_num, column=1).value = log.action
             sheet.cell(row=row_num, column=2).value = log.amount_uzs
             sheet.cell(row=row_num, column=3).value = log.car.number if log.car else ""
@@ -127,15 +164,12 @@ class ExportLogsToExcelAPIView(APIView):
             sheet.cell(row=row_num, column=6).value = log.kind if log.kind else ""
             sheet.cell(row=row_num, column=7).value = log.reason if log.reason else ""
             sheet.cell(row=row_num, column=8).value = log.comment if log.comment else ""
-            sheet.cell(row=row_num, column=9).value = (
-                log.created_at.strftime('%d-%m-%Y   %H:%M') if log.created_at else ""
-            )
+            sheet.cell(row=row_num, column=9).value = log.created_at.strftime('%d-%m-%Y   %H:%M') if log.created_at else ""
 
+        # Response
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = f'attachment; filename="Logs_{action_filter or "All"}.xlsx"'
+        response["Content-Disposition"] = f'attachment; filename="Logs_{filters.get("action", "All")}.xlsx"'
         workbook.save(response)
         return response
-
-
