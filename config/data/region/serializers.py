@@ -12,6 +12,7 @@ class RegionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "flight_type",
             "price1",
             "price2",
         ]
