@@ -2,7 +2,6 @@
 from decimal import Decimal
 
 from django.http import HttpResponse
-from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -21,7 +20,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Car, Model
 from .serializers import *
 from ..finans.models import Logs
 
@@ -102,6 +100,7 @@ class DetailbyCarIDAPIView(ListAPIView):
 
         return queryset
 
+
 class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarListserializer
@@ -171,8 +170,6 @@ class DetailsView(ListAPIView):
     search_fields = ["name"]
 
 
-
-
 class BulkCreateUpdateAPIView(APIView):
     """
     Handle bulk creation and updating of `Details` objects.
@@ -234,6 +231,7 @@ class BulkCreateUpdateAPIView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
 
 class BulkDeleteWithSellPriceAPIView(APIView):
     """
@@ -358,15 +356,14 @@ class DeleteCarAPIView(APIView):
         )
 
 
-from django.db import models
-
 class DownloadCarInfoAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter("model", openapi.IN_QUERY, description="Filter by model ID", type=openapi.TYPE_STRING),
-            openapi.Parameter("fuel_type", openapi.IN_QUERY, description="Filter by fuel type (DIESEL, GAS)", type=openapi.TYPE_STRING),
+            openapi.Parameter("fuel_type", openapi.IN_QUERY, description="Filter by fuel type (DIESEL, GAS)",
+                              type=openapi.TYPE_STRING),
         ],
         responses={200: "Excel file generated"}
     )
@@ -419,8 +416,10 @@ class DownloadCarInfoAPIView(APIView):
             sheet.cell(row=row_num, column=10).value = car.oil_recycle_distance or ""
             sheet.cell(row=row_num, column=11).value = car.next_oil_recycle_distance or ""
             sheet.cell(row=row_num, column=12).value = car.trailer_number or ""
-            sheet.cell(row=row_num, column=13).value = car.created_at.strftime('%Y-%m-%d %H:%M:%S') if car.created_at else ""
-            sheet.cell(row=row_num, column=14).value = car.updated_at.strftime('%Y-%m-%d %H:%M:%S') if car.updated_at else ""
+            sheet.cell(row=row_num, column=13).value = car.created_at.strftime(
+                '%Y-%m-%d %H:%M:%S') if car.created_at else ""
+            sheet.cell(row=row_num, column=14).value = car.updated_at.strftime(
+                '%Y-%m-%d %H:%M:%S') if car.updated_at else ""
 
         # Prepare the response
         response = HttpResponse(
@@ -431,8 +430,6 @@ class DownloadCarInfoAPIView(APIView):
         # Save the workbook to the response
         workbook.save(response)
         return response
-
-
 
 
 class FilteredCarDetailsExportToExcelView(ListAPIView):
@@ -480,9 +477,11 @@ class FilteredCarDetailsExportToExcelView(ListAPIView):
             sheet.cell(row=row_num, column=1).value = detail.name or ""
             sheet.cell(row=row_num, column=2).value = detail.id_detail or ""
             sheet.cell(row=row_num, column=3).value = detail.price_uzs or ""
-            sheet.cell(row=row_num, column=4).value = "Yes" if detail.in_sklad else "No"
-            sheet.cell(row=row_num, column=5).value = detail.created_at.strftime('%d-%m-%Y %H:%M') if detail.created_at else ""
-            sheet.cell(row=row_num, column=6).value = detail.updated_at.strftime('%d-%m-%Y %H:%M') if detail.updated_at else ""
+            sheet.cell(row=row_num, column=4).value = "Да" if detail.in_sklad else "Нет"
+            sheet.cell(row=row_num, column=5).value = detail.created_at.strftime(
+                '%d-%m-%Y %H:%M') if detail.created_at else ""
+            sheet.cell(row=row_num, column=6).value = detail.updated_at.strftime(
+                '%d-%m-%Y %H:%M') if detail.updated_at else ""
 
         # Prepare the response
         response = HttpResponse(
