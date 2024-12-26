@@ -82,19 +82,19 @@ class CarByIDAPIView(RetrieveAPIView):
         except Car.DoesNotExist:
             raise NotFound("Car not found.")
 
-class DetailbyCarIDAPIView(RetrieveAPIView):
-    queryset = Details.objects.all().order_by("-created_at")
-    serializer_class = DetailCreateListSerializer
+
+class DetailbyCarIDAPIView(ListAPIView):
+    serializer_class = DetailCreateSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
-        try:
-            obj = self.get_queryset().get(car__id=self.kwargs.get("pk"))
-            self.check_object_permissions(self.request, obj)
-            return obj
-        except Car.DoesNotExist:
-            raise NotFound("Car not found.")
+    def get_queryset(self):
+        car_id = self.kwargs.get("pk")
+        queryset = Details.objects.filter(car_id=car_id).order_by("-created_at")
 
+        if not queryset.exists():
+            raise NotFound("No details found for the given car ID.")
+
+        return queryset
 
 class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()
