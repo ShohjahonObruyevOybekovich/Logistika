@@ -121,3 +121,17 @@ class GasAnotherStationUpdateAPIView(UpdateAPIView):
 class GasAnotherStationDeleteAPIView(DestroyAPIView):
     queryset = Gas_another_station.objects.all()
     permission_classes = (IsAuthenticated,)
+
+
+class GasByCarID(ListAPIView):
+    serializer_class = GasSaleListSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        car_id = self.kwargs.get("pk")
+        queryset = GasSale.objects.filter(car_id=car_id).order_by("-created_at")
+
+        if not queryset.exists():
+            raise NotFound("Gas Sale not found.")
+
+        return queryset
