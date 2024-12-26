@@ -6,7 +6,7 @@ from data.oil.views import (
     OilUpdateAPIView, OilPurchasesListAPIView, OilPurchaseUpdateAPIView,
     UtilizedOilPurchaseListAPIView, UtilizedOilPurchaseUpdateAPIView, OilListAPIView, OilDetailAPIView,
     RecycledOilListAPIView, RemainingOilPurchaseListAPIView, RecycledOilUpdateAPIView, RecycleListAPIView,
-    OilDetailListAPIView, RecycleOilCARListAPIView, OilPurchaseReadAPIView,
+    OilDetailListAPIView, RecycleOilCARListAPIView, OilPurchaseReadAPIView, OilRecycleListsAPIView,
 )
 
 urlpatterns = [
@@ -15,7 +15,7 @@ urlpatterns = [
 
 
     path('recycle/', RecycledOilListAPIView.as_view(), name='recycled-oil-list'),
-    path("recycle-list/", OilListAPIView.as_view(), name="list"),
+    path("recycle-list/", OilRecycleListsAPIView.as_view(), name="list"),
     path("recycle-car/",RecycleOilCARListAPIView.as_view(), name='recycled-oil-car'),
     path('recycle/<uuid:pk>/', RecycledOilUpdateAPIView.as_view(), name='recycled-oil-detail'),
     path('recycled/<uuid:pk>/',RecycleListAPIView.as_view(), name='recycled-oil-list'),
