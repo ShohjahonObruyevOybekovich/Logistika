@@ -14,7 +14,7 @@ from rest_framework.generics import (
     ListAPIView,
     UpdateAPIView,
     DestroyAPIView,
-    CreateAPIView, )
+    CreateAPIView, get_object_or_404, )
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -22,6 +22,7 @@ from rest_framework.views import APIView
 
 from .serializers import *
 from ..finans.models import Logs
+from ..flight.models import Flight
 
 
 class CarCreateAPIView(CreateAPIView):
@@ -488,5 +489,75 @@ class FilteredCarDetailsExportToExcelView(ListAPIView):
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
         response["Content-Disposition"] = f'attachment; filename="Car_Details_{car_id}.xlsx"'
+        workbook.save(response)
+        return response
+
+
+class CarDetailsExcelAPIView(APIView):
+    """
+    API View to generate an Excel file with car details and associated reyses (trips).
+    """
+
+    def get(self, request, pk, *args, **kwargs):
+        # Get the car instance by pk or return 404 if not found
+        car = get_object_or_404(Car, id=pk)
+
+        # Fetch associated reyses/trips for the car (if applicable)
+        reyses_queryset = Flight.objects.filter(car=car)  # Adjust if the related model is different
+
+        # Create an Excel workbook
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Car Details and Reyses"
+
+        # Define headers for car details
+        car_headers = ["Car Name", "Number", "Model", "Fuel Type", "Price (UZS)", "Distance Travelled"]
+        for col_num, header in enumerate(car_headers, 1):
+            cell = sheet.cell(row=1, column=col_num)
+            cell.value = header
+            cell.font = Font(bold=True, size=12)
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            sheet.column_dimensions[cell.column_letter].width = 20
+
+        # Write car details
+        car_data = [
+            car.name,
+            car.number,
+            car.model.name if car.model else "N/A",
+            car.fuel_type,
+            car.price_uzs or "N/A",
+            car.distance_travelled or 0
+        ]
+        for col_num, value in enumerate(car_data, 1):
+            sheet.cell(row=2, column=col_num).value = value
+
+        # Add headers for reyses
+        reyses_start_row = 4
+        reyses_headers = ["Reys ID", "Start Location", "End Location", "Date", "Distance", "Driver"]
+        for col_num, header in enumerate(reyses_headers, 1):
+            cell = sheet.cell(row=reyses_start_row, column=col_num)
+            cell.value = header
+            cell.font = Font(bold=True, size=12)
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            sheet.column_dimensions[cell.column_letter].width = 20
+
+        # Write reyses data
+        for row_num, reys in enumerate(reyses_queryset, reyses_start_row + 1):
+            reys_data = [
+                reys.id,
+                reys.start_location or "N/A",
+                reys.end_location or "N/A",
+                reys.date.strftime('%Y-%m-%d %H:%M:%S') if reys.date else "N/A",
+                reys.distance or 0,
+                reys.driver.name if reys.driver else "N/A"
+            ]
+            for col_num, value in enumerate(reys_data, 1):
+                sheet.cell(row=row_num, column=col_num).value = value
+
+        # Prepare the HTTP response
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = f'attachment; filename="Car_Details_{pk}.xlsx"'
         workbook.save(response)
         return response

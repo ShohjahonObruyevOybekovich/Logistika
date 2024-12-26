@@ -33,11 +33,12 @@ DEBUG = True
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,[::1]").split(",")
 
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://templify.uz',
-#     'https://root.templify.uz',
-#     'https://www.root.templify.uz',  # Add this if you have a "www" version
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://templify.uz',
+    'https://root.templify.uz',
+    'https://www.root.templify.uz',
+    'https://logistics-dashboard-peach.vercel.app'
+]
 
 # Application definition
 
@@ -192,6 +193,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Frontend domeni
     "http://127.0.0.1:3000",
     "http://16.171.242.109",
+    'https://logistics-dashboard-peach.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = (

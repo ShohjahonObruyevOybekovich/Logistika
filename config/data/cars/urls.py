@@ -23,4 +23,6 @@ urlpatterns = [
     path("car-info/", DownloadCarInfoAPIView.as_view(), name="car-info"),
     path("detail-info/",FilteredCarDetailsExportToExcelView.as_view(), name="detail-info"),
 
+    path("car-infos/<uuid:pk>",CarDetailsExcelAPIView.as_view(), name="car-info"),
+
 ]
