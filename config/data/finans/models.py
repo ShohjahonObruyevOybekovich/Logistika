@@ -57,14 +57,12 @@ class Logs(TimeStampModel):
 
     def __str__(self):
         return f"{self.action} - {self.amount_uzs}"
-
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Case, When, FloatField
 from django.db.models.functions import TruncDay, TruncMonth
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from .models import Logs
 
 
 class FilteredIncomeOutcomeAPIView(APIView):
@@ -114,7 +112,7 @@ class FilteredIncomeOutcomeAPIView(APIView):
         income_sum = queryset.filter(action="INCOME").aggregate(total_income=Sum("amount_uzs"))["total_income"] or 0
         outcome_sum = queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum("amount_uzs"))["total_outcome"] or 0
 
-        # Generate data for chart (grouped by day or month)
+        # Determine grouping
         if start_date and end_date:
             group_by = TruncDay('created_at')
         elif year and month:
@@ -124,13 +122,26 @@ class FilteredIncomeOutcomeAPIView(APIView):
         else:
             group_by = TruncMonth('created_at')
 
+        # Generate chart data
         chart_data = (
             queryset
             .annotate(period=group_by)
             .values('period')
             .annotate(
-                income=Sum('amount_uzs', filter=F('action') == "INCOME"),
-                outcome=Sum('amount_uzs', filter=F('action') == "OUTCOME"),
+                income=Sum(
+                    Case(
+                        When(action="INCOME", then=F('amount_uzs')),
+                        default=0,
+                        output_field=FloatField()
+                    )
+                ),
+                outcome=Sum(
+                    Case(
+                        When(action="OUTCOME", then=F('amount_uzs')),
+                        default=0,
+                        output_field=FloatField()
+                    )
+                ),
             )
             .order_by('period')
         )
