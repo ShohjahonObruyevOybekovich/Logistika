@@ -231,20 +231,20 @@ class ExportOilInfoAPIView(APIView):
         # Handle different types of data
         if data_type == "oil":
             queryset = Oil.objects.all()
-            headers = ["Название масла", "Объем масла (л)", "Дата создания", "Дата обновления"]
+            headers = ["Название масла", "Объем масла (л)", "Дата создания",]
             sheet.append(headers)
 
             for oil in queryset:
                 sheet.append([
                     oil.oil_name,
                     oil.oil_volume,
-                    oil.created_at.strftime('%Y-%m-%d %H:%M:%S') if oil.created_at else "",
-                    oil.updated_at.strftime('%Y-%m-%d %H:%M:%S') if oil.updated_at else ""
+                    oil.created_at.strftime('%d-%m-%Y %H:%M') if oil.created_at else "",
+
                 ])
 
         elif data_type == "purchase":
             queryset = OilPurchase.objects.all()
-            headers = ["Название масла", "Цена (UZS)", "Общая сумма (UZS)", "Объем масла (л)", "Дата создания", "Дата обновления"]
+            headers = ["Название масла", "Цена (UZS)", "Общая сумма (UZS)", "Объем масла (л)", "Дата создания",]
             sheet.append(headers)
 
             for purchase in queryset:
@@ -253,13 +253,12 @@ class ExportOilInfoAPIView(APIView):
                     purchase.price_uzs,
                     purchase.amount_uzs,
                     purchase.oil_volume,
-                    purchase.created_at.strftime('%Y-%m-%d %H:%M:%S') if purchase.created_at else "",
-                    purchase.updated_at.strftime('%Y-%m-%d %H:%M:%S') if purchase.updated_at else ""
+                    purchase.created_at.strftime('%d-%m-%Y %H:%M') if purchase.created_at else "",
                 ])
 
         elif data_type == "recycle":
             queryset = OilREcycles.objects.all()
-            headers = ["Название масла", "Объем масла (л)", "Автомобиль", "Остаток масла (л)", "Дата создания", "Дата обновления"]
+            headers = ["Название масла", "Объем масла (л)", "Автомобиль", "Остаток масла (л)", "Дата создания",]
             sheet.append(headers)
 
             for recycle in queryset:
@@ -268,21 +267,21 @@ class ExportOilInfoAPIView(APIView):
                     recycle.amount,
                     recycle.car.name if recycle.car else "",
                     recycle.remaining_oil,
-                    recycle.created_at.strftime('%Y-%m-%d %H:%M:%S') if recycle.created_at else "",
-                    recycle.updated_at.strftime('%Y-%m-%d %H:%M:%S') if recycle.updated_at else ""
+                    recycle.created_at.strftime('%d-%m-%Y %H:%M') if recycle.created_at else "",
+
                 ])
 
         elif data_type == "utilized":
             queryset = Utilized_oil.objects.all()
-            headers = ["Объем использованного масла (л)", "Цена (UZS)", "Дата создания", "Дата обновления"]
+            headers = ["Объем использованного масла (л)", "Цена (UZS)", "Дата создания",]
             sheet.append(headers)
 
             for utilized in queryset:
                 sheet.append([
                     utilized.quantity_utilized,
                     utilized.price_uzs or "",
-                    utilized.created_at.strftime('%Y-%m-%d %H:%M:%S') if utilized.created_at else "",
-                    utilized.updated_at.strftime('%Y-%m-%d %H:%M:%S') if utilized.updated_at else ""
+                    utilized.created_at.strftime('%d-%m-%Y %H:%M') if utilized.created_at else "",
+
                 ])
 
         else:

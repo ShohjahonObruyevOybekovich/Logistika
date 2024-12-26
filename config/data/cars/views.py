@@ -467,7 +467,7 @@ class FilteredCarDetailsExportToExcelView(ListAPIView):
         sheet.title = "Car Details"
 
         # Define headers
-        headers = ["Name", "ID", "Price (UZS)", "In Sklad", "Created At", "Updated At"]
+        headers = ["Название", "ИД", "Цена (UZS)", "В наличии", "Создано"]
         for col_num, header in enumerate(headers, 1):
             cell = sheet.cell(row=1, column=col_num)
             cell.value = header
@@ -477,12 +477,12 @@ class FilteredCarDetailsExportToExcelView(ListAPIView):
 
         # Write data rows
         for row_num, detail in enumerate(details_queryset, 2):
-            sheet.cell(row=row_num, column=1).value = detail.name or "N/A"
-            sheet.cell(row=row_num, column=2).value = detail.id_detail or "N/A"
-            sheet.cell(row=row_num, column=3).value = detail.price_uzs or "N/A"
+            sheet.cell(row=row_num, column=1).value = detail.name or ""
+            sheet.cell(row=row_num, column=2).value = detail.id_detail or ""
+            sheet.cell(row=row_num, column=3).value = detail.price_uzs or ""
             sheet.cell(row=row_num, column=4).value = "Yes" if detail.in_sklad else "No"
-            sheet.cell(row=row_num, column=5).value = detail.created_at.strftime('%Y-%m-%d %H:%M:%S') if detail.created_at else ""
-            sheet.cell(row=row_num, column=6).value = detail.updated_at.strftime('%Y-%m-%d %H:%M:%S') if detail.updated_at else ""
+            sheet.cell(row=row_num, column=5).value = detail.created_at.strftime('%d-%m-%Y %H:%M') if detail.created_at else ""
+            sheet.cell(row=row_num, column=6).value = detail.updated_at.strftime('%d-%m-%Y %H:%M') if detail.updated_at else ""
 
         # Prepare the response
         response = HttpResponse(

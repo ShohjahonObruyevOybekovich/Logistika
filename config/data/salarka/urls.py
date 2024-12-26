@@ -10,4 +10,5 @@ urlpatterns = [
     path('sale/<uuid:pk>',SaleRetrieveAPIView.as_view(), name='retrieve'),
 
     path("salarka/<uuid:pk>",SalarkaStatsAPIView.as_view(), name='stats'),
+    path("info/",FilteredSalarkaExportToExcelView.as_view(), name='info'),
   ]

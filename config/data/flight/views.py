@@ -125,7 +125,7 @@ from .models import Flight, Ordered
 
 
 class ExportFlightInfoAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -144,28 +144,26 @@ class ExportFlightInfoAPIView(APIView):
         if data_type == "flight":
             queryset = Flight.objects.all()
             headers = [
-                "Регион", "Тип рейса", "Маршрут", "Автомобиль", "Водитель",
+                "Регион", "Тип рейса", "Автомобиль", "Водитель",
                 "Дата отправления", "Дата прибытия", "Цена (UZS)", "Расходы водителя (UZS)",
-                "Информация о грузе", "Другие расходы", "Статус", "Дата создания", "Дата обновления"
+                "Информация о грузе", "Другие расходы", "Статус", "Дата создания"
             ]
             sheet.append(headers)
 
             for flight in queryset:
                 sheet.append([
                     flight.region.name if flight.region else "",
-                    flight.get_flight_type_display() if flight.flight_type else "",
-                    flight.get_route_display() if flight.route else "",
-                    flight.car.name if flight.car else "",
+                    flight.get_flight_type_display() if flight.flight_type else "",\
+                    flight.car.number if flight.car else "",
                     flight.driver.full_name if flight.driver else "",
-                    flight.departure_date.strftime('%Y-%m-%d') if flight.departure_date else "",
-                    flight.arrival_date.strftime('%Y-%m-%d') if flight.arrival_date else "",
+                    flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",
+                    flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "",
                     flight.price_uzs or "",
                     flight.driver_expenses_uzs or "",
                     flight.cargo_info or "",
                     flight.other_expences or "",
                     flight.get_status_display() if flight.status else "",
-                    flight.created_at.strftime('%Y-%m-%d %H:%M:%S') if flight.created_at else "",
-                    flight.updated_at.strftime('%Y-%m-%d %H:%M:%S') if flight.updated_at else "",
+                    flight.created_at.strftime("%d-%m-%Y %H:%M") if flight.created_at else "",
                 ])
 
         elif data_type == "ordered":
@@ -173,7 +171,7 @@ class ExportFlightInfoAPIView(APIView):
             headers = [
                 "Имя водителя", "Номер водителя", "Номер автомобиля", "Информация о грузе",
                 "Статус", "Дата отправления", "Цена (UZS)", "Расходы водителя (UZS)",
-                "Регион", "Тип рейса", "Дата создания", "Дата обновления"
+                "Регион", "Тип рейса", "Дата создания"
             ]
             sheet.append(headers)
 
@@ -184,13 +182,12 @@ class ExportFlightInfoAPIView(APIView):
                     ordered.car_number or "",
                     ordered.cargo_info or "",
                     ordered.get_status_display() if ordered.status else "",
-                    ordered.departure_date.strftime('%Y-%m-%d') if ordered.departure_date else "",
+                    ordered.departure_date.strftime('%d-%m-%Y') if ordered.departure_date else "",
                     ordered.price_uzs or "",
                     ordered.driver_expenses_uzs or "",
                     ordered.region.name if ordered.region else "",
                     ordered.get_flight_type_display() if ordered.flight_type else "",
-                    ordered.created_at.strftime('%Y-%m-%d %H:%M:%S') if ordered.created_at else "",
-                    ordered.updated_at.strftime('%Y-%m-%d %H:%M:%S') if ordered.updated_at else "",
+                    ordered.created_at.strftime('%d-%m-%Y %H:%M') if ordered.created_at else "",
                 ])
 
         else:

@@ -170,13 +170,13 @@ class ExportGasInfoAPIView(APIView):
                 sheet.append([
                     station.name,
                     station.remaining_gas,
-                    station.created_at.strftime('%Y-%m-%d %H:%M:%S') if station.created_at else "",
-                    station.updated_at.strftime('%Y-%m-%d %H:%M:%S') if station.updated_at else ""
+                    station.created_at.strftime('%d-%m-%Y %H:%M') if station.created_at else "",
+                    station.updated_at.strftime('%d-%m-%Y %H:%M') if station.updated_at else ""
                 ])
 
         elif data_type == "purchase":
             queryset = GasPurchase.objects.all()
-            headers = ["Station", "Amount (m³)", "Paid Price (UZS)", "Price (UZS)", "Created At", "Updated At"]
+            headers = ["Станция", "Количество (м³)", "Оплаченная цена (UZS)", "Цена (UZS)", "Создано"]
             sheet.append(headers)
 
             for purchase in queryset:
@@ -185,13 +185,13 @@ class ExportGasInfoAPIView(APIView):
                     purchase.amount,
                     purchase.payed_price_uzs or "",
                     purchase.price_uzs or "",
-                    purchase.created_at.strftime('%Y-%m-%d %H:%M:%S') if purchase.created_at else "",
-                    purchase.updated_at.strftime('%Y-%m-%d %H:%M:%S') if purchase.updated_at else ""
+                    purchase.created_at.strftime('%d-%m-%Y %H:%M') if purchase.created_at else ""
                 ])
 
         elif data_type == "sale":
             queryset = GasSale.objects.all()
-            headers = ["Station", "Car", "Amount (m³)", "Paid Price (UZS)", "Price (UZS)", "Created At", "Updated At"]
+            headers = ["Станция", "Машина", "Количество (м³)", "Оплаченная цена (UZS)", "Цена (UZS)", "Создано"]
+
             sheet.append(headers)
 
             for sale in queryset:
@@ -201,13 +201,12 @@ class ExportGasInfoAPIView(APIView):
                     sale.amount,
                     sale.payed_price_uzs or "",
                     sale.price_uzs or "",
-                    sale.created_at.strftime('%Y-%m-%d %H:%M:%S') if sale.created_at else "",
-                    sale.updated_at.strftime('%Y-%m-%d %H:%M:%S') if sale.updated_at else ""
+                    sale.created_at.strftime('%d-%m-%Y %H:%M') if sale.created_at else "",
                 ])
 
         elif data_type == "another":
             queryset = Gas_another_station.objects.all()
-            headers = ["Car", "Station Name", "Purchased Volume (m³)", "Paid Price (UZS)", "Created At", "Updated At"]
+            headers = ["Машина", "Название станции", "Купленный объем (м³)", "Оплаченная цена (UZS)", "Создано"]
             sheet.append(headers)
 
             for another in queryset:
@@ -216,8 +215,7 @@ class ExportGasInfoAPIView(APIView):
                     another.name,
                     another.purchased_volume,
                     another.payed_price_uzs or "",
-                    another.created_at.strftime('%Y-%m-%d %H:%M:%S') if another.created_at else "",
-                    another.updated_at.strftime('%Y-%m-%d %H:%M:%S') if another.updated_at else ""
+                    another.created_at.strftime('%d-%m-%Y %H:%M') if another.created_at else "",
                 ])
 
         else:
