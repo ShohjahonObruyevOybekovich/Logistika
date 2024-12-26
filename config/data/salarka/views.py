@@ -26,7 +26,6 @@ class SalarkaListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-
 class SalarkaUpdateAPIView(UpdateAPIView):
     queryset = Salarka.objects.all()
     serializer_class = SalarkaCreateseralizer

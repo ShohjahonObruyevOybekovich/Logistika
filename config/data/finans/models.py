@@ -57,6 +57,9 @@ class Logs(TimeStampModel):
 
     def __str__(self):
         return f"{self.action} - {self.amount_uzs}"
+
+
+
 from django.db.models import Sum, F, Case, When, FloatField
 from django.db.models.functions import TruncDay, TruncMonth
 from rest_framework.views import APIView

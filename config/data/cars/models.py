@@ -28,6 +28,7 @@ class Car(TimeStampModel):
     leasing_period = models.IntegerField(help_text='Leasing period',
                                          null=True, blank=True)
 
+    leasing_payed_amount = models.FloatField(help_text='Leasing payment amount',null=True,blank=True)
 
     with_trailer = models.BooleanField(default=False, help_text='With trailer')
     FUEL_CHOICES = [

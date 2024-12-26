@@ -76,6 +76,9 @@ class FinansUserListserializer(serializers.ModelSerializer):
     income_sum = serializers.SerializerMethodField()
     outcome_sum = serializers.SerializerMethodField()
     win = serializers.SerializerMethodField()
+    total_leasing_paid = serializers.SerializerMethodField()
+    total_car_prices = serializers.SerializerMethodField()
+    leasing_balance = serializers.SerializerMethodField()
 
     class Meta:
         model = Logs
@@ -93,6 +96,9 @@ class FinansUserListserializer(serializers.ModelSerializer):
             "income_sum",
             "outcome_sum",
             "win",
+            "total_leasing_paid",
+            "total_car_prices",
+            "leasing_balance",
         ]
 
     def get_income_sum(self, obj):
@@ -110,3 +116,21 @@ class FinansUserListserializer(serializers.ModelSerializer):
         income = self.get_income_sum(obj)
         outcome = self.get_outcome_sum(obj)
         return income - outcome
+
+    def get_total_leasing_paid(self, obj):
+        # Sum of leasing_payed_amount for all cars with leasing
+        return Car.objects.filter(type_of_payment="LEASING").aggregate(
+            total_leasing_paid=Sum('leasing_payed_amount')
+        )['total_leasing_paid'] or 0
+
+    def get_total_car_prices(self, obj):
+        # Sum of car prices for all cars with leasing
+        return Car.objects.filter(type_of_payment="LEASING").aggregate(
+            total_car_prices=Sum('price_uzs')
+        )['total_car_prices'] or 0
+
+    def get_leasing_balance(self, obj):
+        # Difference between total_car_prices and total_leasing_paid
+        total_car_prices = self.get_total_car_prices(obj)
+        total_leasing_paid = self.get_total_leasing_paid(obj)
+        return total_car_prices - total_leasing_paid
