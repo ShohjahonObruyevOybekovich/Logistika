@@ -77,21 +77,11 @@ class SalarkaStatsAPIView(ListAPIView):
 
 class FilteredSalarkaExportToExcelView(APIView):
     def get(self, request, *args, **kwargs):
-        # Get filter parameters from query
-        car_id = request.GET.get("car_id")  # Filter by car ID
         volume_filter = request.GET.get("volume")  # Filter by volume
         price_filter = request.GET.get("price_uzs")  # Filter by price_uzs
 
         # Start with the queryset for Salarka
         salarka_queryset = Salarka.objects.all()
-
-        # Apply filters if parameters are provided
-        if car_id:
-            try:
-                car_id = int(car_id)
-                salarka_queryset = salarka_queryset.filter(car_id=car_id)
-            except ValueError:
-                return HttpResponse("Invalid car_id parameter.", status=400)
 
         if volume_filter:
             try:
@@ -117,17 +107,17 @@ class FilteredSalarkaExportToExcelView(APIView):
         sheet.title = "Salarka Details"
 
         # Define headers
-        headers = ["Car", "Volume", "Price (UZS)", "Created At", "Updated At"]
+        headers = ["Машина", "Объем", "Цена (UZS)", "Создано"]
         sheet.append(headers)
 
         # Write the filtered data rows
         for salarka in salarka_queryset:
             sheet.append([
-                salarka.car.name if salarka.car else "N/A",
+                salarka.car.name if salarka.car else "",
                 salarka.volume,
-                salarka.price_uzs or "N/A",
-                salarka.created_at.strftime('%Y-%m-%d %H:%M:%S') if salarka.created_at else "",
-                salarka.updated_at.strftime('%Y-%m-%d %H:%M:%S') if salarka.updated_at else ""
+                salarka.price_uzs or "",
+                salarka.created_at.strftime('%Y-%m-%d %H:%M') if salarka.created_at else "",
+                salarka.updated_at.strftime('%Y-%m-%d %H:%M') if salarka.updated_at else ""
             ])
 
         # Apply styles to the header row
