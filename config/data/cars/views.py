@@ -434,9 +434,12 @@ class DownloadCarInfoAPIView(APIView):
 
 
 
-class FilteredCarDetailsExportToExcelView(APIView):
+
+class FilteredCarDetailsExportToExcelView(ListAPIView):
     def get(self, request, *args, **kwargs):
         car_id = request.GET.get("car_id")  # Get the car_id from query parameters
+        name_filter = request.GET.get("name")  # Get name filter from query parameters
+        price_filter = request.GET.get("price_uzs")  # Get price filter from query parameters
 
         if not car_id:
             return HttpResponse("car_id is required", status=400)
@@ -444,8 +447,19 @@ class FilteredCarDetailsExportToExcelView(APIView):
         # Filter details by car_id
         details_queryset = Details.objects.filter(car_id=car_id)
 
+        # Apply additional filters if they are provided
+        if name_filter:
+            details_queryset = details_queryset.filter(name__icontains=name_filter)
+
+        if price_filter:
+            try:
+                price_filter = float(price_filter)  # Convert the price to a float for comparison
+                details_queryset = details_queryset.filter(price_uzs=price_filter)
+            except ValueError:
+                return HttpResponse("Invalid price filter value.", status=400)
+
         if not details_queryset.exists():
-            return HttpResponse("No details found for the specified car_id.", status=404)
+            return HttpResponse("No details found for the specified car_id or filters.", status=404)
 
         # Create an Excel workbook
         workbook = Workbook()
