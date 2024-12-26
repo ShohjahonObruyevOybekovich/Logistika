@@ -8,6 +8,17 @@ from ..cars.serializers import CarListserializer
 User = get_user_model()
 
 
+class RemainingSalesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Remaining_volume
+        fields = [
+            "id",
+            "volume",
+            "created_at",
+
+        ]
+
+
 class SalarkaListSerializer(serializers.ModelSerializer):
     remaining_volume = serializers.SerializerMethodField()
 
@@ -17,19 +28,26 @@ class SalarkaListSerializer(serializers.ModelSerializer):
             "id",
             "car",
             "volume",
-            # 'price_usd',
             'price_uzs',
             "remaining_volume",
             "created_at",
         ]
 
     def get_remaining_volume(self, obj):
-        # Get the current remaining volume
-        remaining_volume = Remaining_volume.objects.first()
-        return remaining_volume.volume if remaining_volume else 0
+        """
+        This method will be called for each Salarka instance.
+        We query the Remaining_volume model based on custom logic.
+        """
+        # You can modify this query logic based on your requirements
+        remaining_volume_instance = Remaining_volume.objects.first()
+
+        if remaining_volume_instance:
+            return RemainingSalesSerializer(remaining_volume_instance).data
+        return None
+
 
     def to_representation(self, instance):
-        """Customize the representation of the 'car' field."""
+        """Customize the representation of the 'car' and 'remaining_volume' fields."""
         representation = super().to_representation(instance)
         representation['car'] = CarListserializer(instance.car).data
         return representation
@@ -92,12 +110,3 @@ class SaleSerializer(serializers.ModelSerializer):
         return representation
 
 
-class RemainingSalesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Remaining_volume
-        fields = [
-            "id",
-            "volume",
-            "created_at",
-
-        ]

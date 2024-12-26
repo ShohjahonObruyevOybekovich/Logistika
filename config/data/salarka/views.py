@@ -8,7 +8,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from .models import Salarka, Sale
+from .models import Salarka, Sale, Remaining_volume
 from .serializers import (
     SalarkaCreateseralizer, SaleSerializer, SalarkaListSerializer
 )
@@ -24,6 +24,7 @@ class SalarkaListAPIView(ListAPIView):
     queryset = Salarka.objects.all().order_by("-created_at")
     serializer_class = SalarkaListSerializer
     permission_classes = (IsAuthenticated,)
+
 
 
 class SalarkaUpdateAPIView(UpdateAPIView):
