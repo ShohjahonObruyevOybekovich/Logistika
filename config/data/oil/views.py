@@ -20,7 +20,7 @@ class OilCreateAPIView(ListCreateAPIView):
 
 
 class OilUpdateAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Oil.objects.all()
+    queryset = Oil.objects.all().order_by("-created_at")
     serializer_class = OilCreateseralizer
     permission_classes = (IsAuthenticated,)
 
@@ -42,7 +42,7 @@ class RecycledOilListAPIView(CreateAPIView):
 
 
 class RecycledOilUpdateAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = OilREcycles.objects.all()
+    queryset = OilREcycles.objects.all().order_by("-created_at")
     serializer_class = RecycledOilSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -59,7 +59,7 @@ class RecycleOilCARListAPIView(ListAPIView):
 
         # Filter by car_id if provided
         if car_id:
-            queryset = queryset.filter(car__id=car_id)
+            queryset = queryset.filter(car__id=car_id).order_by("-created_at")
 
         return queryset
 
@@ -150,7 +150,7 @@ class RecycleListAPIView(ListAPIView):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         oil = get_object_or_404(Oil, id=pk)
-        recycles = OilREcycles.objects.filter(oil=oil)
+        recycles = OilREcycles.objects.filter(oil=oil).order_by("-created_at")
         data = {
             "oil_name": oil.oil_name,
             "recycles": [
@@ -168,7 +168,7 @@ class RecycleListAPIView(ListAPIView):
 
 
 class OilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
-    queryset = OilPurchase.objects.all()
+    queryset = OilPurchase.objects.all().order_by("-created_at")
     serializer_class = OilPurchaseSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -182,7 +182,7 @@ class UtilizedOilPurchaseListAPIView(ListCreateAPIView):
 
 
 class UtilizedOilPurchaseUpdateAPIView(RetrieveUpdateAPIView):
-    queryset = Utilized_oil.objects.all()
+    queryset = Utilized_oil.objects.all().order_by("-created_at")
     serializer_class = Utilized_oilSerializer
     permission_classes = [IsAuthenticated]
 
@@ -192,7 +192,7 @@ class RemainingOilPurchaseListAPIView(APIView):
 
     def get_queryset(self):
         # You can modify this method to filter or get data dynamically
-        return Remaining_oil_quantity.objects.all()
+        return Remaining_oil_quantity.objects.all().order_by("-created_at")
 
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()

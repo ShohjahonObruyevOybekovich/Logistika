@@ -29,7 +29,7 @@ class FlightListAPIView(ListCreateAPIView):
 
 
 class FlightRetrieveAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.all().order_by("-created_at")
     serializer_class = FlightListserializer
     permission_classes = [IsAuthenticated]
 
@@ -86,7 +86,7 @@ class FlightListNOPg(ListAPIView):
 
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.filter_queryset(self.get_queryset()).order_by('-created_at')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -110,7 +110,7 @@ class FlightOrderedListAPIView(ListCreateAPIView):
 
 
 class FlightOrderedRetrieveAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Ordered.objects.all()
+    queryset = Ordered.objects.all().order_by("-created_at")
     serializer_class = FlightOrderedListserializer
     permission_classes = (IsAuthenticated,)
 

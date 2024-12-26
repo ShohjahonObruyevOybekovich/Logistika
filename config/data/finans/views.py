@@ -65,7 +65,7 @@ class FinansList(ListAPIView):
 
 
 class FinansDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Logs.objects.all()
+    queryset = Logs.objects.all().order_by("-created_at")
     serializer_class = FinansListserializer
     permission_classes = [IsAuthenticated]
 

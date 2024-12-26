@@ -51,7 +51,7 @@ class GasPurchasesListAPIView(ListCreateAPIView):
         if not station:
             return GasPurchase.objects.none()
 
-        return station.purchases.all()
+        return station.purchases.all().order_by("-created_at")
 
     def perform_create(self, serializer):
 
@@ -73,7 +73,7 @@ class GasSalesListAPIView(ListCreateAPIView):
         if not station:
             return GasSale.objects.none()
 
-        return station.sales.all()
+        return station.sales.all().order_by("-created_at")
 
     def perform_create(self, serializer):
 
@@ -163,15 +163,14 @@ class ExportGasInfoAPIView(APIView):
         # Handle different types of data
         if data_type == "station":
             queryset = GasStation.objects.all()
-            headers = ["Name", "Remaining Gas", "Created At", "Updated At"]
+            headers = ["Название", "Оставшийся газ", "Создано"]
             sheet.append(headers)
 
             for station in queryset:
                 sheet.append([
                     station.name,
                     station.remaining_gas,
-                    station.created_at.strftime('%d-%m-%Y %H:%M') if station.created_at else "",
-                    station.updated_at.strftime('%d-%m-%Y %H:%M') if station.updated_at else ""
+                    station.created_at.strftime('%d-%m-%Y %H:%M') if station.created_at else ""
                 ])
 
         elif data_type == "purchase":
