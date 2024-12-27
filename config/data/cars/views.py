@@ -544,7 +544,7 @@ class CarDetailsExcelAPIView(APIView):
         # Write flights data
         for row_num, flight in enumerate(flights_queryset, flights_start_row + 1):
             flight_data = [
-                flight.route if flight.route else "",
+                "Туда" if flight.route == "GONE_TO" else "Туда и обратно" if flight.route == "BEEN_TO" else "",
                 flight.region.name if flight.region else "",
                 flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",
                 flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "",
