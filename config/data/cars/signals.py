@@ -8,7 +8,7 @@ def send_oil_recycle_notification(sender, instance, **kwargs):
     if instance.check_oil_recycle_notification():
         # Send a notification
         # You can use any notification mechanism here (e.g., email, push, or database notification)
-        print(f"Notification: Car {instance.name} is nearing the next oil recycle distance.")
+        print(f"Уведомление: Автомобиль {instance.name} приближается к следующему пробегу для замены масла.")
 
 
 @receiver(post_save, sender=Car)
@@ -16,5 +16,5 @@ def send_oil_recycle_notification(sender, instance:Car, **kwargs):
     if instance.check_oil_recycle_notification():
         # Example: Save the notification to the database
         Notification.objects.create(
-            message=f"Car {instance.number} is nearing the next oil recycle distance."
+            message=f"Автомобиль с номером {instance.number} приближается к следующему пробегу для замены масла."
         )
