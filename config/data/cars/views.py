@@ -495,23 +495,23 @@ class FilteredCarDetailsExportToExcelView(ListAPIView):
 
 class CarDetailsExcelAPIView(APIView):
     """
-    API View to generate an Excel file with car details and associated reyses (trips).
+    API View to generate an Excel file with car details and associated flights.
     """
 
     def get(self, request, pk, *args, **kwargs):
         # Get the car instance by pk or return 404 if not found
         car = get_object_or_404(Car, id=pk)
 
-        # Fetch associated reyses/trips for the car (if applicable)
-        reyses_queryset = Flight.objects.filter(car=car)  # Adjust if the related model is different
+        # Fetch associated flights for the car
+        flights_queryset = Flight.objects.filter(car=car)
 
         # Create an Excel workbook
         workbook = Workbook()
         sheet = workbook.active
-        sheet.title = "Car Details and Reyses"
+        sheet.title = "Car Details and Flights"
 
         # Define headers for car details
-        car_headers = ["Car Name", "Number", "Model", "Fuel Type", "Price (UZS)", "Distance Travelled"]
+        car_headers = ["Название автомобиля", "Номер", "Модель", "Тип топлива", "Цена (UZS)", "Пройденное расстояние"]
         for col_num, header in enumerate(car_headers, 1):
             cell = sheet.cell(row=1, column=col_num)
             cell.value = header
@@ -523,44 +523,46 @@ class CarDetailsExcelAPIView(APIView):
         car_data = [
             car.name,
             car.number,
-            car.model.name if car.model else "N/A",
+            car.model.name if car.model else "",
             car.fuel_type,
-            car.price_uzs or "N/A",
+            car.price_uzs or "",
             car.distance_travelled or 0
         ]
         for col_num, value in enumerate(car_data, 1):
             sheet.cell(row=2, column=col_num).value = value
 
-        # Add headers for reyses
-        reyses_start_row = 4
-        reyses_headers = ["Reys ID", "Start Location", "End Location", "Date", "Distance", "Driver"]
-        for col_num, header in enumerate(reyses_headers, 1):
-            cell = sheet.cell(row=reyses_start_row, column=col_num)
+        # Add headers for flights
+        flights_start_row = 4
+        flights_headers = ["Место отправления", "Место прибытия", "Дата отправления", "Дата прибытия", "Водитель", "Цена (UZS)", "Расстояние"]
+        for col_num, header in enumerate(flights_headers, 1):
+            cell = sheet.cell(row=flights_start_row, column=col_num)
             cell.value = header
             cell.font = Font(bold=True, size=12)
             cell.alignment = Alignment(horizontal="center", vertical="center")
             sheet.column_dimensions[cell.column_letter].width = 20
 
-        # Write reyses data
-        for row_num, reys in enumerate(reyses_queryset, reyses_start_row + 1):
-            reys_data = [
-                reys.id,
-                reys.start_location or "N/A",
-                reys.end_location or "N/A",
-                reys.date.strftime('%Y-%m-%d %H:%M:%S') if reys.date else "N/A",
-                reys.distance or 0,
-                reys.driver.name if reys.driver else "N/A"
+        # Write flights data
+        for row_num, flight in enumerate(flights_queryset, flights_start_row + 1):
+            flight_data = [
+                flight.route if flight.route else "",
+                flight.region.name if flight.region else "",
+                flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",
+                flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "",
+                flight.driver.full_name if flight.driver else "",
+                flight.price_uzs or "",
+                flight.distance_travelled if hasattr(flight, 'distance_travelled') else ""
             ]
-            for col_num, value in enumerate(reys_data, 1):
+            for col_num, value in enumerate(flight_data, 1):
                 sheet.cell(row=row_num, column=col_num).value = value
 
         # Prepare the HTTP response
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = f'attachment; filename="Car_Details_{pk}.xlsx"'
+        response["Content-Disposition"] = f'attachment; filename="Car_Details_{car.number}.xlsx"'
         workbook.save(response)
         return response
+
 
 
 

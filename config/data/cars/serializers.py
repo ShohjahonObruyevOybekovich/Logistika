@@ -17,6 +17,11 @@ class CarCreateSerializer(serializers.ModelSerializer):
                   "trailer_number","created_at", "updated_at"]
 
 
+class CarUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = "__all__"
+
 
 class CarListserializer(serializers.ModelSerializer):
     model = serializers.PrimaryKeyRelatedField(queryset=Model.objects.all())
