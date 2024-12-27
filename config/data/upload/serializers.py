@@ -1,4 +1,4 @@
-from django.conf import settings
+from root.settings import BASE_DIR
 from rest_framework import serializers
 
 from .models import File
@@ -16,6 +16,6 @@ class FileUploadSerializer(serializers.ModelSerializer):
         if request is not None:
             representation["file"] = request.build_absolute_uri(instance.file.url)
         else:
-            representation["file"] = f"{settings.BASE_URL}{instance.file.url}"
+            representation["file"] = f"{BASE_DIR}{instance.file.url}"
         return representation
 
