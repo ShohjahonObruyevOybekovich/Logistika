@@ -7,11 +7,8 @@ from ..finans.models import Logs
 
 @receiver(post_save, sender=Flight)
 def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
-    # The signal should only work during updates (not creation)
     if created:
-        return
-
-    if instance.status == "INACTIVE":
+        # if instance.status == "INACTIVE":
         try:
             with transaction.atomic():
                 # Log income if applicable
@@ -42,29 +39,27 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                     instance.driver.save()
 
         except Exception as e:
-            # Log error or handle as needed
             print(f"Error handling flight status update signal: {e}")
+
 
 
 @receiver(post_save, sender=Ordered)
 def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
     # The signal should only work during updates (not creation)
     if created:
-        return
+        # if instance.status == "INACTIVE":
+            try:
+                with transaction.atomic():
+                    # Log income if applicable
+                    if instance.price_uzs > 0:
+                        Logs.objects.create(
+                            action="INCOME",
+                            amount_uzs=instance.price_uzs,
+                            kind="ORDERED_FLIGHT",
+                            comment=f"Доход от заказанного рейса (ID) {instance}",
+                            flight=instance,
+                        )
 
-    if instance.status == "INACTIVE":
-        try:
-            with transaction.atomic():
-                # Log income if applicable
-                if instance.price_uzs > 0:
-                    Logs.objects.create(
-                        action="INCOME",
-                        amount_uzs=instance.price_uzs,
-                        kind="ORDERED_FLIGHT",
-                        comment=f"Доход от заказанного рейса (ID) {instance}",
-                        flight=instance,
-                    )
-
-        except Exception as e:
-            # Log error or handle as needed
-            print(f"Error handling ordered flight status update signal: {e}")
+            except Exception as e:
+                # Log error or handle as needed
+                print(f"Error handling ordered flight status update signal: {e}")

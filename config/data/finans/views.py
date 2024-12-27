@@ -1,3 +1,4 @@
+from django.utils.dateparse import parse_datetime
 from django.views import View
 import openpyxl
 from drf_yasg import openapi
@@ -38,26 +39,50 @@ class Finans(ListCreateAPIView):
 
 
 
+
 class FinansList(ListAPIView):
     queryset = Logs.objects.all().order_by("-created_at")
     serializer_class = FinansUserListserializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_class = LogsFilter  # Ensure this is set
+    filterset_class = LogsFilter
     ordering_fields = ["action", "created_at"]
     search_fields = ["action", "reason", "employee", "flight", "created_at"]
 
     def list(self, request, *args, **kwargs):
-        # Filter the queryset using LogsFilter
         queryset = self.filter_queryset(self.get_queryset())
 
-        # Pass the filtered queryset to the serializer context
-        serializer = self.get_serializer(queryset, many=True, context={'filtered_queryset': queryset})
+        # Extract date filters from query parameters
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
 
-        # Paginate the results if pagination is enabled
+        # Parse the dates if provided
+        start_date = parse_datetime(start_date) if start_date else None
+        end_date = parse_datetime(end_date) if end_date else None
+
+        # Pass the filtered queryset and date range to the serializer context
+        serializer = self.get_serializer(
+            queryset,
+            many=True,
+            context={
+                'filtered_queryset': queryset,
+                'start_date': start_date,
+                'end_date': end_date,
+            }
+        )
+
+        # Paginate the results if necessary
         page = self.paginate_queryset(queryset)
         if page is not None:
-            paginated_serializer = self.get_serializer(page, many=True, context={'filtered_queryset': queryset})
+            paginated_serializer = self.get_serializer(
+                page,
+                many=True,
+                context={
+                    'filtered_queryset': queryset,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                }
+            )
             return self.get_paginated_response(paginated_serializer.data)
 
         return Response(serializer.data)

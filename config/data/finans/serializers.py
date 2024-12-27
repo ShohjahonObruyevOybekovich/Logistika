@@ -71,7 +71,6 @@ class LogsFilter(filters.FilterSet):
         ]
 
 
-
 class FinansUserListserializer(serializers.ModelSerializer):
     income_sum = serializers.SerializerMethodField()
     outcome_sum = serializers.SerializerMethodField()
@@ -79,6 +78,8 @@ class FinansUserListserializer(serializers.ModelSerializer):
     total_leasing_paid = serializers.SerializerMethodField()
     total_car_prices = serializers.SerializerMethodField()
     leasing_balance = serializers.SerializerMethodField()
+    flight_count = serializers.SerializerMethodField()
+    active_flight_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Logs
@@ -99,38 +100,56 @@ class FinansUserListserializer(serializers.ModelSerializer):
             "total_leasing_paid",
             "total_car_prices",
             "leasing_balance",
+            "flight_count",
+            "active_flight_count",
         ]
 
     def get_income_sum(self, obj):
-        # Get the filtered queryset from the context
         queryset = self.context.get('filtered_queryset', Logs.objects.all())
         return queryset.filter(action="INCOME").aggregate(total_income=Sum('amount_uzs'))['total_income'] or 0
 
     def get_outcome_sum(self, obj):
-        # Get the filtered queryset from the context
         queryset = self.context.get('filtered_queryset', Logs.objects.all())
         return queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome'] or 0
 
     def get_win(self, obj):
-        # Calculate win as income - outcome
         income = self.get_income_sum(obj)
         outcome = self.get_outcome_sum(obj)
         return income - outcome
 
     def get_total_leasing_paid(self, obj):
-        # Sum of leasing_payed_amount for all cars with leasing
         return Car.objects.filter(type_of_payment="LEASING").aggregate(
             total_leasing_paid=Sum('leasing_payed_amount')
         )['total_leasing_paid'] or 0
 
     def get_total_car_prices(self, obj):
-        # Sum of car prices for all cars with leasing
         return Car.objects.filter(type_of_payment="LEASING").aggregate(
             total_car_prices=Sum('price_uzs')
         )['total_car_prices'] or 0
 
     def get_leasing_balance(self, obj):
-        # Difference between total_car_prices and total_leasing_paid
         total_car_prices = self.get_total_car_prices(obj)
         total_leasing_paid = self.get_total_leasing_paid(obj)
         return total_car_prices - total_leasing_paid
+
+    def get_flight_count(self, obj):
+        # Get the date filter range from the context
+        queryset = Flight.objects.all()
+        start_date = self.context.get('start_date')
+        end_date = self.context.get('end_date')
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+        return queryset.count()
+
+    def get_active_flight_count(self, obj):
+        # Filter active flights within the date range
+        queryset = Flight.objects.filter(status="ACTIVE")
+        start_date = self.context.get('start_date')
+        end_date = self.context.get('end_date')
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+        return queryset.count()

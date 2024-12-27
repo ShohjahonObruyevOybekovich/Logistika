@@ -47,6 +47,13 @@ class FlightListserializer(serializers.ModelSerializer):
         representation['upload'] = FileUploadSerializer(instance.upload).data
         return representation
 
+    def update(self, instance, validated_data):
+        # Update the instance
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()  # Ensure save() is called to trigger signals
+        return instance
+
 
 class FlightListCReateserializer(serializers.ModelSerializer):
     region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())

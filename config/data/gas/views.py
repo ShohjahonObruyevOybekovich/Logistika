@@ -189,14 +189,15 @@ class ExportGasInfoAPIView(APIView):
 
         elif data_type == "sale":
             queryset = GasSale.objects.all()
-            headers = ["Станция", "Машина", "Количество (м³)", "Оплаченная цена (UZS)", "Цена (UZS)", "Создано"]
+            headers = ["Станция", "Пробег" ,"Машина", "Количество (м³)", "Оплаченная цена (UZS)", "Цена (UZS)", "Создано"]
 
             sheet.append(headers)
 
             for sale in queryset:
                 sheet.append([
                     sale.station.name if sale.station else "",
-                    sale.car.name if sale.car else "",
+                    sale.car.distance_travelled if sale.car else "",
+                    sale.car.number if sale.car else "",
                     sale.amount,
                     sale.payed_price_uzs or "",
                     sale.price_uzs or "",

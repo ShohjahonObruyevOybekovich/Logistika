@@ -69,6 +69,7 @@ class FlightHistoryAPIView(ListAPIView):
             return Flight.objects.filter(driver__id=driver_id).order_by("-created_at")
         return Flight.objects.none()
 
+
 class FlightHistoryStatsAPIView(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
@@ -79,27 +80,16 @@ class FlightHistoryStatsAPIView(ListAPIView):
             return Flight.objects.filter(id=flight_id).order_by("-created_at")
         return Flight.objects.none()
 
+
+
 class FlightListNOPg(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
     queryset = Flight.objects.all().order_by('-created_at')
+    pagination_class = None  # Disable pagination for this view only
 
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset()).order_by('-created_at')
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            response = self.get_paginated_response(serializer.data)
-            print(f"Response type: {type(response)}")  # Debugging
-            return response
-
-        serializer = self.get_serializer(queryset, many=True)
-        response = Response(serializer.data)
-        print(f"Response type: {type(response)}")  # Debugging
-        return response
-
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 
