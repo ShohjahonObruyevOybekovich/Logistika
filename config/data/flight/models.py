@@ -100,7 +100,7 @@ class Flight(TimeStampModel):
 
 
 class Ordered(TimeStampModel):
-    driver_name = models.CharField(max_length=100,null=True,blank=True)
+    driver_name = models.ForeignKey("Employee", on_delete=models.CASCADE)
     driver_number = models.CharField(max_length=100,null=True,blank=True)
     car_number = models.CharField(max_length=100,null=True,blank=True)
     cargo_info = models.TextField(blank=True, null=True)
