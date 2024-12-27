@@ -576,6 +576,9 @@ class NotificationListApi(ListCreateAPIView):
     ordering_fields = ["is_read"]
     search_fields = ["is_read"]
 
+    def get_paginated_response(self, data):
+        return Response(data)
+
 class NotificationDetailsApi(RetrieveUpdateDestroyAPIView):
     queryset = Notification.objects.all()
     permission_classes = [IsAuthenticated]
