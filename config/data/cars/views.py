@@ -14,7 +14,7 @@ from rest_framework.generics import (
     ListAPIView,
     UpdateAPIView,
     DestroyAPIView,
-    CreateAPIView, get_object_or_404, )
+    CreateAPIView, get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView, )
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -561,3 +561,22 @@ class CarDetailsExcelAPIView(APIView):
         response["Content-Disposition"] = f'attachment; filename="Car_Details_{pk}.xlsx"'
         workbook.save(response)
         return response
+
+
+
+class NotificationListApi(ListCreateAPIView):
+    queryset = Notification.objects.all()
+    # permission_classes = [IsAuthenticated]
+    serializer_class = Notificationserializer
+
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = [
+        "is_read",
+    ]
+    ordering_fields = ["is_read"]
+    search_fields = ["is_read"]
+
+class NotificationDetailsApi(RetrieveUpdateDestroyAPIView):
+    queryset = Notification.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = Notificationserializer

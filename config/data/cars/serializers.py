@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from rest_framework import serializers
 
-from .models import Car, Model, Details
+from .models import Car, Model, Details, Notification
 from ..finans.models import Logs
 
 User = get_user_model()
@@ -92,3 +92,11 @@ class DetailCreateListSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         details = [Details(**data) for data in validated_data]
         return Details.objects.bulk_create(details)
+
+
+class Notificationserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ["id","message","is_read"]
+
+

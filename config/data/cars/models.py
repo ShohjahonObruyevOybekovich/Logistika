@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from data.command.models import TimeStampModel
 
+User = get_user_model()
 
 class Model(TimeStampModel):
     name = models.CharField(max_length=100)
@@ -75,6 +77,15 @@ class Car(TimeStampModel):
         return f"{self.name} - {self.model} ({self.number})"
 
 
+    def check_oil_recycle_notification(self):
+        """Check if the car is nearing the next oil recycle distance."""
+        threshold = 50  # Define a threshold distance (e.g., 50 km)
+        if self.next_oil_recycle_distance - self.distance_travelled <= threshold:
+            return True
+        return False
+
+
+
 class Details(TimeStampModel):
     car = models.ForeignKey("Car", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=True, blank=True)
@@ -86,3 +97,12 @@ class Details(TimeStampModel):
 
     def __str__(self):
         return self.name or "Unnamed detail"
+
+
+
+class Notification(TimeStampModel):
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for: {self.message}"

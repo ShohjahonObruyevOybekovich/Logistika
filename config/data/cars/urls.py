@@ -25,4 +25,7 @@ urlpatterns = [
 
     path("car-infos/<uuid:pk>",CarDetailsExcelAPIView.as_view(), name="car-info"),
 
+    path("notification",NotificationListApi.as_view(), name="notification"),
+    path("notif/<uuid:pk>", NotificationDetailsApi.as_view(), name="notif"),
+
 ]
