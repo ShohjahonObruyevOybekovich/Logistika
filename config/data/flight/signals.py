@@ -36,13 +36,18 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                 kind="FLIGHT",
                 comment=f"Расход за рейс для водителя {instance.driver.full_name}: {instance.other_expences} ",
             )
-            instance.driver.balance_uzs += float(instance.other_expences)
-            instance.driver.save()
+            if instance.driver:
+                # Ensure balance_uzs is initialized to 0.0 if None
+                instance.driver.balance_uzs = instance.driver.balance_uzs or 0.0
+                instance.driver.balance_uzs += instance.other_expences
+                instance.driver.save()
 
 
         # Update driver balance
         if instance.driver:
-            instance.driver.balance_uzs += instance.driver_expenses_uzs
+            # Ensure balance_uzs is initialized to 0.0 if None
+            instance.driver.balance_uzs = instance.driver.balance_uzs or 0.0
+            instance.driver.balance_uzs += instance.driver_expenses_uzs or 0.0
             instance.driver.save()
 
 
