@@ -72,7 +72,7 @@ class Flight(TimeStampModel):
     cargo_info = models.TextField(blank=True, null=True)
 
 
-    other_expences = models.TextField(blank=True, null=True)
+    other_expences = models.FloatField(blank=True, null=True)
 
     upload = models.ForeignKey(
         "upload.File",
