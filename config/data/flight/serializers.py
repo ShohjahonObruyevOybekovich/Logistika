@@ -45,6 +45,9 @@ class FlightListserializer(serializers.ModelSerializer):
             "other_expences",
             "other_expenses_price",
             "other_expenses_choice",
+
+            "start_km",
+            "end_km",
             "cargo_info",
             "upload",
             "created_at",
@@ -99,6 +102,8 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "other_expences",
             "other_expenses_price",
             "other_expenses_choice",
+            "start_km",
+            "end_km",
             "cargo_info",
             "upload",
             "created_at",

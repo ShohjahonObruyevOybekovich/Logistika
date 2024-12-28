@@ -13,4 +13,6 @@ urlpatterns = [
 
     path("info",FilteredIncomeOutcomeAPIView.as_view(), name="finans_info"),
 
+    path("flight-info/<uuid:pk>",FinansFlightExcel.as_view(), name="finans_flight"),
+
                ]

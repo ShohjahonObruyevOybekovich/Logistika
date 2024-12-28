@@ -1,3 +1,4 @@
+import openpyxl
 from django.db.models import Sum, F, Case, When, FloatField
 from django.db.models.functions import TruncDay, TruncMonth
 from django.http import HttpResponse
@@ -7,6 +8,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
+from openpyxl.utils import get_column_letter
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -100,9 +102,58 @@ class FinansDriver(ListCreateAPIView):
     def get_queryset(self):
         driver_id = self.kwargs.get('pk')
         if driver_id:
-            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY")
+            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY").order_by("created_at")
         return Logs.objects.none()
 
+class FinansFlightExcel(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk, *args, **kwargs):
+        # Fetch the data based on flight ID
+        flight_id = pk
+        logs = Logs.objects.filter(flight__id=flight_id, kind="FLIGHT").order_by("created_at")
+
+        # Create an Excel workbook and sheet
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Flight Logs"
+
+        # Define the headers in Russian
+        headers = [
+            "ID",              # ID
+            "Название",        # Name
+            "Сумма (UZS)",     # Amount (UZS)
+            "Сумма (USD)",     # Amount (USD)
+            "ID Рейса",        # Flight ID
+            "Тип",             # Kind
+            "Дата создания"    # Created At
+        ]
+
+        # Write the headers
+        for col_num, header in enumerate(headers, start=1):
+            col_letter = get_column_letter(col_num)
+            ws[f"{col_letter}1"] = header
+
+        # Write the data rows
+        for row_num, log in enumerate(logs, start=2):
+            ws[f"A{row_num}"] = log.id
+            ws[f"B{row_num}"] = log.name
+            ws[f"C{row_num}"] = log.amount_uzs
+            ws[f"D{row_num}"] = log.amount_usd
+            ws[f"E{row_num}"] = log.flight.id if log.flight else None
+            ws[f"F{row_num}"] = log.kind
+            ws[f"G{row_num}"] = log.created_at.strftime('%Y-%m-%d %H:%M:%S')
+
+        # Set column widths for better readability
+        for col_num, _ in enumerate(headers, start=1):
+            ws.column_dimensions[get_column_letter(col_num)].width = 20
+
+        # Save the workbook to an in-memory response
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response["Content-Disposition"] = f'attachment; filename="flight_logs_{flight_id}.xlsx"'
+        wb.save(response)
+
+        return response
 
 class ExportLogsToExcelAPIView(APIView):
     @swagger_auto_schema(

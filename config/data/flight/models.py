@@ -133,6 +133,10 @@ class Flight(TimeStampModel):
         default="ACTIVE",
     )
 
+    start_km = models.FloatField(max_length=150,
+                                 null=True, blank=True)
+    end_km = models.FloatField(max_length=150,null=True,blank=True)
+
 
 
     def __str__(self):
