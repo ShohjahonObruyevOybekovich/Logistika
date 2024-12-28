@@ -42,7 +42,11 @@ class RecycledOilSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "oil",
+
             "amount",
+            "amount_usd",
+            "amount_type",
+
             "car",
             "oil_recycle_distance",
             "next_oil_recycle_distance",
@@ -91,10 +95,15 @@ class OilPurchaseSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "oil",
+
             "price_uzs",
-            # "price_usd",
+            "price",
+            "price_type",
+
             "amount_uzs",
-            # "amount_usd",
+            "amount",
+            "amount_type",
+
             "oil_volume",
             "remaining_oil_quantity",
             "created_at",
@@ -113,8 +122,11 @@ class Utilized_oilSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "quantity_utilized",
+
             "price_uzs",
-            # "price_usd",
+            "price",
+            "price_type",
+
             "remaining_oil_quantity",
             "created_at",
         ]

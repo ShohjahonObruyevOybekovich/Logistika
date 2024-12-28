@@ -43,16 +43,27 @@ class Car(TimeStampModel):
         choices=FUEL_CHOICES,
         default='Diesel',
     )
+    price = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
     price_uzs = models.FloatField(
         max_length=150,
         null=True,
         blank=True,
     )
-    # price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+    PRICE_CHOICES = [
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ]
+    price_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        help_text="Type of price"
+    )
     distance_travelled = models.FloatField(
         default=0,
         help_text="The distance the car has traveled in kilometers"
@@ -91,6 +102,18 @@ class Details(TimeStampModel):
     name = models.CharField(max_length=100, null=True, blank=True)
     id_detail = models.CharField(max_length=100, null=True, blank=True)
     price_uzs = models.FloatField(max_length=100, null=True, blank=True)
+    price = models.FloatField(max_length=100, null=True, blank=True)
+    PRICE_CHOICES = [
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ]
+    price_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        help_text="Type of price"
+    )
     in_sklad = models.BooleanField(default=False, help_text='In Sklad',null=True,blank=True)
 
     # price_usd = models.DecimalField(decimal_places=2, max_digits=10,null=True,blank=True)

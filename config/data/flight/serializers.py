@@ -29,11 +29,18 @@ class FlightListserializer(serializers.ModelSerializer):
             "status",
             "departure_date",
             "arrival_date",
+
             "price_uzs",
-            # "price_usd",
+            "price",
+            "price_type",
+
+            "driver_expenses",
             "driver_expenses_uzs",
+            "driver_expenses_type",
+
             "other_expences",
-            # "driver_expenses_usd",
+            "other_expenses_price",
+            "other_expenses_choice",
             "cargo_info",
             "upload",
             "created_at",

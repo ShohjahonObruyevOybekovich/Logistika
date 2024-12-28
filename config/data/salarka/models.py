@@ -11,11 +11,16 @@ class Salarka(TimeStampModel):
         null=True,
         blank=True,
     )
-    # price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+    price = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
 
 class Sale(TimeStampModel):

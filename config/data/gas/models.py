@@ -29,22 +29,32 @@ class GasPurchase(TimeStampModel):
         null=True,
         blank=True,
     )
-    # payed_price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+    payed_price = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    payed_price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
     price_uzs = models.FloatField(
         max_length=150,
         null=True,
         blank=True,
     )
-    # price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+    price = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
 
 class GasSale(TimeStampModel):
@@ -67,17 +77,29 @@ class GasSale(TimeStampModel):
         null=True,
         blank=True,
     )
-    #
-    # payed_price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+
+    payed_price = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    payed_price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
     price_uzs = models.FloatField(
         max_length=150,
         null=True,
         blank=True,
+    )
+    price = models.FloatField(null=True, blank=True)
+    price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True
     )
 
 
@@ -90,12 +112,12 @@ class Gas_another_station(TimeStampModel):
         null=True,
         blank=True,
     )
-
-    # payed_price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+    payed_price = models.FloatField(null=True, blank=True)
+    payed_price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
     def __str__(self):
         return f"Purchased {self.purchased_volume} gas - {self.payed_price_uzs} m³"

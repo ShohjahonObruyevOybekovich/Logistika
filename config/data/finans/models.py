@@ -14,7 +14,12 @@ class Logs(TimeStampModel):
         blank=True
     )
     amount_uzs = models.FloatField(null=True, blank=True)
-    # amount_usd = models.FloatField(null=True,blank=True)
+    amount = models.FloatField(null=True,blank=True)
+    amount_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
     car = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
 

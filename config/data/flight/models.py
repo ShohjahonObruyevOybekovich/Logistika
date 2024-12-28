@@ -45,34 +45,56 @@ class Flight(TimeStampModel):
     departure_date = models.DateField()
     arrival_date = models.DateField(null=True, blank=True)
 
+    price = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
     price_uzs = models.FloatField(
         max_length=150,
         null=True,
         blank=True,
     )
-    #
-    # price_usd = models.FloatField(
-    #     max_length=150,
-    #     null=True,
-    #     blank=True,
-    # )
+    PRICE_CHOICES = [
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ]
+    price_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        help_text="Type of price"
+    )
 
-    driver_expenses_uzs = models.FloatField(
-        help_text="Расходы, выделяемые водителю на рейс",
+    driver_expenses = models.FloatField(
+        max_length=150,
         null=True,
         blank=True,
     )
-
-    # driver_expenses_usd = models.FloatField(
-    #     help_text="Расходы, выделяемые водителю на рейс",
-    #     null=True,
-    #     blank=True,
-    # )
+    driver_expenses_uzs = models.FloatField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    PRICE_CHOICES = [
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ]
+    driver_expenses_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        help_text="Type of price"
+    )
 
     cargo_info = models.TextField(blank=True, null=True)
 
-
     other_expences = models.FloatField(blank=True, null=True)
+    other_expenses_price = models.FloatField(blank=True, null=True)
+    other_expenses_choice = models.CharField(choices=PRICE_CHOICES,default='USD',
+                                             max_length=10,null=True,blank=True)
 
     upload = models.ForeignKey(
         "upload.File",

@@ -63,8 +63,9 @@ class SalarkaCreateseralizer(serializers.ModelSerializer):
             "id",
             "car",
             "volume",
-            # 'price_usd',
-            'price_uzs',
+            "price_uzs",
+            "price",
+            "price_type",
             "created_at",
         ]
         read_only_fields = ['created_at']
@@ -85,7 +86,8 @@ class SalarkaStatsSerializer(serializers.ModelSerializer):
             "id",
             "car_name",
             "price_uzs",
-            # "price_usd",
+            "price",
+            "price_type",
             "created_at",
             "updated_at",
         ]

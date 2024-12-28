@@ -15,10 +15,23 @@ class Oil(TimeStampModel):
 
 class OilPurchase(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE, related_name="purchases")
-    price_uzs = models.DecimalField(decimal_places=2, max_digits=20)
-    # price_usd = models.DecimalField(decimal_places=2, max_digits=10)
-    amount_uzs = models.DecimalField(decimal_places=2, max_digits=20)
-    # amount_usd = models.DecimalField(decimal_places=2, max_digits=10)
+    price_uzs = models.FloatField(null=True,blank=True)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
+
+
+    amount_uzs = models.FloatField(null=True,blank=True)
+    amount = models.FloatField(null=True,blank=True)
+    amount_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
+
     oil_volume = models.FloatField(help_text="Oil volume in liters")
 
     def __str__(self):
@@ -31,6 +44,13 @@ class OilPurchase(TimeStampModel):
 class OilREcycles(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE)
     amount = models.FloatField(help_text="Oil price")
+    amount_usd = models.FloatField(null=True,blank=True)
+    amount_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True
+    )
     car = models.ForeignKey('cars.Car', on_delete=models.CASCADE)
     remaining_oil = models.FloatField(help_text="Oil remaining")
 
@@ -52,6 +72,12 @@ class Remaining_oil_quantity(TimeStampModel):
 class Utilized_oil(TimeStampModel):
     quantity_utilized = models.FloatField(default=0)
     price_uzs = models.FloatField(null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ],default='USD', max_length=10, null=True, blank=True)
 
     # price_usd = models.FloatField(null=True, blank=True)
 

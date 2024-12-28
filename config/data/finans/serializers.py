@@ -24,8 +24,11 @@ class FinansListserializer(serializers.ModelSerializer):
         fields = [
             "id",
             "action",
+
             "amount_uzs",
-            # "amount_usd",
+            "amount",
+            "amount_type",
+
             "car",
             "employee",
             "flight",
@@ -60,7 +63,11 @@ class LogsFilter(filters.FilterSet):
         model = Logs
         fields = [
             "action",
+
             "amount_uzs",
+            "amount",
+            "amount_type",
+
             "car",
             "employee",
             "flight",
@@ -87,6 +94,8 @@ class FinansUserListserializer(serializers.ModelSerializer):
             "id",
             "action",
             "amount_uzs",
+            "amount",
+            "amount_type",
             "car",
             "employee",
             "flight",

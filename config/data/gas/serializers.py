@@ -24,10 +24,15 @@ class GasPurchaseListseralizer(serializers.ModelSerializer):
             "id",
             "station",
             "amount",
+
             "payed_price_uzs",
-            # "payed_price_usd",
+            "payed_price",
+            "payed_price_type",
+
             "price_uzs",
-            # "price_usd",
+            "price",
+            "price_type",
+
             "created_at",
             "updated_at",
         ]
@@ -43,6 +48,15 @@ class GasSaleListSerializer(serializers.ModelSerializer):
             "id",
             "station",
             "car",
+
+            "payed_price_uzs",
+            "payed_price",
+            "payed_price_type",
+
+            "price_uzs",
+            "price",
+            "price_type",
+
             "amount",
             "created_at",
         ]
@@ -60,8 +74,11 @@ class GasAnotherStationCreateseralizer(serializers.ModelSerializer):
 
     class Meta:
         model = Gas_another_station
-        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs","created_at",
-                  # "payed_price_usd"
+        fields = ["id", "car", "name", "purchased_volume",
+                  "payed_price_uzs",
+                  "payed_price",
+                  "payed_price_type",
+                  "created_at",
                   ]
 
     def to_representation(self, instance):
@@ -77,6 +94,10 @@ class GasAnotherListserializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gas_another_station
-        fields = ["id", "car", "name", "purchased_volume", "payed_price_uzs","created_at",
+        fields = ["id", "car", "name", "purchased_volume",
+                  "payed_price_uzs",
+                  "payed_price",
+                  "payed_price_type",
+                  "created_at",
                   #                   "payed_price_usd"
                   ]
