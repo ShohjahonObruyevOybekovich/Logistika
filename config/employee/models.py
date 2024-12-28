@@ -1,7 +1,7 @@
 from django.db import models
 from data.upload.models import File
 
-# from data.flight.models import flight
+
 
 class Employee(models.Model):
     full_name = models.CharField(max_length=100)
@@ -41,6 +41,8 @@ class Employee(models.Model):
         ('UZS', 'UZS'),
         ('KZT', "KZT")
     ], default='USD', max_length=10, null=True, blank=True)
+
+    bonus = models.FloatField(null=True, blank=True, default=0.0)
     created_at = models.DateField(auto_now_add=True,
                                   null=True, blank=True)
     updated_at = models.DateField(auto_now=True,

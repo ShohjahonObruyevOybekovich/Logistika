@@ -18,3 +18,10 @@ def on_employee_balance(sender, instance: Logs, created, **kwargs):
         employee.balance_uzs = employee_balance + salary_amount
         employee.save()
 
+@receiver(post_save, sender=Logs)
+def on_salary_balance(sender, instance: Logs, created, **kwargs):
+    if created and instance.action == "OUTCOME" and instance.kind == "BONUS" and instance.employee is not None:
+        employee = Employee.objects.get(id=instance.employee.id)
+        # Ensure `bonus` is not None
+        employee.bonus = (employee.bonus or 0) + instance.amount_uzs
+        employee.save()

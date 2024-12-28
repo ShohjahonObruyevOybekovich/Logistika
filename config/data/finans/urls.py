@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .models import FilteredIncomeOutcomeAPIView
+from .views import FilteredIncomeOutcomeAPIView
 from .views import *
 
 urlpatterns = [

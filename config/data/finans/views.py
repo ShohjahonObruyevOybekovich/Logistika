@@ -1,20 +1,20 @@
+from django.db.models import Sum, F, Case, When, FloatField
+from django.db.models.functions import TruncDay, TruncMonth
+from django.http import HttpResponse
 from django.utils.dateparse import parse_datetime
-from django.views import View
-import openpyxl
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
-
-from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from data.finans.models import Logs
 from data.finans.serializers import FinansListserializer, LogsFilter, FinansUserListserializer
+from .models import Logs
 
 
 class Finans(ListCreateAPIView):
@@ -34,10 +34,8 @@ class Finans(ListCreateAPIView):
         "comment",
         "created_at",
     ]
-    ordering_fields = ["action","created_at"]
-    search_fields = ["action", "reason","employee", "flight","created_at"]
-
-
+    ordering_fields = ["action", "created_at"]
+    search_fields = ["action", "reason", "employee", "flight", "created_at"]
 
 
 class FinansList(ListAPIView):
@@ -88,7 +86,6 @@ class FinansList(ListAPIView):
         return Response(serializer.data)
 
 
-
 class FinansDetail(RetrieveUpdateDestroyAPIView):
     queryset = Logs.objects.all().order_by("-created_at")
     serializer_class = FinansListserializer
@@ -107,30 +104,24 @@ class FinansDriver(ListCreateAPIView):
         return Logs.objects.none()
 
 
-
-from django.http import HttpResponse
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment
-from rest_framework.views import APIView
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-from .models import Logs
-from django.db.models import Q
-
-
 class ExportLogsToExcelAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter("action", openapi.IN_QUERY, description="Filter by action (INCOME, OUTCOME)", type=openapi.TYPE_STRING),
-            openapi.Parameter("amount_uzs", openapi.IN_QUERY, description="Filter by amount in UZS", type=openapi.TYPE_NUMBER),
+            openapi.Parameter("action", openapi.IN_QUERY, description="Filter by action (INCOME, OUTCOME)",
+                              type=openapi.TYPE_STRING),
+            openapi.Parameter("amount_uzs", openapi.IN_QUERY, description="Filter by amount in UZS",
+                              type=openapi.TYPE_NUMBER),
             openapi.Parameter("car", openapi.IN_QUERY, description="Filter by car ID", type=openapi.TYPE_STRING),
-            openapi.Parameter("employee", openapi.IN_QUERY, description="Filter by employee ID", type=openapi.TYPE_STRING),
+            openapi.Parameter("employee", openapi.IN_QUERY, description="Filter by employee ID",
+                              type=openapi.TYPE_STRING),
             openapi.Parameter("flight", openapi.IN_QUERY, description="Filter by flight ID", type=openapi.TYPE_STRING),
             openapi.Parameter("reason", openapi.IN_QUERY, description="Filter by reason", type=openapi.TYPE_STRING),
             openapi.Parameter("kind", openapi.IN_QUERY, description="Filter by kind", type=openapi.TYPE_STRING),
             openapi.Parameter("comment", openapi.IN_QUERY, description="Filter by comment", type=openapi.TYPE_STRING),
-            openapi.Parameter("start_date", openapi.IN_QUERY, description="Filter by start date (YYYY-MM-DD)", type=openapi.TYPE_STRING),
-            openapi.Parameter("end_date", openapi.IN_QUERY, description="Filter by end date (YYYY-MM-DD)", type=openapi.TYPE_STRING),
+            openapi.Parameter("start_date", openapi.IN_QUERY, description="Filter by start date (YYYY-MM-DD)",
+                              type=openapi.TYPE_STRING),
+            openapi.Parameter("end_date", openapi.IN_QUERY, description="Filter by end date (YYYY-MM-DD)",
+                              type=openapi.TYPE_STRING),
         ],
         responses={200: "Excel file generated"}
     )
@@ -171,7 +162,8 @@ class ExportLogsToExcelAPIView(APIView):
         sheet.title = "Logs"
 
         # Headers
-        headers = ["Действие", "Сумма (UZS)", "Машина", "Водитель", "Рейс", "Тип", "Причина", "Комментарий", "Время создания"]
+        headers = ["Действие", "Сумма (UZS)", "Машина", "Водитель", "Рейс", "Тип", "Причина", "Комментарий",
+                   "Время создания"]
         for col_num, header in enumerate(headers, 1):
             cell = sheet.cell(row=1, column=col_num)
             cell.value = header
@@ -189,7 +181,8 @@ class ExportLogsToExcelAPIView(APIView):
             sheet.cell(row=row_num, column=6).value = log.kind if log.kind else ""
             sheet.cell(row=row_num, column=7).value = log.reason if log.reason else ""
             sheet.cell(row=row_num, column=8).value = log.comment if log.comment else ""
-            sheet.cell(row=row_num, column=9).value = log.created_at.strftime('%d-%m-%Y   %H:%M') if log.created_at else ""
+            sheet.cell(row=row_num, column=9).value = log.created_at.strftime(
+                '%d-%m-%Y   %H:%M') if log.created_at else ""
 
         # Response
         response = HttpResponse(
@@ -198,3 +191,108 @@ class ExportLogsToExcelAPIView(APIView):
         response["Content-Disposition"] = f'attachment; filename="Logs_{filters.get("action", "All")}.xlsx"'
         workbook.save(response)
         return response
+
+
+class FilteredIncomeOutcomeAPIView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("year", openapi.IN_QUERY, description="Filter by year", type=openapi.TYPE_INTEGER),
+            openapi.Parameter("month", openapi.IN_QUERY, description="Filter by month", type=openapi.TYPE_INTEGER),
+            openapi.Parameter("day", openapi.IN_QUERY, description="Filter by day", type=openapi.TYPE_INTEGER),
+            openapi.Parameter("start_date", openapi.IN_QUERY, description="Start date (YYYY-MM-DD)",
+                              type=openapi.TYPE_STRING),
+            openapi.Parameter("end_date", openapi.IN_QUERY, description="End date (YYYY-MM-DD)",
+                              type=openapi.TYPE_STRING),
+            openapi.Parameter("action", openapi.IN_QUERY, description="Filter by action (INCOME, OUTCOME)",
+                              type=openapi.TYPE_STRING),
+        ],
+        responses={200: "Filtered income and outcome sums with chart data"}
+    )
+    def get(self, request):
+        # Extract query parameters
+        year = request.GET.get("year")
+        month = request.GET.get("month")
+        day = request.GET.get("day")
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+        action = request.GET.get("action")  # Optional filter by action (INCOME, OUTCOME)
+
+        # Base queryset
+        queryset = Logs.objects.all()
+
+        # Apply year, month, and day filters
+        if year:
+            queryset = queryset.filter(created_at__year=year)
+            if month:
+                queryset = queryset.filter(created_at__month=month)
+                if day:
+                    queryset = queryset.filter(created_at__day=day)
+
+        # Apply custom date range filter
+        if start_date and end_date:
+            queryset = queryset.filter(
+                created_at__gte=start_date,
+                created_at__lte=end_date
+            )
+
+        # Apply action filter (optional)
+        if action in ["INCOME", "OUTCOME"]:
+            queryset = queryset.filter(action=action)
+
+        # Calculate income and outcome sums
+        income_sum = queryset.filter(action="INCOME").aggregate(total_income=Sum("amount_uzs"))["total_income"] or 0
+        outcome_sum = queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum("amount_uzs"))["total_outcome"] or 0
+
+        # Determine grouping
+        if start_date and end_date:
+            group_by = TruncDay('created_at')
+        elif year and month:
+            group_by = TruncDay('created_at')
+        elif year:
+            group_by = TruncMonth('created_at')
+        else:
+            group_by = TruncMonth('created_at')
+
+        # Generate chart data
+        chart_data = (
+            queryset
+            .annotate(period=group_by)
+            .values('period')
+            .annotate(
+                income=Sum(
+                    Case(
+                        When(action="INCOME", then=F('amount_uzs')),
+                        default=0,
+                        output_field=FloatField()
+                    )
+                ),
+                outcome=Sum(
+                    Case(
+                        When(action="OUTCOME", then=F('amount_uzs')),
+                        default=0,
+                        output_field=FloatField()
+                    )
+                ),
+            )
+            .order_by('period')
+        )
+
+        # Prepare response data
+        data = {
+            "filters": {
+                "year": year,
+                "month": month,
+                "day": day,
+                "start_date": start_date,
+                "end_date": end_date,
+                "action": action,
+            },
+            "results": {
+                "income_sum": income_sum,
+                "outcome_sum": outcome_sum,
+                "win": income_sum - outcome_sum,  # Net income
+                "chart_data": list(chart_data)  # Grouped data for chart
+            },
+        }
+
+        return Response(data)
