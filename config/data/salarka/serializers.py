@@ -4,6 +4,8 @@ from rest_framework import serializers
 from .models import Salarka, Sale, Remaining_volume, SalarkaAnotherStation
 from ..cars.models import Car
 from ..cars.serializers import CarListserializer
+from ..flight.models import Flight
+from ..flight.serializers import FlightListserializer
 
 User = get_user_model()
 
@@ -117,12 +119,14 @@ class SaleSerializer(serializers.ModelSerializer):
 
 class SaleAnotherStationSerializers(serializers.ModelSerializer):
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    flight = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all())
     class Meta:
         model = SalarkaAnotherStation
 
         fields = [
             "id",
             "car",
+            "flight",
             "volume",
             "price_uzs",
             "price",
@@ -137,5 +141,6 @@ class SaleAnotherStationSerializers(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['car'] = CarListserializer(instance.car).data
+        representation['flight'] = FlightListserializer(instance.flight).data
         return representation
 

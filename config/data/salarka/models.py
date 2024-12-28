@@ -47,7 +47,6 @@ class SalarkaAnotherStation(TimeStampModel):
     flight = models.ForeignKey(
         "flight.Flight", on_delete=models.SET_NULL, null=True, blank=True
     )
-
     volume = models.PositiveIntegerField(help_text="Volume of the sale")
     price = models.FloatField(max_length=150, help_text="Price of the sale",null=True,blank=True)
     price_uzs = models.FloatField(max_length=150,null=True,blank=True)
