@@ -6,7 +6,7 @@ from data.upload.models import File
 class Employee(models.Model):
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
-    passport = models.CharField(max_length=20, help_text="Passport number",
+    passport = models.CharField(max_length=140, help_text="Passport number",
                                 null=True, blank=True)
     passport_photo = models.ForeignKey(
         "upload.File",
@@ -15,7 +15,7 @@ class Employee(models.Model):
         null=True,
         blank=True,
     )
-    license = models.CharField(max_length=20, help_text="Prava number",
+    license = models.CharField(max_length=140, help_text="Prava number",
                                null=True, blank=True)
     license_photo = models.ForeignKey(
         "upload.File",

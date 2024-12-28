@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from data.upload.models import File
 from data.upload.serializers import FileUploadSerializer
 from .models import Employee
 
@@ -28,6 +29,8 @@ class EmployeeListserializer(serializers.ModelSerializer):
 
 
 class EmployeeCreateSerializer(serializers.ModelSerializer):
+    passport_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
+    license_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
     class Meta:
         model = Employee
         fields = [
@@ -48,5 +51,16 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(EmployeeCreateSerializer, self).to_representation(instance)
-        ret["passport_photo"] = FileUploadSerializer(instance.upload).data
-        ret["license_photo"] = FileUploadSerializer(instance.upload).data
+
+        # Correctly access `passport_photo` and `license_photo` attributes
+        if instance.passport_photo:
+            ret["passport_photo"] = FileUploadSerializer(instance.passport_photo).data
+        else:
+            ret["passport_photo"] = None
+
+        if instance.license_photo:
+            ret["license_photo"] = FileUploadSerializer(instance.license_photo).data
+        else:
+            ret["license_photo"] = None
+
+        return ret
