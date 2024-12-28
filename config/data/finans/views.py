@@ -109,6 +109,9 @@ class FinansDriver(ListCreateAPIView):
             return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY").order_by("created_at")
         return Logs.objects.none()
 
+
+
+
 class FinansFlightExcel(APIView):
     def get(self, request, pk, *args, **kwargs):
         # Fetch the flight logs and related data
@@ -125,6 +128,17 @@ class FinansFlightExcel(APIView):
         ws_logs = wb.active
         ws_logs.title = "Flight Logs"
 
+        flight_balance = None
+        if flight.status == "INACTIVE":
+            flight_balance = (
+                flight.price_uzs
+                - (
+                    (flight.driver_expenses_uzs or 0)
+                    + (flight.flight_expenses_uzs or 0)
+                    + (flight.other_expenses_price or 0)
+                )
+            )
+
         # Define headers for logs
         headers_logs = [
             "Название",  # Name
@@ -135,6 +149,7 @@ class FinansFlightExcel(APIView):
             "Конечная дата",  # End Date
             "Начальный км",  # Start KM
             "Конечный км",  # End KM
+            "Баланс рейса",
             "Дата создания"  # Created At
         ]
 
@@ -153,7 +168,8 @@ class FinansFlightExcel(APIView):
             ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "N/A"
             ws_logs[f"G{row_num}"] = flight.start_km or "N/A"
             ws_logs[f"H{row_num}"] = flight.end_km or "N/A"
-            ws_logs[f"I{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
+            ws_logs[f"I{row_num}"] = flight_balance if flight.status == "INACTIVE" else "N/A"
+            ws_logs[f"J{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
 
         # Adjust column widths for logs
         for col_num, _ in enumerate(headers_logs, start=1):

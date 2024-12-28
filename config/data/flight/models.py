@@ -110,8 +110,8 @@ class Flight(TimeStampModel):
 
 
     other_expences = models.FloatField(blank=True, null=True)
-    other_expenses_price = models.FloatField(blank=True, null=True)
-    other_expenses_choice = models.CharField(choices=PRICE_CHOICES,default='USD',
+    other_expenses_uzs = models.FloatField(blank=True, null=True)
+    other_expenses_type = models.CharField(choices=PRICE_CHOICES,default='USD',
                                              max_length=10,null=True,blank=True)
 
     upload = models.ForeignKey(

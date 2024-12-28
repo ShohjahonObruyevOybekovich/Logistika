@@ -100,8 +100,9 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "flight_expenses_type",
 
             "other_expences",
-            "other_expenses_price",
-            "other_expenses_choice",
+            "other_expenses_uzs",
+            "other_expenses_type",
+
             "start_km",
             "end_km",
             "cargo_info",

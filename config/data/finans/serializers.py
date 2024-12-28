@@ -82,6 +82,7 @@ class FinansUserListserializer(serializers.ModelSerializer):
     income_sum = serializers.SerializerMethodField()
     outcome_sum = serializers.SerializerMethodField()
     win = serializers.SerializerMethodField()
+
     total_leasing_paid = serializers.SerializerMethodField()
     total_car_prices = serializers.SerializerMethodField()
     leasing_balance = serializers.SerializerMethodField()

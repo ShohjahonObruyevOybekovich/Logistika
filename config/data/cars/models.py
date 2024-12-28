@@ -27,6 +27,7 @@ class Car(TimeStampModel):
         default="LEASING",
         help_text="Type of payment"
     )
+
     leasing_period = models.IntegerField(help_text='Leasing period',
                                          null=True, blank=True)
 
