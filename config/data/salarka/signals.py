@@ -25,14 +25,3 @@ def on_sale_purchased(sender, instance: Sale, created, **kwargs):
             remaining_volume.save()
 
 
-# INcome
-@receiver(post_save, sender=Salarka)
-def income(sender, instance: Salarka, created, **kwargs):
-    if created:
-        Logs.objects.create(
-            action="OUTCOME",
-            amount_uzs=instance.price_uzs,
-            # amount_usd=instance.price_usd,
-            kind="OTHER",
-            comment=f"За {instance.price_uzs} сум была закуплена солярка."
-        )

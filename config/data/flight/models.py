@@ -91,6 +91,24 @@ class Flight(TimeStampModel):
 
     cargo_info = models.TextField(blank=True, null=True)
 
+    flight_expences = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Flight expenses route"
+    )
+    flight_expenses_uzs = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Type of route price"
+    )
+    flight_expences_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        help_text="Type of route expense"
+    )
+
+
     other_expences = models.FloatField(blank=True, null=True)
     other_expenses_price = models.FloatField(blank=True, null=True)
     other_expenses_choice = models.CharField(choices=PRICE_CHOICES,default='USD',
@@ -138,16 +156,31 @@ class Ordered(TimeStampModel):
     )
     departure_date = models.DateField()
 
-    price_uzs = models.FloatField(
-        max_length=150,
-        null=True,
-        blank=True,
-    )
+
+    PRICE_CHOICES = [
+        ('USD', 'USD'),
+        ('UZS', 'UZS'),
+        ('KZT', "KZT")
+    ]
+
     driver_expenses_uzs = models.FloatField(
         help_text="Расходы, выделяемые водителю на рейс",
         null=True,
         blank=True,
     )
+    driver_expenses_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        null=True,
+        blank=True,
+    )
+    driver_expenses = models.FloatField(
+        help_text="Расходы, выделяемые водителю на рейс",
+        null=True,
+        blank=True,
+    )
+
+
     region: "Region" = models.ForeignKey(
         "region.Region", on_delete=models.CASCADE, related_name="ordered"
     )
