@@ -56,5 +56,6 @@ class SalarkaAnotherStation(TimeStampModel):
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 
+
     def __str__(self):
         return f"{self.car.name} - {self.flight.region.name})"
