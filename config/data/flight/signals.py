@@ -59,12 +59,12 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
             try:
                 with transaction.atomic():
                     # Log income if applicable
-                    if instance.price_uzs > 0:
+                    if instance.driver_expenses_uzs > 0:
                         Logs.objects.create(
                             action="INCOME",
-                            amount_uzs=instance.price_uzs,
+                            amount_uzs=instance.driver_expenses_uzs,
                             kind="ORDERED_FLIGHT",
-                            comment=f"Доход от заказанного рейса (ID) {instance}",
+                            comment=f"Доход от заказанного рейса (ID) {instance.departure_date}",
                             flight=instance,
                         )
 
@@ -75,7 +75,6 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
                             kind="ORDERED_FLIGHT",
                             comment=f"Доход от заказанного рейса  {instance.driver_name}"
                         )
-
 
             except Exception as e:
                 # Log error or handle as needed
