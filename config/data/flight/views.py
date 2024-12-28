@@ -81,6 +81,7 @@ class FlightHistoryStatsAPIView(ListAPIView):
         return Flight.objects.none()
 
 
+
 class FlightListNOPg(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
