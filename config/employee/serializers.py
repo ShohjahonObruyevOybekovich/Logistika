@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from data.upload.serializers import FileUploadSerializer
 from .models import Employee
 
 User = get_user_model()
@@ -44,3 +45,8 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def to_representation(self, instance):
+        ret = super(EmployeeCreateSerializer, self).to_representation(instance)
+        ret["passport_photo"] = FileUploadSerializer(instance.upload).data
+        ret["license_photo"] = FileUploadSerializer(instance.upload).data

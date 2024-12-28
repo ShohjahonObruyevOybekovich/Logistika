@@ -101,7 +101,7 @@ class Flight(TimeStampModel):
         blank=True,
         help_text="Type of route price"
     )
-    flight_expences_type = models.CharField(
+    flight_expenses_type = models.CharField(
         choices=PRICE_CHOICES,
         default='USD',
         max_length=10,
@@ -171,6 +171,7 @@ class Ordered(TimeStampModel):
     driver_expenses_type = models.CharField(
         choices=PRICE_CHOICES,
         default='USD',
+        max_length=15,
         null=True,
         blank=True,
     )

@@ -1,10 +1,16 @@
 import django_filters
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
 from drf_yasg.openapi import Response
+from drf_yasg.utils import swagger_auto_schema
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, \
     ListAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from data.flight.serializers import FlightListserializer, FlightListCReateserializer, FlightOrderedListserializer
 from .models import Flight, Ordered
@@ -15,17 +21,12 @@ class FlightListAPIView(ListCreateAPIView):
     serializer_class = FlightListserializer
     # permission_classes = [IsAuthenticated]
 
-    filter_backends = (DjangoFilterBackend,SearchFilter,OrderingFilter)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = [
-        'flight_type',"route","status"
+        'flight_type', "route", "status"
     ]
-    ordering_fields = ('flight_type',"route","status")
-    search_fields = ('flight_type',"route","status")
-
-
-
-
-
+    ordering_fields = ('flight_type', "route", "status")
+    search_fields = ('flight_type', "route", "status")
 
 
 class FlightRetrieveAPIView(RetrieveUpdateDestroyAPIView):
@@ -47,7 +48,6 @@ class FlightStatsAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FlightFilter  # Use the filter class
-
 
     def get_queryset(self):
         car_id = self.kwargs.get('pk')
@@ -81,7 +81,6 @@ class FlightHistoryStatsAPIView(ListAPIView):
         return Flight.objects.none()
 
 
-
 class FlightListNOPg(ListAPIView):
     serializer_class = FlightListCReateserializer
     permission_classes = (IsAuthenticated,)
@@ -90,7 +89,6 @@ class FlightListNOPg(ListAPIView):
 
     def get_paginated_response(self, data):
         return Response(data)
-
 
 
 class FlightOrderedListAPIView(ListCreateAPIView):
@@ -104,22 +102,14 @@ class FlightOrderedRetrieveAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = FlightOrderedListserializer
     permission_classes = (IsAuthenticated,)
 
-from django.http import HttpResponse
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-from .models import Flight, Ordered
-
 
 class ExportFlightInfoAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter("type", openapi.IN_QUERY, description="Type of data to export (flight, ordered)", type=openapi.TYPE_STRING),
+            openapi.Parameter("type", openapi.IN_QUERY, description="Type of data to export (flight, ordered)",
+                              type=openapi.TYPE_STRING),
         ],
         responses={200: "Excel file generated"}
     )
@@ -143,7 +133,7 @@ class ExportFlightInfoAPIView(APIView):
             for flight in queryset:
                 sheet.append([
                     flight.region.name if flight.region else "",
-                    flight.get_flight_type_display() if flight.flight_type else "",\
+                    flight.get_flight_type_display() if flight.flight_type else "", \
                     flight.car.number if flight.car else "",
                     flight.driver.full_name if flight.driver else "",
                     flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",
