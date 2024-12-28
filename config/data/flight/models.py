@@ -64,6 +64,8 @@ class Flight(TimeStampModel):
         choices=PRICE_CHOICES,
         default='USD',
         max_length=10,
+        null=True,
+        blank=True,
         help_text="Type of price"
     )
 
@@ -86,6 +88,8 @@ class Flight(TimeStampModel):
         choices=PRICE_CHOICES,
         default='USD',
         max_length=10,
+        null=True,
+        blank=True,
         help_text="Type of price"
     )
 
@@ -105,6 +109,8 @@ class Flight(TimeStampModel):
         choices=PRICE_CHOICES,
         default='USD',
         max_length=10,
+        null=True,
+        blank=True,
         help_text="Type of route expense"
     )
 
