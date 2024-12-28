@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import Salarka, Remaining_volume, Sale
+from .models import Salarka, Remaining_volume, Sale, SalarkaAnotherStation
 from ..finans.models import Logs
 
 
@@ -25,3 +25,15 @@ def on_sale_purchased(sender, instance: Sale, created, **kwargs):
             remaining_volume.save()
 
 
+@receiver(post_save, sender=SalarkaAnotherStation)
+def on_logs_another_purchased(sender, instance: SalarkaAnotherStation, created, **kwargs):
+    if created:
+        Logs.objects.create(
+            action="OUTCOME",
+            amount_uzs=instance.price_uzs,
+            amount_type=instance.price_type,
+            amount=instance.price,
+            car=instance.car,
+            kind="OTHER",
+            comment=f"продано {instance.volume} м³ солярки за {instance.price} {instance.price_type}."
+        )

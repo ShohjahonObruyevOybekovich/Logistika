@@ -3,14 +3,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from openpyxl.styles import Font, Alignment
 from openpyxl.workbook import Workbook
 from rest_framework.generics import (
-    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView, RetrieveAPIView
+    ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, ListCreateAPIView, RetrieveAPIView,
+    RetrieveUpdateDestroyAPIView
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from .models import Salarka, Sale, Remaining_volume
+from .models import Salarka, Sale, Remaining_volume, SalarkaAnotherStation
 from .serializers import (
-    SalarkaCreateseralizer, SaleSerializer, SalarkaListSerializer
+    SalarkaCreateseralizer, SaleSerializer, SalarkaListSerializer, SaleAnotherStationSerializers
 )
 
 
@@ -134,3 +135,13 @@ class FilteredSalarkaExportToExcelView(APIView):
         response["Content-Disposition"] = f'attachment; filename="Salarka_Export.xlsx"'
         workbook.save(response)
         return response
+
+class SalarkaAnotherStationApiView(ListCreateAPIView):
+    queryset = SalarkaAnotherStation.objects.all()
+    serializer_class = SaleAnotherStationSerializers
+    permission_classes = (IsAuthenticated,)
+
+class SalarkaAnotherStationRetriveAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = SalarkaAnotherStation.objects.all()
+    serializer_class = SaleAnotherStationSerializers
+    permission_classes = (IsAuthenticated,)
