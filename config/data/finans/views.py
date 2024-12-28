@@ -17,6 +17,10 @@ from rest_framework.views import APIView
 
 from data.finans.serializers import FinansListserializer, LogsFilter, FinansUserListserializer
 from .models import Logs
+from ..cars.models import Car
+from ..flight.models import Flight
+from ..gas.models import GasPurchase, GasSale
+from ..salarka.models import Salarka, SalarkaAnotherStation
 
 
 class Finans(ListCreateAPIView):
@@ -106,52 +110,89 @@ class FinansDriver(ListCreateAPIView):
         return Logs.objects.none()
 
 class FinansFlightExcel(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, pk, *args, **kwargs):
-        # Fetch the data based on flight ID
+        # Fetch the flight logs and related data
         flight_id = pk
-        logs = Logs.objects.filter(flight__id=flight_id, kind="FLIGHT").order_by("created_at")
+        flight = Flight.objects.filter(id=flight_id).first()
+        if not flight:
+            return HttpResponse("Flight not found", status=404)
 
-        # Create an Excel workbook and sheet
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Flight Logs"
+        logs = Logs.objects.filter(flight=flight, kind="FLIGHT").order_by("created_at")
+        purchases = SalarkaAnotherStation.objects.filter(flight=flight).order_by("created_at")
 
-        # Define the headers in Russian
-        headers = [
-            "Название",        # Name
-            "Сумма (UZS)",     # Amount (UZS)
-            "Сумма (USD)",     # Amount (USD)
-            "ID Рейса",        # Flight ID
-            "Тип",             # Kind
-            "Дата создания"    # Created At
+        # Create an Excel workbook
+        wb = Workbook()
+        ws_logs = wb.active
+        ws_logs.title = "Flight Logs"
+
+        # Define headers for logs
+        headers_logs = [
+            "Название",  # Name
+            "Сумма (UZS)",  # Amount (UZS)
+            "Тип",  # Type
+            "Комментарий",  # Comment
+            "Начальная дата",  # Start Date
+            "Конечная дата",  # End Date
+            "Начальный км",  # Start KM
+            "Конечный км",  # End KM
+            "Дата создания"  # Created At
         ]
 
-        # Write the headers
-        for col_num, header in enumerate(headers, start=1):
+        # Write headers for logs
+        for col_num, header in enumerate(headers_logs, start=1):
             col_letter = get_column_letter(col_num)
-            ws[f"{col_letter}1"] = header
+            ws_logs[f"{col_letter}1"] = header
 
-        # Write the data rows
+        # Write data rows for logs
         for row_num, log in enumerate(logs, start=2):
-            ws[f"B{row_num}"] = log.name
-            ws[f"C{row_num}"] = log.amount_uzs
-            ws[f"D{row_num}"] = log.amount_usd
-            ws[f"E{row_num}"] = log.flight.id if log.flight else None
-            ws[f"F{row_num}"] = log.kind
-            ws[f"G{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
+            ws_logs[f"A{row_num}"] = f"{flight.car.number} - {flight.region.name}"
+            ws_logs[f"B{row_num}"] = log.amount_uzs
+            ws_logs[f"C{row_num}"] = "Приход" if log.action == "INCOME" else "Расход"
+            ws_logs[f"D{row_num}"] = f"{log.kind or ''}, {log.reason or ''}, {log.comment or ''}"
+            ws_logs[f"E{row_num}"] = flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "N/A"
+            ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "N/A"
+            ws_logs[f"G{row_num}"] = flight.start_km or "N/A"
+            ws_logs[f"H{row_num}"] = flight.end_km or "N/A"
+            ws_logs[f"I{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
 
-        # Set column widths for better readability
-        for col_num, _ in enumerate(headers, start=1):
-            ws.column_dimensions[get_column_letter(col_num)].width = 20
+        # Adjust column widths for logs
+        for col_num, _ in enumerate(headers_logs, start=1):
+            ws_logs.column_dimensions[get_column_letter(col_num)].width = 20
+
+        # Add a sheet for purchases
+        ws_purchases = wb.create_sheet(title="Purchases")
+        headers_purchases = [
+            "Название",  # Name
+            "Количество",  # Quantity
+            "Сумма (UZS)",  # Amount (UZS)
+            "Дата"  # Date
+        ]
+
+        # Write headers for purchases
+        for col_num, header in enumerate(headers_purchases, start=1):
+            col_letter = get_column_letter(col_num)
+            ws_purchases[f"{col_letter}1"] = header
+
+        # Write data rows for purchases
+        for row_num, purchase in enumerate(purchases, start=2):
+            ws_purchases[f"A{row_num}"] = f"{purchase.car.number} - {purchase.car.name}"
+            ws_purchases[f"B{row_num}"] = purchase.volume
+            ws_purchases[f"C{row_num}"] = f"{purchase.price} - {purchase.price_type}"
+            ws_purchases[f"D{row_num}"] = purchase.created_at.strftime('%d-%m-%Y %H:%M')
+
+        # Adjust column widths for purchases
+        for col_num, _ in enumerate(headers_purchases, start=1):
+            ws_purchases.column_dimensions[get_column_letter(col_num)].width = 20
 
         # Save the workbook to an in-memory response
         response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        response["Content-Disposition"] = f'attachment; filename="flight_logs_{flight_id}.xlsx"'
+        response["Content-Disposition"] = f'attachment; filename="flight_logs.xlsx"'
         wb.save(response)
 
         return response
+
+
+
 
 class ExportLogsToExcelAPIView(APIView):
     @swagger_auto_schema(
