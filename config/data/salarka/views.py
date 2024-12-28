@@ -39,7 +39,7 @@ class SalarkaDeleteAPIView(DestroyAPIView):
 
 
 class SaleCreateAPIView(ListCreateAPIView):
-    queryset = Sale.objects.all()
+    queryset = Sale.objects.all().order_by("-created_at")
     serializer_class = SaleSerializer
     permission_classes = (IsAuthenticated,)
 

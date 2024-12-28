@@ -38,11 +38,11 @@ class FlightListserializer(serializers.ModelSerializer):
             "driver_expenses_uzs",
             "driver_expenses_type",
 
-            "flight_expences",
+            "flight_expenses",
             "flight_expenses_uzs",
             "flight_expenses_type",
 
-            "other_expences",
+            "other_expenses",
             "other_expenses_uzs",
             "other_expenses_type",
 
@@ -109,11 +109,11 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "driver_expenses_uzs",
             "driver_expenses_type",
 
-            "flight_expences",
+            "flight_expenses",
             "flight_expenses_uzs",
             "flight_expenses_type",
 
-            "other_expences",
+            "other_expenses",
             "other_expenses_uzs",
             "other_expenses_type",
 

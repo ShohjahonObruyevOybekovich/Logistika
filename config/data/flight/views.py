@@ -134,7 +134,7 @@ class ExportFlightInfoAPIView(APIView):
             for flight in queryset:
                 sheet.append([
                     flight.region.name if flight.region else "",
-                    flight.get_flight_type_display() if flight.flight_type else "", \
+                    flight.get_flight_type_display() if flight.flight_type else "",
                     flight.car.number if flight.car else "",
                     flight.driver.full_name if flight.driver else "",
                     flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",

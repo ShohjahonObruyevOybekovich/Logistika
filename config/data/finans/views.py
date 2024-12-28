@@ -111,7 +111,6 @@ class FinansDriver(ListCreateAPIView):
 
 
 
-
 class FinansFlightExcel(APIView):
     def get(self, request, pk, *args, **kwargs):
         # Fetch the flight logs and related data
@@ -206,8 +205,6 @@ class FinansFlightExcel(APIView):
         wb.save(response)
 
         return response
-
-
 
 
 class ExportLogsToExcelAPIView(APIView):

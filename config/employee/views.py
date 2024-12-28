@@ -32,7 +32,7 @@ class EmployeeUpdateAPIView(UpdateAPIView):
 
 
 class EmployeeListAPIView(ListAPIView):
-    queryset = Employee.objects.all()
+    queryset = Employee.objects.all().order_by("-created_at")
     serializer_class = EmployeeListserializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
@@ -59,7 +59,7 @@ class EmployeeDeleteAPIView(DestroyAPIView):
 
 
 class EmployeeListCreateAPIView(ListAPIView):
-    queryset = Employee.objects.all()
+    queryset = Employee.objects.all().order_by("-created_at")
     permission_classes = (IsAuthenticated,)
     serializer_class = EmployeeListserializer
 

@@ -95,7 +95,7 @@ class Flight(TimeStampModel):
 
     cargo_info = models.TextField(blank=True, null=True)
 
-    flight_expences = models.FloatField(
+    flight_expenses = models.FloatField(
         null=True,
         blank=True,
         help_text="Flight expenses route"
@@ -115,7 +115,7 @@ class Flight(TimeStampModel):
     )
 
 
-    other_expences = models.FloatField(blank=True, null=True)
+    other_expenses = models.FloatField(blank=True, null=True)
     other_expenses_uzs = models.FloatField(blank=True, null=True)
     other_expenses_type = models.CharField(choices=PRICE_CHOICES,default='USD',
                                              max_length=10,null=True,blank=True)
