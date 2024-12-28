@@ -132,6 +132,9 @@ class SaleAnotherStationSerializers(serializers.ModelSerializer):
             "price",
             "price_type",
 
+            "km",
+            "km_car",
+
             "created_at",
             "updated_at",
         ]
