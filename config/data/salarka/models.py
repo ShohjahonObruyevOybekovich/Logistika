@@ -18,7 +18,7 @@ class Salarka(TimeStampModel):
     )
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 
@@ -43,7 +43,7 @@ class SalarkaAnotherStation(TimeStampModel):
     price_uzs = models.FloatField(max_length=150,null=True,blank=True)
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 

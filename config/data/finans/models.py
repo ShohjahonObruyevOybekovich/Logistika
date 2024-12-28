@@ -17,7 +17,7 @@ class Logs(TimeStampModel):
     amount = models.FloatField(null=True,blank=True)
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 

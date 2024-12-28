@@ -19,7 +19,7 @@ class OilPurchase(TimeStampModel):
     price = models.DecimalField(decimal_places=2, max_digits=10)
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 
@@ -28,7 +28,7 @@ class OilPurchase(TimeStampModel):
     amount = models.FloatField(null=True,blank=True)
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 
@@ -47,7 +47,7 @@ class OilREcycles(TimeStampModel):
     amount_usd = models.FloatField(null=True,blank=True)
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True
     )
@@ -75,7 +75,7 @@ class Utilized_oil(TimeStampModel):
     price = models.FloatField(null=True, blank=True)
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ],default='USD', max_length=10, null=True, blank=True)
 

@@ -57,7 +57,7 @@ class Flight(TimeStampModel):
     )
     PRICE_CHOICES = [
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ]
     price_type = models.CharField(
@@ -79,7 +79,7 @@ class Flight(TimeStampModel):
     )
     PRICE_CHOICES = [
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ]
     driver_expenses_type = models.CharField(
@@ -163,7 +163,7 @@ class Ordered(TimeStampModel):
 
     PRICE_CHOICES = [
         ('USD', 'USD'),
-        ('UZS', 'UZS'),
+        ('RUB', 'RUB'),
         ('KZT', "KZT")
     ]
 
