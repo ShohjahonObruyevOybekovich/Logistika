@@ -120,7 +120,6 @@ class FinansFlightExcel(APIView):
 
         # Define the headers in Russian
         headers = [
-            "ID",              # ID
             "Название",        # Name
             "Сумма (UZS)",     # Amount (UZS)
             "Сумма (USD)",     # Amount (USD)
@@ -136,13 +135,12 @@ class FinansFlightExcel(APIView):
 
         # Write the data rows
         for row_num, log in enumerate(logs, start=2):
-            ws[f"A{row_num}"] = log.id
             ws[f"B{row_num}"] = log.name
             ws[f"C{row_num}"] = log.amount_uzs
             ws[f"D{row_num}"] = log.amount_usd
             ws[f"E{row_num}"] = log.flight.id if log.flight else None
             ws[f"F{row_num}"] = log.kind
-            ws[f"G{row_num}"] = log.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            ws[f"G{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
 
         # Set column widths for better readability
         for col_num, _ in enumerate(headers, start=1):
