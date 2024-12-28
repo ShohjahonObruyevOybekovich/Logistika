@@ -102,7 +102,10 @@ class SaleSerializer(serializers.ModelSerializer):
             "id",
             "car",
             "volume",
+            "km",
+            "km_car",
             "created_at",
+            "updated_at",
         ]
 
     def to_representation(self, instance):
@@ -124,6 +127,10 @@ class SaleAnotherStationSerializers(serializers.ModelSerializer):
             "price_uzs",
             "price",
             "price_type",
+
+            "km",
+            "km_car",
+
             "created_at",
             "updated_at",
         ]

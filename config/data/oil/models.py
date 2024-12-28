@@ -15,22 +15,21 @@ class Oil(TimeStampModel):
 
 class OilPurchase(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE, related_name="purchases")
-    price_uzs = models.FloatField(null=True,blank=True)
+    price_uzs = models.FloatField(null=True, blank=True)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
 
-
-    amount_uzs = models.FloatField(null=True,blank=True)
-    amount = models.FloatField(null=True,blank=True)
+    amount_uzs = models.FloatField(null=True, blank=True)
+    amount = models.FloatField(null=True, blank=True)
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
 
     oil_volume = models.FloatField(help_text="Oil volume in liters")
 
@@ -44,12 +43,12 @@ class OilPurchase(TimeStampModel):
 class OilREcycles(TimeStampModel):
     oil = models.ForeignKey("Oil", on_delete=models.CASCADE)
     amount = models.FloatField(help_text="Oil price")
-    amount_usd = models.FloatField(null=True,blank=True)
+    amount_usd = models.FloatField(null=True, blank=True)
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True
+    ], default='USD', max_length=10, null=True, blank=True
     )
     car = models.ForeignKey('cars.Car', on_delete=models.CASCADE)
     remaining_oil = models.FloatField(help_text="Oil remaining")
@@ -77,7 +76,7 @@ class Utilized_oil(TimeStampModel):
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
 
     # price_usd = models.FloatField(null=True, blank=True)
 

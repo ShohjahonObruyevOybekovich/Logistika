@@ -38,7 +38,7 @@ class GasPurchase(TimeStampModel):
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
 
     price_uzs = models.FloatField(
         max_length=150,
@@ -54,7 +54,7 @@ class GasPurchase(TimeStampModel):
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
 
 
 class GasSale(TimeStampModel):
@@ -87,7 +87,7 @@ class GasSale(TimeStampModel):
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
 
     price_uzs = models.FloatField(
         max_length=150,
@@ -99,8 +99,10 @@ class GasSale(TimeStampModel):
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True
+    ], default='USD', max_length=10, null=True, blank=True
     )
+    km = models.FloatField(default=0, null=True, blank=True, help_text="KM of car traveled")
+    km_car = models.FloatField(default=0, null=True, blank=True, help_text="sum(km)")
 
 
 class Gas_another_station(TimeStampModel):
@@ -117,7 +119,10 @@ class Gas_another_station(TimeStampModel):
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT")
-    ],default='USD', max_length=10, null=True, blank=True)
+    ], default='USD', max_length=10, null=True, blank=True)
+
+    km = models.FloatField(default=0, null=True, blank=True, )
+    km_car = models.FloatField(default=0, null=True, blank=True, )
 
     def __str__(self):
         return f"Purchased {self.purchased_volume} gas - {self.payed_price_uzs} m³"
