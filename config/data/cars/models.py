@@ -57,7 +57,8 @@ class Car(TimeStampModel):
     PRICE_CHOICES = [
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ]
     price_type = models.CharField(
         choices=PRICE_CHOICES,
@@ -107,7 +108,8 @@ class Details(TimeStampModel):
     PRICE_CHOICES = [
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ]
     price_type = models.CharField(
         choices=PRICE_CHOICES,

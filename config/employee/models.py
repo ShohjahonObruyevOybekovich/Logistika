@@ -39,7 +39,8 @@ class Employee(models.Model):
     balance_price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
     bonus = models.FloatField(null=True, blank=True, default=0.0)

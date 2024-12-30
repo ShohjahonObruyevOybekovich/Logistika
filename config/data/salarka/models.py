@@ -19,7 +19,8 @@ class Salarka(TimeStampModel):
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ],default='USD', max_length=10, null=True, blank=True)
 
     def __str__(self):
@@ -53,7 +54,8 @@ class SalarkaAnotherStation(TimeStampModel):
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ],default='USD', max_length=10, null=True, blank=True)
     km = models.FloatField(default=0.0, help_text="Kilometer Miles",null=True, blank=True)
     km_car = models.FloatField(default=0.0, help_text="Kilometer Miles",null=True, blank=True)

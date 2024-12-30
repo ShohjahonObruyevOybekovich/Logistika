@@ -20,7 +20,9 @@ class OilPurchase(TimeStampModel):
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
+
     ], default='USD', max_length=10, null=True, blank=True)
 
     amount_uzs = models.FloatField(null=True, blank=True)
@@ -28,7 +30,8 @@ class OilPurchase(TimeStampModel):
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
     oil_volume = models.FloatField(help_text="Oil volume in liters")
@@ -47,7 +50,8 @@ class OilREcycles(TimeStampModel):
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True
     )
     car = models.ForeignKey('cars.Car', on_delete=models.CASCADE)
@@ -75,7 +79,8 @@ class Utilized_oil(TimeStampModel):
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
     # price_usd = models.FloatField(null=True, blank=True)

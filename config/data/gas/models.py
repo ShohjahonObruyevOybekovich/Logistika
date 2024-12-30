@@ -37,7 +37,8 @@ class GasPurchase(TimeStampModel):
     payed_price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
     price_uzs = models.FloatField(
@@ -53,7 +54,8 @@ class GasPurchase(TimeStampModel):
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
 
@@ -86,7 +88,8 @@ class GasSale(TimeStampModel):
     payed_price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
     price_uzs = models.FloatField(
@@ -98,7 +101,8 @@ class GasSale(TimeStampModel):
     price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True
     )
     km = models.FloatField(default=0, null=True, blank=True, help_text="KM of car traveled")
@@ -118,7 +122,8 @@ class Gas_another_station(TimeStampModel):
     payed_price_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
     km = models.FloatField(default=0, null=True, blank=True, )

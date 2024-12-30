@@ -18,7 +18,8 @@ class Logs(TimeStampModel):
     amount_type = models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
-        ('KZT', "KZT")
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
     ],default='USD', max_length=10, null=True, blank=True)
 
     car = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
