@@ -15,4 +15,6 @@ urlpatterns = [
     path("ordered/<uuid:pk>", FlightOrderedRetrieveAPIView.as_view(), name="flight-list-ordered"),
 
     path("info/",ExportFlightInfoAPIView.as_view(), name="flight-info"),
+
+    path("finance/<uuid:pk>",FinanceFlightAPIView.as_view(), name="flight-finance"),
                ]

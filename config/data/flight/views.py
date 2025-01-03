@@ -14,6 +14,8 @@ from rest_framework.views import APIView
 
 from data.flight.serializers import FlightListserializer, FlightListCReateserializer, FlightOrderedListserializer
 from .models import Flight, Ordered
+from ..finans.models import Logs
+from ..finans.serializers import FinansListserializer
 
 
 class FlightListAPIView(ListCreateAPIView):
@@ -80,7 +82,14 @@ class FlightHistoryStatsAPIView(ListAPIView):
             return Flight.objects.filter(id=flight_id).order_by("-created_at")
         return Flight.objects.none()
 
+class FinanceFlightAPIView(ListAPIView):
+    serializer_class = FinansListserializer
 
+    def get_queryset(self):
+        flight_id = self.kwargs.get('pk')
+        if flight_id:
+            return Logs.objects.filter(flight__id=flight_id).order_by("-created_at")
+        return Logs.objects.none()
 
 class FlightListNOPg(ListAPIView):
     serializer_class = FlightListCReateserializer
