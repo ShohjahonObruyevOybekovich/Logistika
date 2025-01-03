@@ -19,36 +19,24 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                 employee=instance.driver,
             )
 
-        # Log outcome for driver expenses
-        if instance.driver_expenses_uzs > 0:
-            Logs.objects.create(
-                action="OUTCOME",
-                amount_uzs=instance.driver_expenses_uzs,
-                kind="FLIGHT",
-                comment=f"Расход на рейс  {instance.car.number} - {instance.region.name}.",
-                flight=instance,
-                employee=instance.driver,
-            )
-        if instance.other_expenses_uzs:
-            Logs.objects.create(
-                action="OUTCOME",
-                amount_uzs=instance.other_expenses_uzs,
-                kind="FLIGHT",
-                comment=f"Расход за рейс для водителя {instance.driver.full_name}: {instance.other_expenses_uzs} ",
-            )
-            if instance.driver:
-                # Ensure balance_uzs is initialized to 0.0 if None
-                instance.driver.balance_uzs = instance.driver.balance_uzs or 0.0
-                instance.driver.balance_uzs += instance.other_expenses_uzs
-                instance.driver.save()
+        # # Log outcome for driver expenses
+        # if instance.driver_expenses_uzs > 0:
+        #     Logs.objects.create(
+        #         action="OUTCOME",
+        #         amount_uzs=instance.driver_expenses_uzs,
+        #         kind="FLIGHT",
+        #         comment=f"Расход на рейс  {instance.car.number} - {instance.region.name}.",
+        #         flight=instance,
+        #         employee=instance.driver,
+        #     )
+        # if instance.other_expenses_uzs:
+        #     Logs.objects.create(
+        #         action="OUTCOME",
+        #         amount_uzs=instance.other_expenses_uzs,
+        #         kind="FLIGHT",
+        #         comment=f"Расход за рейс для водителя {instance.driver.full_name}: {instance.other_expenses_uzs} ",
+        #     )
 
-
-        # Update driver balance
-        if instance.driver:
-            # Ensure balance_uzs is initialized to 0.0 if None
-            instance.driver.balance_uzs = instance.driver.balance_uzs or 0.0
-            instance.driver.balance_uzs += instance.driver_expenses_uzs or 0.0
-            instance.driver.save()
 
 
 @receiver(post_save, sender=Ordered)
