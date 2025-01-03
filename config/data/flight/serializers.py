@@ -61,7 +61,6 @@ class FlightListserializer(serializers.ModelSerializer):
         """
         return (
             (obj.flight_expenses_uzs or 0)
-            - ((obj.driver_expenses_uzs or 0)  + (obj.other_expenses_uzs or 0))
         )
 
 

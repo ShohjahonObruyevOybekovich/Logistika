@@ -101,12 +101,12 @@ class FinansDetail(RetrieveUpdateDestroyAPIView):
 class FinansDriver(ListCreateAPIView):
     # queryset = Logs.objects.all()
     serializer_class = FinansListserializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         driver_id = self.kwargs.get('pk')
         if driver_id:
-            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY").order_by("created_at")
+            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY",).order_by("created_at")
         return Logs.objects.none()
 
 
