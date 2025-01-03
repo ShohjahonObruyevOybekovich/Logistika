@@ -110,15 +110,17 @@ class FinansDriver(ListCreateAPIView):
         return Logs.objects.none()
 
 
-
 class FinansFlightExcel(APIView):
     def get(self, request, pk, *args, **kwargs):
         # Fetch the flight logs and related data
         flight_id = pk
-        flight = Flight.objects.filter(id=flight_id).first()
-        if not flight:
+        try:
+            # Explicitly include all flights regardless of their status
+            flight = Flight.objects.get(id=flight_id)
+        except Flight.DoesNotExist:
             return HttpResponse("Flight not found", status=404)
 
+        # Fetch related logs and purchases
         logs = Logs.objects.filter(flight=flight, kind="FLIGHT").order_by("created_at")
         purchases = SalarkaAnotherStation.objects.filter(flight=flight).order_by("created_at")
 
@@ -127,6 +129,7 @@ class FinansFlightExcel(APIView):
         ws_logs = wb.active
         ws_logs.title = "Flight Logs"
 
+        # Calculate flight balance if flight is inactive
         flight_balance = None
         if flight.status == "INACTIVE":
             flight_balance = (
@@ -134,7 +137,7 @@ class FinansFlightExcel(APIView):
                 - (
                     (flight.driver_expenses_uzs or 0)
                     + (flight.flight_expenses_uzs or 0)
-                    + (flight.other_expenses_price or 0)
+                    + (flight.other_expenses_uzs or 0)
                 )
             )
 
@@ -148,7 +151,7 @@ class FinansFlightExcel(APIView):
             "Конечная дата",  # End Date
             "Начальный км",  # Start KM
             "Конечный км",  # End KM
-            "Баланс рейса",
+            "Баланс рейса",  # Flight Balance
             "Дата создания"  # Created At
         ]
 
@@ -162,12 +165,12 @@ class FinansFlightExcel(APIView):
             ws_logs[f"A{row_num}"] = f"{flight.car.number} - {flight.region.name}"
             ws_logs[f"B{row_num}"] = log.amount_uzs
             ws_logs[f"C{row_num}"] = "Приход" if log.action == "INCOME" else "Расход"
-            ws_logs[f"D{row_num}"] = f"{log.kind or ''}, {log.reason or ''}, {log.comment or ''}"
-            ws_logs[f"E{row_num}"] = flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "N/A"
-            ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "N/A"
-            ws_logs[f"G{row_num}"] = flight.start_km or "N/A"
-            ws_logs[f"H{row_num}"] = flight.end_km or "N/A"
-            ws_logs[f"I{row_num}"] = flight_balance if flight.status == "INACTIVE" else "N/A"
+            ws_logs[f"D{row_num}"] = f"{log.reason or ''}, {log.comment or ''}"
+            ws_logs[f"E{row_num}"] = flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else ""
+            ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else ""
+            ws_logs[f"G{row_num}"] = flight.start_km or ""
+            ws_logs[f"H{row_num}"] = flight.end_km or ""
+            ws_logs[f"I{row_num}"] = flight_balance if flight.status == "INACTIVE" else ""
             ws_logs[f"J{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
 
         # Adjust column widths for logs
@@ -201,7 +204,7 @@ class FinansFlightExcel(APIView):
 
         # Save the workbook to an in-memory response
         response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        response["Content-Disposition"] = f'attachment; filename="flight_logs.xlsx"'
+        response["Content-Disposition"] = f'attachment; filename="flight_logs_{flight_id}.xlsx"'
         wb.save(response)
 
         return response
