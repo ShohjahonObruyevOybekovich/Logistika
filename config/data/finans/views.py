@@ -106,7 +106,7 @@ class FinansDriver(ListCreateAPIView):
     def get_queryset(self):
         driver_id = self.kwargs.get('pk')
         if driver_id:
-            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY",).order_by("created_at")
+            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY").order_by("-created_at")
         return Logs.objects.none()
 
 
@@ -121,8 +121,8 @@ class FinansFlightExcel(APIView):
             return HttpResponse("Flight not found", status=404)
 
         # Fetch related logs and purchases
-        logs = Logs.objects.filter(flight=flight, kind="FLIGHT").order_by("created_at")
-        purchases = SalarkaAnotherStation.objects.filter(flight=flight).order_by("created_at")
+        logs = Logs.objects.filter(flight=flight, kind="FLIGHT").order_by("-created_at")
+        purchases = SalarkaAnotherStation.objects.filter(flight=flight).order_by("-created_at")
 
         # Create an Excel workbook
         wb = Workbook()
