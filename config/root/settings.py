@@ -37,6 +37,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://templify.uz',
     'https://root.templify.uz',
     'https://www.root.templify.uz',
+    "https://api.logic.sector-soft.ru"
     'https://logistics-dashboard-peach.vercel.app'
 ]
 
