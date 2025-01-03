@@ -14,7 +14,7 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                 action="INCOME",
                 amount_uzs=instance.price_uzs,
                 kind="FLIGHT",
-                comment=f"Доход от рейса с ID {instance.departure_date}.",
+                comment=f"Доход от рейса {instance.car.number} - {instance.region.name}.",
                 flight=instance,
                 employee=instance.driver,
             )
@@ -25,7 +25,7 @@ def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
                 action="OUTCOME",
                 amount_uzs=instance.driver_expenses_uzs,
                 kind="FLIGHT",
-                comment=f"Расход на рейс с ID {instance.departure_date}.",
+                comment=f"Расход на рейс  {instance.car.number} - {instance.region.name}.",
                 flight=instance,
                 employee=instance.driver,
             )
@@ -64,7 +64,7 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
                             action="INCOME",
                             amount_uzs=instance.driver_expenses_uzs,
                             kind="ORDERED_FLIGHT",
-                            comment=f"Доход от заказанного рейса (ID) {instance.departure_date}",
+                            comment=f"Доход от заказанного рейса {instance.car_number} - {instance.region.name}",
                             flight=instance,
                         )
 
@@ -73,7 +73,7 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
                             action="OUTCOME",
                             amount_uzs=instance.driver_expenses_uzs,
                             kind="ORDERED_FLIGHT",
-                            comment=f"Доход от заказанного рейса  {instance.driver_name}"
+                            comment=f"Доход от заказанного рейса {instance.car_number} - {instance.region.name}",
                         )
 
             except Exception as e:

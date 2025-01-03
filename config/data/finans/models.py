@@ -37,6 +37,7 @@ class Logs(TimeStampModel):
             ("OTHER", "Boshqa"),
             ("FIX_CAR", "Avtomobil tuzatish"),
             ("PAY_SALARY", "Oylik berish"),
+            ("SALARKA", "SALARKA"),
             ("FLIGHT", "FLIGHT"),
             ("LEASING","Leasing"),
             ("BONUS","BONUS"),

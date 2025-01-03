@@ -134,7 +134,7 @@ class ExportFlightInfoAPIView(APIView):
             for flight in queryset:
                 sheet.append([
                     flight.region.name if flight.region else "",
-                    flight.get_flight_type_display() if flight.flight_type else "",
+                    "Рейсы внутри Узбекистана" if flight.flight_type == "In_uzb" else "Рейсы за пределы Узбекистана" if flight.flight_type else "",
                     flight.car.number if flight.car else "",
                     flight.driver.full_name if flight.driver else "",
                     flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",
@@ -142,7 +142,7 @@ class ExportFlightInfoAPIView(APIView):
                     flight.price_uzs or "",
                     flight.driver_expenses_uzs or "",
                     flight.cargo_info or "",
-                    flight.other_expences or "",
+                    flight.other_expenses or "",
                     flight.get_status_display() if flight.status else "",
                     flight.created_at.strftime("%d-%m-%Y %H:%M") if flight.created_at else "",
                 ])
@@ -167,7 +167,7 @@ class ExportFlightInfoAPIView(APIView):
                     ordered.price_uzs or "",
                     ordered.driver_expenses_uzs or "",
                     ordered.region.name if ordered.region else "",
-                    ordered.get_flight_type_display() if ordered.flight_type else "",
+                    "Рейсы внутри Узбекистана" if ordered.flight_type == "In_uzb" else "Рейсы за пределы Узбекистана" if ordered.flight_type else "",
                     ordered.created_at.strftime('%d-%m-%Y %H:%M') if ordered.created_at else "",
                 ])
 

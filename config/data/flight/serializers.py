@@ -60,8 +60,8 @@ class FlightListserializer(serializers.ModelSerializer):
         Calculate the flight balance: price_uzs - (driver_expenses_uzs + flight_expenses_uzs + other_expenses_uzs)
         """
         return (
-            (obj.price_uzs or 0)
-            - ((obj.driver_expenses_uzs or 0) + (obj.flight_expenses_uzs or 0) + (obj.other_expenses_uzs or 0))
+            (obj.flight_expenses_uzs or 0)
+            - ((obj.driver_expenses_uzs or 0)  + (obj.other_expenses_uzs or 0))
         )
 
 
@@ -129,8 +129,8 @@ class FlightListCReateserializer(serializers.ModelSerializer):
         Calculate the flight balance: price_uzs - (driver_expenses_uzs + flight_expenses_uzs + other_expenses_uzs)
         """
         return (
-            (obj.price_uzs or 0)
-            - ((obj.driver_expenses_uzs or 0) + (obj.flight_expenses_uzs or 0) + (obj.other_expenses_uzs or 0))
+            (obj.flight_expenses_uzs or 0)
+            - ((obj.driver_expenses_uzs or 0)  + (obj.other_expenses_uzs or 0))
         )
 
     def to_representation(self, instance):
