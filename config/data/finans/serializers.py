@@ -128,9 +128,13 @@ class FinansUserListserializer(serializers.ModelSerializer):
         return income - outcome
 
     def get_total_leasing_paid(self, obj):
-        return Car.objects.filter(type_of_payment="LEASING").aggregate(
-            total_leasing_paid=Sum('leasing_payed_amount')
-        )['total_leasing_paid'] or 0
+        """
+        Calculate the total amount paid for leasing based on Logs.
+        """
+        leasing_logs = Logs.objects.filter(kind="LEASING", action="OUTCOME").aggregate(
+            total_leasing_paid=Sum('amount_uzs')
+        )
+        return leasing_logs['total_leasing_paid'] or 0
 
     def get_total_car_prices(self, obj):
         return Car.objects.filter(type_of_payment="LEASING").aggregate(

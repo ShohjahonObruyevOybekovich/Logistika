@@ -3,6 +3,7 @@ from django.dispatch import receiver
 
 from employee.models import Employee
 from .models import Logs
+from ..cars.models import Car
 from ..flight.models import Flight
 
 
@@ -42,4 +43,5 @@ def on_flight_expenses(sender, instance: Logs, created, **kwargs):
         flight = Flight.objects.filter(id=instance.flight.id).first()
         flight.flight_expenses_uzs -= instance.amount_uzs
         flight.save()
+
 
