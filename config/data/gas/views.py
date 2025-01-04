@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from icecream import ic
 from openpyxl.styles import Font, Alignment
 from openpyxl.workbook import Workbook
 from rest_framework.exceptions import NotFound
@@ -12,9 +13,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.db import models
 from data.gas.models import GasPurchase, GasSale, GasStation
 from data.gas.models import Gas_another_station
-from data.gas.serializers import GasAnotherStationCreateseralizer, GasAnotherListserializer
+from data.gas.serializers import GasAnotherStationCreateseralizer, GasAnotherListserializer, CombinedGasSaleSerializer
 from data.gas.serializers import (
     GasPurchaseListseralizer,
     GasSaleListSerializer,
@@ -128,19 +130,41 @@ class GasAnotherStationDeleteAPIView(DestroyAPIView):
     queryset = Gas_another_station.objects.all()
     permission_classes = (IsAuthenticated,)
 
-
 class GasByCarID(ListAPIView):
-    serializer_class = GasSaleListSerializer
+    serializer_class = CombinedGasSaleSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         car_id = self.kwargs.get("pk")
-        queryset = GasSale.objects.filter(car_id=car_id).order_by("-created_at")
+        ic(car_id)
 
-        if not queryset.exists():
-            raise NotFound("Gas Sale not found.")
+        # Fetch data from GasSale with related Car and Station
+        gas_sales = GasSale.objects.filter(car_id=car_id).select_related('car', 'station').annotate(
+            model_type=models.Value('GasSale', output_field=models.CharField())
+        )
 
-        return queryset
+        # Fetch data from Gas_another_station with related Car
+        gas_another_sales = Gas_another_station.objects.filter(car_id=car_id).select_related('car').annotate(
+            model_type=models.Value('GasAnotherStation', output_field=models.CharField())
+        )
+
+        # Combine and sort the querysets
+        combined_sales = sorted(
+            list(gas_sales) + list(gas_another_sales),
+            key=lambda x: x.created_at,  # Access `created_at` directly on the model instance
+            reverse=True
+        )
+        ic(combined_sales)
+
+        if not combined_sales:
+            raise NotFound("Gas purchases not found.")
+
+        return combined_sales
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True, context={'previous_km': None})
+        return Response(serializer.data)
 
 
 
