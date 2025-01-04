@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from django.db import models
@@ -43,7 +44,7 @@ class Flight(TimeStampModel):
     )
 
     departure_date = models.DateField()
-    arrival_date = models.DateField(null=True, blank=True)
+    arrival_date = models.DateField( default=datetime.today(),null=True, blank=True)
 
     price = models.FloatField(
         max_length=150,

@@ -31,10 +31,16 @@ def on_salary_balance(sender, instance: Logs, created, **kwargs):
 
 @receiver(post_save, sender=Logs)
 def on_Salarka(sender, instance: Logs, created, **kwargs):
-    if created and instance.action == "OUTCOME" and instance.kind == "SALARKA" :
-        flight = Flight.objects.filter(id=instance.flight.id).first()
-        flight.flight_balance_uzs -= instance.amount_uzs
-        flight.save()
+    if created and instance.action == "OUTCOME" and instance.kind == "SALARKA":
+        # Ensure instance.flight is not None
+        if instance.flight:
+            flight = Flight.objects.filter(id=instance.flight.id).first()
+            if flight:
+                flight.flight_balance_uzs -= instance.amount_uzs
+                flight.save()
+        else:
+            # Log or handle the case where instance.flight is None
+            print("Error: instance.flight is None.")
 
 
 @receiver(post_save, sender=Logs)
