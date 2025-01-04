@@ -15,35 +15,70 @@ class Region(TimeStampModel):
         choices=Flight_CHOICES,
         default="IN_UZB",
     )
+    Route_CHOICES = [
+        ("GONE_TO", "GONE_TO"),
+        ("BEEN_TO", "BEEN_TO"),
+    ]
+    route = models.CharField(choices=Route_CHOICES, max_length=10,
+                             default="GONE_TO", null=True, blank=True)
 
-    flight_price = models.FloatField(
+    gone_flight_price = models.FloatField(
         null=True,
         blank=True,
     )
-    flight_price_uzs= models.FloatField(
+    gone_flight_price_uzs= models.FloatField(
         null=True,
         blank=True,
     )
-    flight_price_type= models.CharField(choices=[
+    gone_flight_price_type= models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT"),
         ("UZS", "UZS"),
     ],default='USD', max_length=10, null=True, blank=True)
-    driver_expenses= models.FloatField(
+    gone_driver_expenses= models.FloatField(
         null=True,
         blank=True,
     )
-    driver_expenses_uzs= models.FloatField(
+    gone_driver_expenses_uzs= models.FloatField(
         null=True,
         blank=True,
     )
-    driver_expenses_type= models.CharField(choices=[
+    gone_driver_expenses_type= models.CharField(choices=[
         ('USD', 'USD'),
         ('RUB', 'RUB'),
         ('KZT', "KZT"),
         ("UZS", "UZS"),
     ],default='USD', max_length=10, null=True, blank=True)
+
+    been_flight_price = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    been_flight_price_uzs = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    been_flight_price_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('RUB', 'RUB'),
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
+    ], default='USD', max_length=10, null=True, blank=True)
+    been_driver_expenses = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    been_driver_expenses_uzs = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    been_driver_expenses_type = models.CharField(choices=[
+        ('USD', 'USD'),
+        ('RUB', 'RUB'),
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
+    ], default='USD', max_length=10, null=True, blank=True)
 
     def __str__(self):
         return self.name
