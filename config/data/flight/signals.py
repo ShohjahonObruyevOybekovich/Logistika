@@ -51,7 +51,7 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
                         Logs.objects.create(
                             action="INCOME",
                             amount_uzs=instance.driver_expenses_uzs,
-                            kind="ORDERED_FLIGHT",
+                            kind="FLIGHT",
                             comment=f"Доход от заказанного рейса {instance.car_number} - {instance.region.name}",
                             flight=instance,
                         )
@@ -60,7 +60,7 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
                         Logs.objects.create(
                             action="OUTCOME",
                             amount_uzs=instance.driver_expenses_uzs,
-                            kind="ORDERED_FLIGHT",
+                            kind="FLIGHT",
                             comment=f"Доход от заказанного рейса {instance.car_number} - {instance.region.name}",
                         )
 
