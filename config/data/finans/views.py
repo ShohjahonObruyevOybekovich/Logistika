@@ -306,7 +306,13 @@ class ExportLogsToExcelAPIView(APIView):
             sheet.cell(row=row_num, column=2).value = log.amount_uzs
             sheet.cell(row=row_num, column=3).value = log.car.number if log.car else ""
             sheet.cell(row=row_num, column=4).value = log.employee.full_name if log.employee else ""
-            sheet.cell(row=row_num, column=5).value = {log.flight.car.number} - {log.flight.region.name} if log.flight.region  and log.flight.car else ""
+            sheet.cell(row=row_num, column=5).value = (
+                f"{log.flight.car.number} - {log.flight.region.name}"
+                if log.flight and log.flight.region and log.flight.car
+                else ""
+            )
+
+
             KIND_TO_RUSSIAN = {
                 "OTHER": "Прочее",
                 "FIX_CAR": "Ремонт автомобиля",

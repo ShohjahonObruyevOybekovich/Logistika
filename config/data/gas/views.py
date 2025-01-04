@@ -101,8 +101,8 @@ class GasAnotherStationCreateAPIView(ListCreateAPIView):
         instance = serializer.save()
 
         # Calculate km and update the instance
-        instance.km_car = instance.car.distance_traveled  # Snapshot of car's current distance_traveled
-        instance.km = instance.car.distance_traveled - instance.km_car  # Calculate km
+        instance.km_car = instance.car.distance_travelled  # Snapshot of car's current distance_travelled
+        instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
         instance.save()
 
 
