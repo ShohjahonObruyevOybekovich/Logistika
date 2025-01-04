@@ -28,6 +28,8 @@ def on_sale_purchased(sender, instance: Sale, created, **kwargs):
 @receiver(post_save, sender=SalarkaAnotherStation)
 def on_logs_another_purchased(sender, instance: SalarkaAnotherStation, created, **kwargs):
     if created:
+        instance.flight.flight_balance_uzs -= float(instance.price_uzs)
+        instance.flight.save()
         Logs.objects.create(
             action="OUTCOME",
             amount_uzs=instance.price_uzs,
