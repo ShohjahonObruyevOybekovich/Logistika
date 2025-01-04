@@ -280,7 +280,7 @@ class FlightCloseApi(APIView):
                     action="OUTCOME",
                     amount_uzs=lunch_payments,
                     kind="FLIGHT",
-                    comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} по рейсу {flight.car.name - flight.car.number}",
+                    comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} по рейсу {flight.car.name } { flight.car.number}",
                     flight=flight,
                     employee=flight.driver
                 )
