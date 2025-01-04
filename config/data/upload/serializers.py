@@ -1,4 +1,4 @@
-from root.settings import BASE_DIR
+from root.settings import BASE_DIR, MEDIA_URL
 from rest_framework import serializers
 
 from .models import File
@@ -16,6 +16,6 @@ class FileUploadSerializer(serializers.ModelSerializer):
         if request is not None:
             representation["file"] = request.build_absolute_uri(instance.file.url)
         else:
-            representation["file"] = f"{BASE_DIR}{instance.file.url}"
+            representation["file"] = f"{MEDIA_URL}{instance.file.url}"
         return representation
 
