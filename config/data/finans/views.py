@@ -19,7 +19,7 @@ from data.finans.serializers import FinansListserializer, LogsFilter, FinansUser
 from .models import Logs
 from ..cars.models import Car
 from ..flight.models import Flight
-from ..gas.models import GasPurchase, GasSale
+from ..gas.models import GasPurchase, GasSale, Gas_another_station
 from ..salarka.models import Salarka, SalarkaAnotherStation
 
 
@@ -115,14 +115,33 @@ class FinansFlightExcel(APIView):
         # Fetch the flight logs and related data
         flight_id = pk
         try:
-            # Explicitly include all flights regardless of their status
             flight = Flight.objects.get(id=flight_id)
         except Flight.DoesNotExist:
             return HttpResponse("Flight not found", status=404)
 
-        # Fetch related logs and purchases
+        car = flight.car
+        fuel_type = car.fuel_type.lower()  # Assuming fuel_type is either "salaka" or "gaz"
+
+        # Fetch related logs
         logs = Logs.objects.filter(flight=flight, kind="FLIGHT").order_by("-created_at")
-        purchases = SalarkaAnotherStation.objects.filter(flight=flight).order_by("-created_at")
+
+        # Fetch purchases based on fuel type
+        if fuel_type == "diesel":
+            purchases = SalarkaAnotherStation.objects.filter(flight=flight).order_by("-created_at")
+        elif fuel_type == "gas":
+            purchases = list(
+                GasSale.objects.filter(
+                    car=car,
+                    created_at__range=(flight.departure_date, flight.arrival_date)
+                ).select_related("station")
+            ) + list(
+                Gas_another_station.objects.filter(
+                    car=car,
+                    created_at__range=(flight.departure_date, flight.arrival_date)
+                )
+            )
+        else:
+            return HttpResponse("Unsupported fuel type", status=400)
 
         # Create an Excel workbook
         wb = Workbook()
@@ -149,8 +168,6 @@ class FinansFlightExcel(APIView):
             "Комментарий",  # Comment
             "Начальная дата",  # Start Date
             "Конечная дата",  # End Date
-            "Начальный км",  # Start KM
-            "Конечный км",  # End KM
             "Баланс рейса",  # Flight Balance
             "Дата создания"  # Created At
         ]
@@ -168,10 +185,8 @@ class FinansFlightExcel(APIView):
             ws_logs[f"D{row_num}"] = f"{log.reason or ''}, {log.comment or ''}"
             ws_logs[f"E{row_num}"] = flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else ""
             ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else ""
-            ws_logs[f"G{row_num}"] = flight.start_km or ""
-            ws_logs[f"H{row_num}"] = flight.end_km or ""
-            ws_logs[f"I{row_num}"] = flight_balance if flight.status == "INACTIVE" else ""
-            ws_logs[f"J{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
+            ws_logs[f"G{row_num}"] = flight_balance if flight.status == "INACTIVE" else ""
+            ws_logs[f"H{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
 
         # Adjust column widths for logs
         for col_num, _ in enumerate(headers_logs, start=1):
@@ -193,10 +208,17 @@ class FinansFlightExcel(APIView):
 
         # Write data rows for purchases
         for row_num, purchase in enumerate(purchases, start=2):
-            ws_purchases[f"A{row_num}"] = f"{purchase.car.number} - {purchase.car.name}"
-            ws_purchases[f"B{row_num}"] = purchase.volume
-            ws_purchases[f"C{row_num}"] = f"{purchase.price} - {purchase.price_type}"
-            ws_purchases[f"D{row_num}"] = purchase.created_at.strftime('%d-%m-%Y %H:%M')
+            if fuel_type == "salaka":
+                ws_purchases[f"A{row_num}"] = f"{purchase.car.number} - {purchase.car.name}"
+                ws_purchases[f"B{row_num}"] = purchase.volume
+                ws_purchases[f"C{row_num}"] = f"{purchase.price} - {purchase.price_type}"
+                ws_purchases[f"D{row_num}"] = purchase.created_at.strftime('%d-%m-%Y %H:%M')
+            elif fuel_type == "gaz":
+                name = purchase.station.name if hasattr(purchase, "station") else purchase.name
+                ws_purchases[f"A{row_num}"] = name
+                ws_purchases[f"B{row_num}"] = purchase.amount if hasattr(purchase, "amount") else purchase.purchased_volume
+                ws_purchases[f"C{row_num}"] = f"{purchase.price} - {purchase.price_type}"
+                ws_purchases[f"D{row_num}"] = purchase.created_at.strftime('%d-%m-%Y %H:%M')
 
         # Adjust column widths for purchases
         for col_num, _ in enumerate(headers_purchases, start=1):
@@ -208,6 +230,7 @@ class FinansFlightExcel(APIView):
         wb.save(response)
 
         return response
+
 
 
 class ExportLogsToExcelAPIView(APIView):
@@ -247,7 +270,7 @@ class ExportLogsToExcelAPIView(APIView):
         end_date = request.GET.get("end_date")
 
         # Build the queryset with filters
-        queryset = Logs.objects.all()
+        queryset = Logs.objects.all().order_by("-created_at")
 
         # Apply field-specific filters
         for field, value in filters.items():
@@ -279,12 +302,23 @@ class ExportLogsToExcelAPIView(APIView):
 
         # Rows
         for row_num, log in enumerate(queryset, 2):
-            sheet.cell(row=row_num, column=1).value = log.action
+            sheet.cell(row=row_num, column=1).value = "Приход" if log.action == "INCOME" else "Расход"
             sheet.cell(row=row_num, column=2).value = log.amount_uzs
             sheet.cell(row=row_num, column=3).value = log.car.number if log.car else ""
-            sheet.cell(row=row_num, column=4).value = log.employee.phone if log.employee else ""
-            sheet.cell(row=row_num, column=5).value = log.flight.departure_date if log.flight else ""
-            sheet.cell(row=row_num, column=6).value = log.kind if log.kind else ""
+            sheet.cell(row=row_num, column=4).value = log.employee.full_name if log.employee else ""
+            sheet.cell(row=row_num, column=5).value = {log.flight.car.number} - {log.flight.region.name} if log.flight.region  and log.flight.car else ""
+            KIND_TO_RUSSIAN = {
+                "OTHER": "Прочее",
+                "FIX_CAR": "Ремонт автомобиля",
+                "PAY_SALARY": "Зарплата",
+                "SALARKA": "Солярка",
+                "FLIGHT": "Рейс",
+                "LEASING": "Лизинг",
+                "BONUS": "Бонус",
+            }
+
+            # Populate the Excel cell with the Russian name
+            sheet.cell(row=row_num, column=6).value = KIND_TO_RUSSIAN.get(log.kind, "")
             sheet.cell(row=row_num, column=7).value = log.reason if log.reason else ""
             sheet.cell(row=row_num, column=8).value = log.comment if log.comment else ""
             sheet.cell(row=row_num, column=9).value = log.created_at.strftime(
@@ -324,7 +358,7 @@ class FilteredIncomeOutcomeAPIView(APIView):
         action = request.GET.get("action")  # Optional filter by action (INCOME, OUTCOME)
 
         # Base queryset
-        queryset = Logs.objects.all()
+        queryset = Logs.objects.all().order_by("-created_at")
 
         # Apply year, month, and day filters
         if year:
