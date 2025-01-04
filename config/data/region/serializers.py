@@ -20,7 +20,6 @@ class RegionSerializer(serializers.ModelSerializer):
             "gone_driver_expenses",
             "gone_driver_expenses_uzs",
             "gone_driver_expenses_type",
-            "been_flight_type",
             "been_flight_price",
             "been_flight_price_uzs",
             "been_flight_price_type",
