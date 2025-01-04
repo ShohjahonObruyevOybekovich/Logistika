@@ -13,6 +13,10 @@ class RegionSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "flight_type",
-            "price1",
-            "price2",
+            "flight_price",
+            "flight_price_uzs",
+            "flight_price_type",
+            "driver_expenses",
+            "driver_expenses_uzs",
+            "driver_expenses_type",
         ]

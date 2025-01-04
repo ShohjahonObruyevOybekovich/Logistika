@@ -18,3 +18,4 @@ def send_oil_recycle_notification(sender, instance:Car, **kwargs):
         Notification.objects.create(
             message=f"Автомобиль с номером {instance.number} приближается к следующему пробегу для замены масла."
         )
+

@@ -16,8 +16,34 @@ class Region(TimeStampModel):
         default="IN_UZB",
     )
 
-    price1 = models.FloatField(null=True, blank=True)
-    price2 = models.FloatField(null=True, blank=True)
+    flight_price = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    flight_price_uzs= models.FloatField(
+        null=True,
+        blank=True,
+    )
+    flight_price_type= models.CharField(choices=[
+        ('USD', 'USD'),
+        ('RUB', 'RUB'),
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
+    ],default='USD', max_length=10, null=True, blank=True)
+    driver_expenses= models.FloatField(
+        null=True,
+        blank=True,
+    )
+    driver_expenses_uzs= models.FloatField(
+        null=True,
+        blank=True,
+    )
+    driver_expenses_type= models.CharField(choices=[
+        ('USD', 'USD'),
+        ('RUB', 'RUB'),
+        ('KZT', "KZT"),
+        ("UZS", "UZS"),
+    ],default='USD', max_length=10, null=True, blank=True)
 
     def __str__(self):
         return self.name
