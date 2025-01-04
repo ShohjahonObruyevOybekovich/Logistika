@@ -275,15 +275,15 @@ class FlightCloseApi(APIView):
                         flight=flight,
                         employee=flight.driver
                     )
-
-                Logs.objects.create(
-                    action="OUTCOME",
-                    amount_uzs=lunch_payments,
-                    kind="FLIGHT",
-                    comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} по рейсу {flight.car.name } { flight.car.number}",
-                    flight=flight,
-                    employee=flight.driver
-                )
+                if lunch_payments >0 :
+                    Logs.objects.create(
+                        action="OUTCOME",
+                        amount_uzs=lunch_payments,
+                        kind="FLIGHT",
+                        comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} по рейсу {flight.car.name } { flight.car.number}",
+                        flight=flight,
+                        employee=flight.driver
+                    )
 
                 Logs.objects.create(
                     action="OUTCOME",
