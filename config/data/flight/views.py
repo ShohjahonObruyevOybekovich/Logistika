@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import django_filters
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -199,11 +201,13 @@ class ExportFlightInfoAPIView(APIView):
         workbook.save(response)
         return response
 
+
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from datetime import datetime
-
+from icecream import ic
 
 class FlightCloseApi(APIView):
     def put(self, request, pk, *args, **kwargs):
@@ -212,6 +216,7 @@ class FlightCloseApi(APIView):
 
             if flight.status == "INACTIVE":
                 return Response({"detail": "Flight is already closed."}, status=status.HTTP_400_BAD_REQUEST)
+
 
             flight.status = "INACTIVE"
 
@@ -222,58 +227,44 @@ class FlightCloseApi(APIView):
             else:
                 arrival_date = flight.arrival_date
 
-            # Parse end_km and flight_balance
+            # Update other fields
             flight.end_km = request.data.get("end_km", flight.end_km)
             flight.flight_balance = request.data.get("flight_balance", flight.flight_balance)
             flight.arrival_date = arrival_date
 
+            # Save flight updates
+            flight.save()
+            ic("Updated flight details and saved.")
+
             # Calculate lunch payments safely
+            lunch_payments = 0
             if flight.departure_date and flight.arrival_date:
                 days = max((flight.arrival_date - flight.departure_date).days, 0)
                 lunch_payments = flight.other_expenses_uzs * days
-            else:
-                lunch_payments = 0
 
+            # Update driver balance
             if flight.driver:
                 print(f"Updating driver balance for {flight.driver.full_name}")
                 flight.driver.balance_uzs += flight.driver_expenses_uzs
                 flight.driver.balance_uzs += lunch_payments
                 flight.driver.balance_uzs += flight.flight_balance_uzs
                 flight.driver.save()
+
+                flight.flight_balance_uzs = request.data.get("flight_balance_uzs", flight.flight_balance_uzs)
+                if flight.flight_balance_uzs:
+                    try:
+                        flight.flight_balance_uzs = Decimal(flight.flight_balance_uzs)  # Ensure type consistency
+                    except Exception as e:
+                        return Response({"detail": f"Invalid data for flight_balance_uzs: {e}"},
+                                        status=status.HTTP_400_BAD_REQUEST)
+
+                flight.save()
+
+                ic("Driver balance updated.")
             else:
                 print("Driver is None, skipping balance update")
 
-                Logs.objects.create(
-                    action="OUTCOME",
-                    amount=flight.driver_expenses,
-                    amount_uzs=flight.driver_expenses_uzs,
-                    amount_type=flight.driver_expenses_type,
-                    employee=flight.driver,
-                    flight=flight,
-                    comment=f"{flight.driver.full_name} заплатил за рейс {flight.car.number} - {flight.region.name} - {flight.driver_expenses_uzs} $",
-                )
-                Logs.objects.create(
-                    action="OUTCOME",
-                    amount=flight.flight_balance,
-                    amount_uzs=flight.flight_balance_uzs,
-                    amount_type=flight.flight_balance_type,
-                    employee=flight.driver,
-                    flight=flight,
-                    comment=f"{flight.driver.full_name} заплатил за рейс {flight.car.number} - {flight.region.name} - {flight.flight_balance_uzs} $",
-                )
-                if lunch_payments > 0:
-                    Logs.objects.create(
-                        action="OUTCOME",
-                        amount=lunch_payments,
-                        amount_uzs=lunch_payments,
-                        amount_type="USD",
-                        employee=flight.driver,
-                        flight=flight,
-                        comment=f"{flight.driver.full_name} заплатил за рейс {flight.car.number} - {flight.region.name} - Расход на питание ${lunch_payments}",
-                    )
-
-            flight.save()
-
+            # Serialize and return response
             serializer = FlightListserializer(flight)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
