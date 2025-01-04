@@ -211,6 +211,8 @@ from icecream import ic
 
 class FlightCloseApi(APIView):
     def put(self, request, pk, *args, **kwargs):
+
+        data = request.data
         try:
             flight = Flight.objects.get(id=pk)
 
@@ -221,19 +223,21 @@ class FlightCloseApi(APIView):
             flight.status = "INACTIVE"
 
             # Parse arrival_date if provided
-            arrival_date_str = request.data.get("arrival_date")
+            arrival_date_str = data.get("arrival_date")
             if arrival_date_str:
                 arrival_date = datetime.strptime(arrival_date_str, "%Y-%m-%d").date()
             else:
                 arrival_date = flight.arrival_date
 
             # Update other fields
-            flight.end_km = request.data.get("end_km", flight.end_km)
-            flight.flight_balance = request.data.get("flight_balance", flight.flight_balance)
+            flight.end_km = data.get("end_km", flight.end_km)
+            flight.flight_balance = data.get("flight_balance", flight.flight_balance)
             flight.arrival_date = arrival_date
 
             # Save flight updates
             flight.save()
+
+
             ic("Updated flight details and saved.")
 
             # Calculate lunch payments safely
@@ -253,10 +257,15 @@ class FlightCloseApi(APIView):
         # Update driver balance
             if flight.driver:
                 print(f"Updating driver balance for {flight.driver.full_name}")
-                flight.driver.balance_uzs += flight.driver_expenses_uzs
-                flight.driver.balance_uzs += lunch_payments
-                flight.driver.balance_uzs -= flight.flight_balance_uzs
-                flight.driver.save()
+                driver = flight.driver
+
+                driver.balance_uzs += flight.driver_expenses_uzs
+                driver.balance_uzs += lunch_payments
+                driver.balance_uzs -= flight.flight_balance_uzs
+
+
+                driver.save()
+
 
                 flight.save()
 
