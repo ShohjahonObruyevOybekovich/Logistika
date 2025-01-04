@@ -242,21 +242,21 @@ class FlightCloseApi(APIView):
                 days = max((flight.arrival_date - flight.departure_date).days, 0)
                 lunch_payments = flight.other_expenses_uzs * days
 
-            # Update driver balance
+            flight.flight_balance_uzs = request.data.get("flight_balance_uzs", flight.flight_balance_uzs)
+            if flight.flight_balance_uzs:
+                try:
+                    flight.flight_balance_uzs = float(flight.flight_balance_uzs)
+                    flight.flight_expenses_uzs = flight.flight_balance_uzs
+                except Exception as e:
+                    return Response({"detail": f"Invalid data for flight_balance_uzs: {e}"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+        # Update driver balance
             if flight.driver:
                 print(f"Updating driver balance for {flight.driver.full_name}")
                 flight.driver.balance_uzs += flight.driver_expenses_uzs
                 flight.driver.balance_uzs += lunch_payments
-                flight.driver.balance_uzs += flight.flight_balance_uzs
+                flight.driver.balance_uzs -= flight.flight_balance_uzs
                 flight.driver.save()
-
-                flight.flight_balance_uzs = request.data.get("flight_balance_uzs", flight.flight_balance_uzs)
-                if flight.flight_balance_uzs:
-                    try:
-                        flight.flight_balance_uzs = Decimal(flight.flight_balance_uzs)  # Ensure type consistency
-                    except Exception as e:
-                        return Response({"detail": f"Invalid data for flight_balance_uzs: {e}"},
-                                        status=status.HTTP_400_BAD_REQUEST)
 
                 flight.save()
 
