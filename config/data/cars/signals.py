@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Car, Notification
+from ..finans.models import Logs
 
 
 @receiver(post_save, sender=Car)
@@ -19,3 +20,14 @@ def send_oil_recycle_notification(sender, instance:Car, **kwargs):
             message=f"Автомобиль с номером {instance.number} приближается к следующему пробегу для замены масла."
         )
 
+@receiver(post_save, sender=Car)
+def on_car_create(sender, instance: Car, created, **kwargs):
+    if created and instance.type_of_payment=="CASH":
+        Logs.objects.create(
+            action="OUTCOME",
+            amount_uzs=instance.price_uzs,
+            amount=instance.price,
+            amount_type=instance.price_type,
+            kind="OTHER",
+            comment=f"Машина {instance.number} была куплена за {instance.price} {instance.price_type}! "
+        )

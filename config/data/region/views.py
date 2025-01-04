@@ -8,7 +8,7 @@ from .serializers import *
 
 
 class RegionListAPIVIew(ListCreateAPIView):
-    queryset = Region.objects.all()
+    queryset = Region.objects.all().order_by("-created_at")
     serializer_class = RegionSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = [
@@ -18,7 +18,7 @@ class RegionListAPIVIew(ListCreateAPIView):
     search_fields = ["name","flight_type"]
 
 class RegionPGListAPIVIew(ListAPIView):
-    queryset = Region.objects.all()
+    queryset = Region.objects.all().order_by("-created_at")
     serializer_class = RegionSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = [
@@ -33,5 +33,5 @@ class RegionPGListAPIVIew(ListAPIView):
 
 
 class RegionDetailAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Region.objects.all()
+    queryset = Region.objects.all().order_by("-created_at")
     serializer_class = RegionSerializer
