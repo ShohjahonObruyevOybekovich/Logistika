@@ -300,7 +300,7 @@ class DeleteCarAPIView(APIView):
         car_id = kwargs.get('uuid')  # Car UUID from URL
         sell_price = request.data.get('sell_price')
 
-        if not sell_price:
+        if not sell_price :
             return Response(
                 {"detail": "Sell price is required."},
                 status=status.HTTP_400_BAD_REQUEST

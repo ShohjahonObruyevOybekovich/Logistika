@@ -140,7 +140,23 @@ class Flight(TimeStampModel):
         choices=STATUS_CHOICES,
         default="ACTIVE",
     )
-
+    flight_balance_uzs = models.FloatField(
+        null=True,
+        blank=True,
+        default=0
+    )
+    flight_balance_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        null=True,
+        blank=True,
+        help_text="Type of route expense")
+    flight_balance = models.FloatField(
+        null=True,
+        blank=True,
+        default=0
+    )
     start_km = models.FloatField(max_length=150,
                                  null=True, blank=True)
     end_km = models.FloatField(max_length=150,null=True,blank=True)

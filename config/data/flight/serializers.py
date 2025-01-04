@@ -16,7 +16,7 @@ class FlightListserializer(serializers.ModelSerializer):
     car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all(),allow_null=True)  # Ensure this uses the Car model
     driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(),allow_null=True)
     upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
-    flight_balance = serializers.SerializerMethodField()
+
     class Meta:
         model = Flight
         fields = [
@@ -51,17 +51,12 @@ class FlightListserializer(serializers.ModelSerializer):
             "cargo_info",
 
             "flight_balance",
+            "flight_balance_uzs",
+            "flight_balance_type",
 
             "upload",
             "created_at",
         ]
-    def get_flight_balance(self, obj):
-        """
-        Calculate the flight balance: price_uzs - (driver_expenses_uzs + flight_expenses_uzs + other_expenses_uzs)
-        """
-        return (
-            (obj.flight_expenses_uzs or 0)
-        )
 
 
     def to_representation(self, instance):
@@ -86,7 +81,6 @@ class FlightListCReateserializer(serializers.ModelSerializer):
     driver = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())
     upload = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
 
-    flight_balance = serializers.SerializerMethodField()
 
     class Meta:
         model = Flight
@@ -120,16 +114,12 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "end_km",
             "cargo_info",
             "flight_balance",
+            "flight_balance_uzs",
+            "flight_balance_type",
             "upload",
             "created_at",
         ]
-    def get_flight_balance(self, obj):
-        """
-        Calculate the flight balance: price_uzs - (driver_expenses_uzs + flight_expenses_uzs + other_expenses_uzs)
-        """
-        return (
-            (obj.flight_expenses_uzs or 0)
-        )
+
 
     def to_representation(self, instance):
         """Customize the representation of fields."""

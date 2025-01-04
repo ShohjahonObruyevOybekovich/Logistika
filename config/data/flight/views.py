@@ -88,7 +88,7 @@ class FinanceFlightAPIView(ListAPIView):
     def get_queryset(self):
         flight_id = self.kwargs.get('pk')
         if flight_id:
-            return Logs.objects.filter(flight__id=flight_id,action="OUTCOME" ).order_by("-created_at")
+            return Logs.objects.filter(flight__id=flight_id).order_by("-created_at")
         return Logs.objects.none()
 
 class FlightListNOPg(ListAPIView):
