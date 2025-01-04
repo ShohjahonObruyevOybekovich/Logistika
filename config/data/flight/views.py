@@ -273,7 +273,7 @@ class FlightCloseApi(APIView):
                         action="OUTCOME",
                         amount_uzs=flight.flight_balance_uzs,
                         kind="FLIGHT",
-                        comment=f"{flight.full_name} заплатил за рейс ${flight.balance_uzs} ${flight.balance_type}",
+                        comment=f"{flight.driver.full_name} заплатил за рейс ${flight.balance_uzs} ${flight.balance_type}",
                         flight=flight,
                         employee=flight.driver
                         )
@@ -289,7 +289,7 @@ class FlightCloseApi(APIView):
                     action="OUTCOME",
                     amount_uzs=flight.flight_expenses_uzs,
                     kind="FLIGHT",
-                    comment=f"{flight.full_name} заплатил за рейс ${flight.balance_uzs} ${flight.balance_type}",
+                    comment=f"{flight.driver.full_name} заплатил за рейс ${flight.balance_uzs} ${flight.balance_type}",
                     flight=flight,
                     employee=flight.driver
                 )
