@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import GasPurchase, GasSale
+from .models import GasPurchase, GasSale, Gas_another_station
 from ..finans.models import Logs
 from ..oil.models import Utilized_oil
 
@@ -33,3 +33,15 @@ def income(sender, instance: GasPurchase, created, **kwargs):
         )
 
 
+@receiver(post_save, sender=Gas_another_station)
+def outcome(sender, instance: Gas_another_station, created, **kwargs):
+    if created:
+        Logs.objects.create(
+            action="OUTCOME",
+            amount_uzs=instance.payed_price_uzs,
+            amount=instance.payed_price,
+            amount_type=instance.payed_price_type,
+            car=instance.car,
+            kind="OTHER",
+            comment=f"Расход для покупки газа с других заправок {instance.name}."
+        )

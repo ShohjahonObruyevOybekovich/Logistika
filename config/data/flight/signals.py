@@ -46,22 +46,13 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
         # if instance.status == "INACTIVE":
             try:
                 with transaction.atomic():
-                    # Log income if applicable
-                    if instance.driver_expenses_uzs > 0:
-                        Logs.objects.create(
-                            action="INCOME",
-                            amount_uzs=instance.driver_expenses_uzs,
-                            kind="FLIGHT",
-                            comment=f"Доход от заказанного рейса {instance.car_number} - {instance.region.name}",
-                            flight=instance,
-                        )
 
                     if instance.driver_expenses_uzs > 0:
                         Logs.objects.create(
                             action="OUTCOME",
                             amount_uzs=instance.driver_expenses_uzs,
                             kind="FLIGHT",
-                            comment=f"Доход от заказанного рейса {instance.car_number} - {instance.region.name}",
+                            comment=f"Расход для заказанного рейса {instance.car_number} - {instance.region.name}",
                         )
 
             except Exception as e:

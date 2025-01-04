@@ -567,7 +567,7 @@ class CarDetailsExcelAPIView(APIView):
 
 
 class NotificationListApi(ListCreateAPIView):
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.all().order_by("-created_at")
     # permission_classes = [IsAuthenticated]
     serializer_class = Notificationserializer
 
@@ -582,6 +582,6 @@ class NotificationListApi(ListCreateAPIView):
         return Response(data)
 
 class NotificationDetailsApi(RetrieveUpdateDestroyAPIView):
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.all().order_by("-created_at")
     permission_classes = [IsAuthenticated]
     serializer_class = Notificationserializer

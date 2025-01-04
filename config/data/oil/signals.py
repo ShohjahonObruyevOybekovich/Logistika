@@ -47,7 +47,7 @@ def on_income(sender, instance: Utilized_oil, created, **kwargs):
             amount_uzs=instance.price_uzs,
             # amount_usds=instance.price_usd,
             kind="OTHER",
-            comment=f"Доход от {instance.quantity_utilized} использованного масла {instance.price} {instance.price_type}.",
+            comment=f"{instance.price_uzs} $ доход от продажи {instance.quantity_utilized} литров переработанного масла",
         )
 
 
@@ -59,7 +59,7 @@ def on_purchase(sender, instance: OilPurchase, created, **kwargs):
             amount_uzs=instance.amount_uzs,
             # amount_usd=instance.amount_usd,
             kind="OTHER",
-            comment=f"Расход на покупку в размере {instance.price} {instance.price_type}. Покупка товара: {instance.oil.oil_name}."
+            comment=f"{instance.price_uzs} $ расход для покупки {instance.oil_volume} литров масла {instance.oil.oil_name}"
         )
 
 

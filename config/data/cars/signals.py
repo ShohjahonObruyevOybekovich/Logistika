@@ -29,5 +29,5 @@ def on_car_create(sender, instance: Car, created, **kwargs):
             amount=instance.price,
             amount_type=instance.price_type,
             kind="OTHER",
-            comment=f"Машина {instance.number} была куплена за {instance.price} {instance.price_type}! "
+            comment=f"За покупку техники / {instance.name} и {instance.number} "
         )

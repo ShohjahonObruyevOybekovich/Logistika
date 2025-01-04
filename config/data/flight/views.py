@@ -268,7 +268,8 @@ class FlightCloseApi(APIView):
                         action="OUTCOME",
                         amount_uzs=flight.flight_balance_uzs,
                         kind="FLIGHT",
-                        comment=f"{flight.driver.full_name} заплатил за рейс {flight.flight_balance_uzs} {flight.flight_balance_type or ''}",
+                        comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
+                            f"{flight.car.name - flight.car.number} для водителя {flight.driver.full_name}",
                         flight=flight,
                         employee=flight.driver
                     )
@@ -277,7 +278,7 @@ class FlightCloseApi(APIView):
                     action="OUTCOME",
                     amount_uzs=lunch_payments,
                     kind="FLIGHT",
-                    comment=f"Расход на питание {lunch_payments}",
+                    comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} по рейсу {flight.car.name - flight.car.number}",
                     flight=flight,
                     employee=flight.driver
                 )
@@ -286,7 +287,8 @@ class FlightCloseApi(APIView):
                     action="OUTCOME",
                     amount_uzs=flight.driver_expenses_uzs or 0,
                     kind="FLIGHT",
-                    comment=f"{flight.driver.full_name} заплатил за рейс {flight.driver_expenses_uzs or 0} {flight.driver_expenses_type or ''}",
+                    comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
+                            f"{flight.car.name - flight.car.number} для водителя {flight.driver.full_name}",
                     flight=flight,
                     employee=flight.driver
                 )
