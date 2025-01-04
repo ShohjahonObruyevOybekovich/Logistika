@@ -287,9 +287,9 @@ class FlightCloseApi(APIView):
                 )
                 Logs.objects.create(
                     action="OUTCOME",
-                    amount_uzs=flight.flight_expenses_uzs,
+                    amount_uzs=flight.driver_expenses_uzs,
                     kind="FLIGHT",
-                    comment=f"{flight.driver.full_name} заплатил за рейс ${flight.flight_expenses_uzs} ${flight.flight_expenses_type}",
+                    comment=f"{flight.driver.full_name} заплатил за рейс ${flight.driver_expenses_uzs} ${flight.driver_expenses_type}",
                     flight=flight,
                     employee=flight.driver
                 )
