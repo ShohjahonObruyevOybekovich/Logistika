@@ -229,8 +229,8 @@ class FlightCloseApi(APIView):
                 arrival_date = flight.arrival_date
 
             # Update other fields safely
-            flight.end_km = data.get("end_km", flight.end_km or 0)
-            flight.flight_balance = data.get("flight_balance", flight.flight_balance or 0)
+            flight.end_km = data.get("end_km", flight.end_km or 0) or 0
+            flight.flight_balance = data.get("flight_balance", flight.flight_balance or 0) or 0
             flight.arrival_date = arrival_date
 
             # Save flight updates
@@ -244,10 +244,10 @@ class FlightCloseApi(APIView):
                 lunch_payments = (flight.other_expenses_uzs or 0) * days
 
             # Handle flight_balance_uzs safely
-            flight.flight_balance_uzs = data.get("flight_balance_uzs", flight.flight_balance_uzs or 0)
+            flight.flight_balance_uzs = data.get("flight_balance_uzs", flight.flight_balance_uzs or 0) or 0
             try:
                 flight.flight_balance_uzs = float(flight.flight_balance_uzs or 0)
-                flight.flight_expenses_uzs = flight.flight_balance_uzs
+                flight.flight_expenses_uzs = float(flight.flight_balance_uzs or 0)
             except ValueError as e:
                 return Response({"detail": f"Invalid data for flight_balance_uzs: {e}"},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -257,7 +257,9 @@ class FlightCloseApi(APIView):
                 ic(f"Updating driver balance for {flight.driver.full_name}")
                 driver = flight.driver
 
-                driver.balance_uzs = (driver.balance_uzs or 0) + float(flight.driver_expenses_uzs or 0)
+                driver.balance_uzs = (
+                        (driver.balance_uzs or 0) + float(flight.driver_expenses_uzs or 0)
+                )
                 driver.balance_uzs += float(lunch_payments or 0)
                 driver.balance_uzs -= float(flight.flight_balance_uzs or 0)
 
