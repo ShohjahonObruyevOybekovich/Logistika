@@ -85,8 +85,7 @@ class GasSalesListAPIView(ListCreateAPIView):
         # Save the object first
         instance = serializer.save(station=station)
 
-        # Calculate km and update the instance
-        instance.km_car = instance.car.distance_travelled  # Snapshot of car's current distance_travelled
+ # Snapshot of car's current distance_travelled
         instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
         instance.save()
 
@@ -99,9 +98,7 @@ class GasAnotherStationCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         # Save the object first
         instance = serializer.save()
-
-        # Calculate km and update the instance
-        instance.km_car = instance.car.distance_travelled  # Snapshot of car's current distance_travelled
+  # Snapshot of car's current distance_travelled
         instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
         instance.save()
 
@@ -142,6 +139,7 @@ class GasAnotherStationUpdateAPIView(UpdateAPIView):
 class GasAnotherStationDeleteAPIView(DestroyAPIView):
     queryset = Gas_another_station.objects.all()
     permission_classes = (IsAuthenticated,)
+
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
