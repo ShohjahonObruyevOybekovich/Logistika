@@ -7,37 +7,50 @@ from .models import Employee
 
 User = get_user_model()
 
+def clean_media_path(file_path):
+    """
+    Ensures the file path contains only a single occurrence of '/media'.
+    """
+    if file_path:
+        return file_path.replace('/media/media/', '/media/')
+    return file_path
 
-class EmployeeListserializer(serializers.ModelSerializer):
-    passport_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
-    license_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
+
+class EmployeeListSerializer(serializers.ModelSerializer):
+    passport_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
+    license_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
 
     class Meta:
         model = Employee
         fields = [
             "id",
-            'full_name',
-            'phone',
-            'passport',
+            "full_name",
+            "phone",
+            "passport",
             "passport_photo",
-            'license',
+            "license",
             "license_photo",
-            'flight_type',
-            'balance_uzs',
+            "flight_type",
+            "balance_uzs",
             "balance",
             "balance_price_type",
             "created_at",
             "updated_at",
         ]
+
     def to_representation(self, instance):
-        ret = super(EmployeeListserializer, self).to_representation(instance)
+        ret = super(EmployeeListSerializer, self).to_representation(instance)
         if instance.passport_photo:
-            ret["passport_photo"] = FileUploadSerializer(instance.passport_photo).data
+            photo_data = FileUploadSerializer(instance.passport_photo).data
+            photo_data["file"] = clean_media_path(photo_data.get("file"))
+            ret["passport_photo"] = photo_data
         else:
             ret["passport_photo"] = None
 
         if instance.license_photo:
-            ret["license_photo"] = FileUploadSerializer(instance.license_photo).data
+            photo_data = FileUploadSerializer(instance.license_photo).data
+            photo_data["file"] = clean_media_path(photo_data.get("file"))
+            ret["license_photo"] = photo_data
         else:
             ret["license_photo"] = None
 
@@ -45,20 +58,21 @@ class EmployeeListserializer(serializers.ModelSerializer):
 
 
 class EmployeeCreateSerializer(serializers.ModelSerializer):
-    passport_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
-    license_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(),allow_null=True)
+    passport_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
+    license_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
+
     class Meta:
         model = Employee
         fields = [
             "id",
-            'full_name',
-            'phone',
-            'passport',
+            "full_name",
+            "phone",
+            "passport",
             "passport_photo",
-            'license',
+            "license",
             "license_photo",
-            'flight_type',
-            'balance_uzs',
+            "flight_type",
+            "balance_uzs",
             "balance",
             "balance_price_type",
             "created_at",
@@ -68,12 +82,16 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(EmployeeCreateSerializer, self).to_representation(instance)
         if instance.passport_photo:
-            ret["passport_photo"] = FileUploadSerializer(instance.passport_photo).data
+            photo_data = FileUploadSerializer(instance.passport_photo).data
+            photo_data["file"] = clean_media_path(photo_data.get("file"))
+            ret["passport_photo"] = photo_data
         else:
             ret["passport_photo"] = None
 
         if instance.license_photo:
-            ret["license_photo"] = FileUploadSerializer(instance.license_photo).data
+            photo_data = FileUploadSerializer(instance.license_photo).data
+            photo_data["file"] = clean_media_path(photo_data.get("file"))
+            ret["license_photo"] = photo_data
         else:
             ret["license_photo"] = None
 

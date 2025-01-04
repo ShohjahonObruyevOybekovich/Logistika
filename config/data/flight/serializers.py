@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from data.cars.models import Car  # Ensure you import the Car model
 from employee.models import Employee
-from employee.serializers import EmployeeListserializer
+from employee.serializers import EmployeeListSerializer
 from .models import Flight, Ordered
 from ..cars.serializers import CarListserializer  # Import your CarListSerializer
 from ..region.models import Region
@@ -137,7 +137,7 @@ class FlightListCReateserializer(serializers.ModelSerializer):
         representation['car'] = CarListserializer(instance.car).data
         representation['region'] = RegionSerializer(instance.region).data
         representation['upload'] = FileUploadSerializer(instance.upload).data
-        representation['driver'] = EmployeeListserializer(instance.driver).data
+        representation['driver'] = EmployeeListSerializer(instance.driver).data
         return representation
 
 

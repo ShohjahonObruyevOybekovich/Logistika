@@ -16,7 +16,7 @@ User = get_user_model()
 
 class EmployeeRetrieveAPIView(RetrieveAPIView):
     queryset = Employee.objects.all()
-    serializer_class = EmployeeListserializer
+    serializer_class = EmployeeListSerializer
 
 
 class EmployeeCreateAPIView(CreateAPIView):
@@ -33,7 +33,7 @@ class EmployeeUpdateAPIView(UpdateAPIView):
 
 class EmployeeListAPIView(ListAPIView):
     queryset = Employee.objects.all().order_by("-created_at")
-    serializer_class = EmployeeListserializer
+    serializer_class = EmployeeListSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = [
@@ -61,7 +61,7 @@ class EmployeeDeleteAPIView(DestroyAPIView):
 class EmployeeListCreateAPIView(ListAPIView):
     queryset = Employee.objects.all().order_by("-created_at")
     permission_classes = (IsAuthenticated,)
-    serializer_class = EmployeeListserializer
+    serializer_class = EmployeeListSerializer
 
     def get_paginated_response(self, data):
         return Response(data)
