@@ -13,7 +13,7 @@ class RegionSerializer(serializers.ModelSerializer):
             "id",
             "name",
             'route',
-            "gone_flight_type",
+            "flight_type",
             "gone_flight_price",
             "gone_flight_price_uzs",
             "gone_flight_price_type",
