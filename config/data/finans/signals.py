@@ -33,7 +33,7 @@ def on_salary_balance(sender, instance: Logs, created, **kwargs):
 def on_Salarka(sender, instance: Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind == "SALARKA" :
         flight = Flight.objects.filter(id=instance.flight.id).first()
-        flight.flight_expenses_uzs -= instance.amount_uzs
+        flight.flight_balance_uzs -= instance.amount_uzs
         flight.save()
 
 
@@ -41,7 +41,7 @@ def on_Salarka(sender, instance: Logs, created, **kwargs):
 def on_flight_expenses(sender, instance: Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind == "FLIGHT" and instance.flight is not None:
         flight = Flight.objects.filter(id=instance.flight.id).first()
-        flight.flight_expenses_uzs -= instance.amount_uzs
+        flight.flight_balance_uzs -= instance.amount_uzs
         flight.save()
 
 
