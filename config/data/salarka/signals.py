@@ -34,6 +34,6 @@ def on_logs_another_purchased(sender, instance: SalarkaAnotherStation, created, 
             amount_type=instance.price_type,
             amount=instance.price,
             car=instance.car,
-            kind="OTHER",
+            kind="SALARKA",
             comment=f"Продано {instance.volume} литр солярки за {instance.price} {instance.price_type}. Оплата произведена в {instance.price_type}."
         )
