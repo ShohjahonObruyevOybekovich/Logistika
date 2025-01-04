@@ -259,9 +259,9 @@ class FlightCloseApi(APIView):
                 print(f"Updating driver balance for {flight.driver.full_name}")
                 driver = flight.driver
 
-                driver.balance_uzs += flight.driver_expenses_uzs
-                driver.balance_uzs += lunch_payments
-                driver.balance_uzs -= flight.flight_balance_uzs
+                driver.balance_uzs += float(flight.driver_expenses_uzs)
+                driver.balance_uzs += float(lunch_payments)
+                driver.balance_uzs -= float(flight.flight_balance_uzs)
 
 
                 driver.save()
