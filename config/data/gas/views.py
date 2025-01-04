@@ -142,6 +142,8 @@ class GasAnotherStationUpdateAPIView(UpdateAPIView):
 class GasAnotherStationDeleteAPIView(DestroyAPIView):
     queryset = Gas_another_station.objects.all()
     permission_classes = (IsAuthenticated,)
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 class GasByCarID(ListAPIView):
     serializer_class = CombinedGasSaleSerializer
@@ -177,16 +179,23 @@ class GasByCarID(ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
 
-        # Use the car's current `distance_traveled` and update dynamically
-        if queryset:
-            car_distance_traveled = queryset[0].car.distance_travelled
-            for record in queryset:
+        # Pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 30  # Custom page size
+
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            # Use the car's current `distance_traveled` and update dynamically
+            car_distance_traveled = queryset[0].car.distance_travelled if queryset else 0
+            for record in page:
                 record.distance_traveled = car_distance_traveled
                 car_distance_traveled -= record.km
 
+            serializer = self.serializer_class(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
-
 
 
 class ExportGasInfoAPIView(APIView):
