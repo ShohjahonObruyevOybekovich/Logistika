@@ -268,8 +268,32 @@ class FlightCloseApi(APIView):
 
 
                 flight.save()
-
-                ic("Driver balance updated.")
+                if flight.flight_balance_uzs > 0:
+                    Logs.objects.create(
+                        action="OUTCOME",
+                        amount_uzs=flight.flight_balance_uzs,
+                        kind="FLIGHT",
+                        comment=f"{flight.full_name} заплатил за рейс ${flight.balance_uzs} ${flight.balance_type}",
+                        flight=flight,
+                        employee=flight.driver
+                        )
+                Logs.objects.create(
+                    action="OUTCOME",
+                    amount_uzs=lunch_payments,
+                    kind="FLIGHT",
+                    comment=f"Расход на питание {lunch_payments} $",
+                    flight=flight,
+                    employee=flight.driver
+                )
+                Logs.objects.create(
+                    action="OUTCOME",
+                    amount_uzs=flight.flight_expenses_uzs,
+                    kind="FLIGHT",
+                    comment=f"{flight.full_name} заплатил за рейс ${flight.balance_uzs} ${flight.balance_type}",
+                    flight=flight,
+                    employee=flight.driver
+                )
+                ic(f"Updated driver balance for {flight.driver.full_name}")
             else:
                 print("Driver is None, skipping balance update")
 
