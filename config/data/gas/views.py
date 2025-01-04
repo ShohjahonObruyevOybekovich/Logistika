@@ -78,19 +78,32 @@ class GasSalesListAPIView(ListCreateAPIView):
         return station.sales.all().order_by("-created_at")
 
     def perform_create(self, serializer):
-
         station = GasStation.objects.filter(pk=self.kwargs["pk"]).first()
-
         if not station:
             raise NotFound("Gas station not found.")
 
-        serializer.save(station=station)
+        # Save the object first
+        instance = serializer.save(station=station)
+
+        # Calculate km and update the instance
+        instance.km_car = instance.car.distance_traveled  # Snapshot of car's current distance_traveled
+        instance.km = instance.car.distance_traveled - instance.km_car  # Calculate km
+        instance.save()
 
 
 class GasAnotherStationCreateAPIView(ListCreateAPIView):
     queryset = Gas_another_station.objects.all().order_by("-created_at")
     serializer_class = GasAnotherStationCreateseralizer
     permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        # Save the object first
+        instance = serializer.save()
+
+        # Calculate km and update the instance
+        instance.km_car = instance.car.distance_traveled  # Snapshot of car's current distance_traveled
+        instance.km = instance.car.distance_traveled - instance.km_car  # Calculate km
+        instance.save()
 
 
 # class GasAnotherStationListAPIView(ListAPIView):
@@ -151,7 +164,7 @@ class GasByCarID(ListAPIView):
         # Combine and sort the querysets
         combined_sales = sorted(
             list(gas_sales) + list(gas_another_sales),
-            key=lambda x: x.created_at,  # Access `created_at` directly on the model instance
+            key=lambda x: x.created_at,
             reverse=True
         )
         ic(combined_sales)
@@ -163,7 +176,15 @@ class GasByCarID(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = self.serializer_class(queryset, many=True, context={'previous_km': None})
+
+        # Use the car's current `distance_traveled` and update dynamically
+        if queryset:
+            car_distance_traveled = queryset[0].car.distance_travelled
+            for record in queryset:
+                record.distance_traveled = car_distance_traveled
+                car_distance_traveled -= record.km
+
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
 

@@ -110,7 +110,6 @@ class GasAnotherListserializer(serializers.ModelSerializer):
 
                   ]
 
-
 class CombinedGasSaleSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     model_type = serializers.CharField()
@@ -120,35 +119,27 @@ class CombinedGasSaleSerializer(serializers.Serializer):
     name = serializers.CharField(required=False)
     amount = serializers.FloatField(required=False)
     purchased_volume = serializers.FloatField(required=False)
-    km = serializers.FloatField(required=False)
-    distance_traveled = serializers.SerializerMethodField()
+    km = serializers.FloatField()
+    distance_traveled = serializers.FloatField()
 
     def get_car(self, obj):
+        """
+        Serialize car details.
+        """
         return CarListserializer(obj.car).data
 
     def get_station(self, obj):
+        """
+        Serialize station details if applicable.
+        """
         if hasattr(obj, 'station') and obj.station:
             return GasStationListSerializer(obj.station).data
         return None
 
-    def get_distance_traveled(self, obj):
-        """
-        Calculate the distance traveled since the last gas purchase.
-        """
-        # Fetch the previous purchase from the context
-        previous_km = self.context.get('previous_km', None)
-        current_km = obj.km if hasattr(obj, 'km') else 0
-
-        # Update the previous_km in context for the next record
-        self.context['previous_km'] = current_km
-
-        # If no previous record, return None
-        if previous_km is None:
-            return None
-
-        return current_km - previous_km
-
     def to_representation(self, instance):
+        """
+        Customize representation based on model type.
+        """
         res = super().to_representation(instance)
 
         if instance.model_type == 'GasSale':
@@ -161,5 +152,6 @@ class CombinedGasSaleSerializer(serializers.Serializer):
                 'purchased_volume': instance.purchased_volume,
                 'name': instance.name,
             })
+
         return res
 

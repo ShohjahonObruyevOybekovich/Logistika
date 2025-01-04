@@ -58,6 +58,9 @@ class GasPurchase(TimeStampModel):
         ("UZS", "UZS"),
     ], default='USD', max_length=10, null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.amount} {self.price_type} {self.price}"
+
 
 class GasSale(TimeStampModel):
     station: "GasStation" = models.ForeignKey(
@@ -108,6 +111,16 @@ class GasSale(TimeStampModel):
     km = models.FloatField(default=0, null=True, blank=True, help_text="KM of car traveled")
     km_car = models.FloatField(default=0, null=True, blank=True, help_text="sum(km)")
 
+    def __str__(self):
+        return f"{self.station.name } - {self.car.name} - {self.amount} m³"
+
+    def save(self, *args, **kwargs):
+
+        self.km_car = self.car.distance_travelled
+        super().save(*args, **kwargs)
+
+
+
 
 class Gas_another_station(TimeStampModel):
     car: "Car" = models.ForeignKey("cars.Car", on_delete=models.CASCADE)
@@ -128,6 +141,10 @@ class Gas_another_station(TimeStampModel):
 
     km = models.FloatField(default=0, null=True, blank=True, )
     km_car = models.FloatField(default=0, null=True, blank=True, )
+
+    def save(self, *args, **kwargs):
+        self.km_car = self.car.distance_travelled
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Purchased {self.purchased_volume} gas - {self.payed_price_uzs} m³"
