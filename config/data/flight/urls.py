@@ -17,4 +17,5 @@ urlpatterns = [
     path("info/",ExportFlightInfoAPIView.as_view(), name="flight-info"),
 
     path("finance/<uuid:pk>",FinanceFlightAPIView.as_view(), name="flight-finance"),
+    path("close/<uuid:pk>",FlightCloseApi.as_view(), name="flight-close"),
                ]
