@@ -3,7 +3,6 @@ from django.dispatch import receiver
 
 from employee.models import Employee
 from .models import Logs
-from ..cars.models import Car
 from ..flight.models import Flight
 
 
@@ -12,29 +11,32 @@ def on_employee_balance(sender, instance: Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind == "PAY_SALARY" and instance.employee is not None:
         employee = Employee.objects.get(id=instance.employee.id)
 
-        employee_balance = employee.balance_uzs if employee.balance_uzs is not None else 0
-        salary_amount = instance.amount_uzs if instance.amount_uzs is not None else 0
+        employee_balance = employee.balance_uzs or 0
+        salary_amount = instance.amount_uzs or 0
 
         employee.balance_uzs = employee_balance - salary_amount
         employee.save()
+
 
 @receiver(post_save, sender=Logs)
 def on_salary_balance(sender, instance: Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind == "BONUS" and instance.employee is not None:
         employee = Employee.objects.get(id=instance.employee.id)
         # Ensure `bonus` is not None
-        employee.bonus = (employee.bonus or 0) + instance.amount_uzs
+        employee.bonus = (employee.bonus or 0) + (instance.amount_uzs or 0)
         employee.save()
 
 
 @receiver(post_save, sender=Logs)
 def on_Salarka(sender, instance: Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind == "SALARKA":
-        # Ensure instance.flight is not None
         if instance.flight:
             flight = Flight.objects.filter(id=instance.flight.id).first()
             if flight:
-                flight.flight_balance_uzs -= instance.amount_uzs
+                flight_balance = flight.flight_balance_uzs or 0
+                expense_amount = instance.amount_uzs or 0
+
+                flight.flight_balance_uzs = flight_balance - expense_amount
                 flight.save()
         else:
             # Log or handle the case where instance.flight is None
@@ -45,7 +47,9 @@ def on_Salarka(sender, instance: Logs, created, **kwargs):
 def on_flight_expenses(sender, instance: Logs, created, **kwargs):
     if created and instance.action == "OUTCOME" and instance.kind == "FLIGHT" and instance.flight is not None:
         flight = Flight.objects.filter(id=instance.flight.id).first()
-        flight.flight_balance_uzs -= instance.amount_uzs
-        flight.save()
+        if flight:
+            flight_balance = flight.flight_balance_uzs or 0
+            expense_amount = instance.amount_uzs or 0
 
-
+            flight.flight_balance_uzs = flight_balance - expense_amount
+            flight.save()

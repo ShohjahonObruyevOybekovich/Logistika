@@ -202,23 +202,22 @@ class ExportFlightInfoAPIView(APIView):
         return response
 
 
-
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from datetime import datetime
 from icecream import ic
+from .models import Flight
+from .serializers import FlightListserializer
 
 class FlightCloseApi(APIView):
     def put(self, request, pk, *args, **kwargs):
-
         data = request.data
         try:
             flight = Flight.objects.get(id=pk)
 
             if flight.status == "INACTIVE":
                 return Response({"detail": "Flight is already closed."}, status=status.HTTP_400_BAD_REQUEST)
-
 
             flight.status = "INACTIVE"
 
@@ -229,73 +228,71 @@ class FlightCloseApi(APIView):
             else:
                 arrival_date = flight.arrival_date
 
-            # Update other fields
-            flight.end_km = data.get("end_km", flight.end_km)
-            flight.flight_balance = data.get("flight_balance", flight.flight_balance)
+            # Update other fields safely
+            flight.end_km = data.get("end_km", flight.end_km or 0)
+            flight.flight_balance = data.get("flight_balance", flight.flight_balance or 0)
             flight.arrival_date = arrival_date
 
             # Save flight updates
             flight.save()
-
-
             ic("Updated flight details and saved.")
 
             # Calculate lunch payments safely
             lunch_payments = 0
             if flight.departure_date and flight.arrival_date:
                 days = max((flight.arrival_date - flight.departure_date).days, 0)
-                lunch_payments = flight.other_expenses_uzs * days
+                lunch_payments = (flight.other_expenses_uzs or 0) * days
 
-            flight.flight_balance_uzs = request.data.get("flight_balance_uzs", flight.flight_balance_uzs)
-            if flight.flight_balance_uzs:
-                try:
-                    flight.flight_balance_uzs = float(flight.flight_balance_uzs)
-                    flight.flight_expenses_uzs = flight.flight_balance_uzs
-                except Exception as e:
-                    return Response({"detail": f"Invalid data for flight_balance_uzs: {e}"},
-                                    status=status.HTTP_400_BAD_REQUEST)
-        # Update driver balance
+            # Handle flight_balance_uzs safely
+            flight.flight_balance_uzs = data.get("flight_balance_uzs", flight.flight_balance_uzs or 0)
+            try:
+                flight.flight_balance_uzs = float(flight.flight_balance_uzs or 0)
+                flight.flight_expenses_uzs = flight.flight_balance_uzs
+            except ValueError as e:
+                return Response({"detail": f"Invalid data for flight_balance_uzs: {e}"},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Update driver balance
             if flight.driver:
-                print(f"Updating driver balance for {flight.driver.full_name}")
+                ic(f"Updating driver balance for {flight.driver.full_name}")
                 driver = flight.driver
 
-                driver.balance_uzs += float(flight.driver_expenses_uzs)
-                driver.balance_uzs += float(lunch_payments)
-                driver.balance_uzs -= float(flight.flight_balance_uzs)
-
+                driver.balance_uzs = (driver.balance_uzs or 0) + float(flight.driver_expenses_uzs or 0)
+                driver.balance_uzs += float(lunch_payments or 0)
+                driver.balance_uzs -= float(flight.flight_balance_uzs or 0)
 
                 driver.save()
 
-
-                flight.save()
                 if flight.flight_balance_uzs > 0:
                     Logs.objects.create(
                         action="OUTCOME",
                         amount_uzs=flight.flight_balance_uzs,
                         kind="FLIGHT",
-                        comment=f"{flight.driver.full_name} заплатил за рейс ${flight.flight_balance_uzs} ${flight.flight_balance_type}",
+                        comment=f"{flight.driver.full_name} заплатил за рейс {flight.flight_balance_uzs} {flight.flight_balance_type or ''}",
                         flight=flight,
                         employee=flight.driver
-                        )
+                    )
+
                 Logs.objects.create(
                     action="OUTCOME",
                     amount_uzs=lunch_payments,
                     kind="FLIGHT",
-                    comment=f"Расход на питание {lunch_payments} $",
+                    comment=f"Расход на питание {lunch_payments}",
                     flight=flight,
                     employee=flight.driver
                 )
+
                 Logs.objects.create(
                     action="OUTCOME",
-                    amount_uzs=flight.driver_expenses_uzs,
+                    amount_uzs=flight.driver_expenses_uzs or 0,
                     kind="FLIGHT",
-                    comment=f"{flight.driver.full_name} заплатил за рейс ${flight.driver_expenses_uzs} ${flight.driver_expenses_type}",
+                    comment=f"{flight.driver.full_name} заплатил за рейс {flight.driver_expenses_uzs or 0} {flight.driver_expenses_type or ''}",
                     flight=flight,
                     employee=flight.driver
                 )
                 ic(f"Updated driver balance for {flight.driver.full_name}")
             else:
-                print("Driver is None, skipping balance update")
+                ic("Driver is None, skipping balance update")
 
             # Serialize and return response
             serializer = FlightListserializer(flight)
