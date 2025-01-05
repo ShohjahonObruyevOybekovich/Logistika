@@ -10,6 +10,13 @@ from ..region.serializers import RegionSerializer
 from ..upload.models import File
 from ..upload.serializers import FileUploadSerializer
 
+def clean_media_path(file_path):
+    """
+    Ensures the file path contains only a single occurrence of '/media'.
+    """
+    if file_path:
+        return file_path.replace('/media/media/', '/media/')
+    return file_path
 
 class FlightListserializer(serializers.ModelSerializer):
     region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all(),allow_null=True)
@@ -64,7 +71,13 @@ class FlightListserializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['car'] = CarListserializer(instance.car).data
         representation['region'] = RegionSerializer(instance.region).data
-        representation['upload'] = FileUploadSerializer(instance.upload).data
+        if instance.upload:
+            upload_data = FileUploadSerializer(instance.upload).data
+            upload_data["file"] = clean_media_path(upload_data.get("file"))
+            representation["upload"] = upload_data
+        else:
+            representation["upload"] = None
+
         return representation
 
     def update(self, instance, validated_data):
@@ -126,9 +139,16 @@ class FlightListCReateserializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['car'] = CarListserializer(instance.car).data
         representation['region'] = RegionSerializer(instance.region).data
-        representation['upload'] = FileUploadSerializer(instance.upload).data
         representation['driver'] = EmployeeListSerializer(instance.driver).data
+        if instance.upload:
+            upload_data = FileUploadSerializer(instance.upload).data
+            upload_data["file"] = clean_media_path(upload_data.get("file"))
+            representation["upload"] = upload_data
+        else:
+            representation["upload"] = None
+
         return representation
+
 
 
 class FlightOrderedListserializer(serializers.ModelSerializer):
