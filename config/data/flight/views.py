@@ -291,22 +291,22 @@ class FlightCloseApi(APIView):
 
                 driver.save()
 
-                if flight.flight_balance_uzs > 0:
-                    Logs.objects.create(
-                        action="OUTCOME",
-                        amount_uzs=flight.flight_balance_uzs,
-                        kind="FLIGHT",
-                        comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
-                            f"{flight.car.name } { flight.car.number} для водителя {flight.driver.full_name}",
-                        flight=flight,
-                        employee=flight.driver
-                    )
                 if flight.flight_balance_uzs < 0:
                     Logs.objects.create(
                         action="OUTCOME",
                         amount_uzs=flight.flight_balance_uzs,
+                        kind="FLIGHT",
+                        comment=f"оплата за рейс "
+                            f"{flight.car.name } { flight.car.number} для водителя {flight.driver.full_name}",
+                        flight=flight,
+                        employee=flight.driver
+                    )
+                if flight.flight_balance_uzs > 0:
+                    Logs.objects.create(
+                        action="OUTCOME",
+                        amount_uzs=flight.flight_balance_uzs,
                         kind="FLIGHT_SALARY",
-                        comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
+                        comment=f"оплата за рейс "
                                 f"{flight.car.name} {flight.car.number} для водителя {flight.driver.full_name}",
                         flight=flight,
                         employee=flight.driver
@@ -316,7 +316,7 @@ class FlightCloseApi(APIView):
                         action="OUTCOME",
                         amount_uzs=lunch_payments,
                         kind="FLIGHT_SALARY",
-                        comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} "
+                        comment=f"за оплату еды для водителя {flight.driver.full_name} "
                                 f"по рейсу {flight.car.name } { flight.car.number}",
                         flight=flight,
                         employee=flight.driver
@@ -326,7 +326,7 @@ class FlightCloseApi(APIView):
                     action="OUTCOME",
                     amount_uzs=flight.driver_expenses_uzs or 0,
                     kind="FLIGHT_SALARY",
-                    comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
+                    comment=f"оплата за рейс "
                             f"{flight.car.name }  { flight.car.number} для водителя {flight.driver.full_name}",
                     flight=flight,
                     employee=flight.driver
