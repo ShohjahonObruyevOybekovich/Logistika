@@ -252,13 +252,13 @@ class FlightCloseApi(APIView):
 
             # Save flight updates
             flight.save()
-            ic("Updated flight details and saved.")
 
             # Calculate lunch payments safely
             lunch_payments = 0
             if flight.departure_date and flight.arrival_date:
                 days = max((flight.arrival_date - flight.departure_date).days, 0)
                 lunch_payments = (flight.other_expenses_uzs or 0) * days
+                ic(days, lunch_payments)
 
             # Handle flight_balance_uzs safely
             flight.flight_balance_uzs = data.get("flight_balance_uzs", flight.flight_balance_uzs or 0) or 0
@@ -278,7 +278,10 @@ class FlightCloseApi(APIView):
                         (driver.balance_uzs or 0) + float(flight.driver_expenses_uzs or 0)
                 )
                 driver.balance_uzs += float(lunch_payments or 0)
+                ic(driver.balance_uzs)
                 driver.balance_uzs -= float(flight.flight_balance_uzs or 0)
+                ic(driver.balance_uzs)
+
 
                 driver.save()
 
@@ -292,11 +295,21 @@ class FlightCloseApi(APIView):
                         flight=flight,
                         employee=flight.driver
                     )
+                if flight.flight_balance_uzs < 0:
+                    Logs.objects.create(
+                        action="OUTCOME",
+                        amount_uzs=flight.flight_balance_uzs,
+                        kind="FLIGHT_SALARY",
+                        comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
+                                f"{flight.car.name} {flight.car.number} для водителя {flight.driver.full_name}",
+                        flight=flight,
+                        employee=flight.driver
+                    )
                 if lunch_payments >0 :
                     Logs.objects.create(
                         action="OUTCOME",
                         amount_uzs=lunch_payments,
-                        kind="FLIGHT",
+                        kind="FLIGHT_SALARY",
                         comment=f"{lunch_payments} $ за оплату еды для водителя {flight.driver.full_name} по рейсу {flight.car.name } { flight.car.number}",
                         flight=flight,
                         employee=flight.driver
@@ -305,12 +318,13 @@ class FlightCloseApi(APIView):
                 Logs.objects.create(
                     action="OUTCOME",
                     amount_uzs=flight.driver_expenses_uzs or 0,
-                    kind="FLIGHT",
+                    kind="FLIGHT_SALARY",
                     comment=f"{flight.driver_expenses_uzs or 0} {flight.driver_expenses_type} оплата за рейс "
                             f"{flight.car.name }  { flight.car.number} для водителя {flight.driver.full_name}",
                     flight=flight,
                     employee=flight.driver
                 )
+
                 ic(f"Updated driver balance for {flight.driver.full_name}")
             else:
                 ic("Driver is None, skipping balance update")

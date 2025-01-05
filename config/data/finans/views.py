@@ -1,5 +1,5 @@
 import openpyxl
-from django.db.models import Sum, F, Case, When, FloatField
+from django.db.models import Sum, F, Case, When, FloatField, Q
 from django.db.models.functions import TruncDay, TruncMonth
 from django.http import HttpResponse
 from django.utils.dateparse import parse_datetime
@@ -24,7 +24,7 @@ from ..salarka.models import Salarka, SalarkaAnotherStation
 
 
 class Finans(ListCreateAPIView):
-    queryset = Logs.objects.all().order_by("-created_at")
+    queryset = Logs.objects.all().exclude(kind="FLIGHT_SALARY").order_by("-created_at")
     serializer_class = FinansListserializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
@@ -98,15 +98,20 @@ class FinansDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
 
+
 class FinansDriver(ListCreateAPIView):
-    # queryset = Logs.objects.all()
     serializer_class = FinansListserializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Enforce authentication
 
     def get_queryset(self):
-        driver_id = self.kwargs.get('pk')
+        driver_id = self.kwargs.get("pk")
         if driver_id:
-            return Logs.objects.filter(employee__id=driver_id, kind="PAY_SALARY").order_by("-created_at")
+            # Filter logs based on driver and specific kinds
+            return Logs.objects.filter(
+                employee__id=driver_id,
+                kind__in=["PAY_SALARY", "FLIGHT_SALARY"]
+            ).order_by("-created_at")
+
         return Logs.objects.none()
 
 
@@ -168,7 +173,6 @@ class FinansFlightExcel(APIView):
             "Комментарий",  # Comment
             "Начальная дата",  # Start Date
             "Конечная дата",  # End Date
-            "Баланс рейса",  # Flight Balance
             "Дата создания"  # Created At
         ]
 
@@ -185,7 +189,6 @@ class FinansFlightExcel(APIView):
             ws_logs[f"D{row_num}"] = f"{log.reason or ''}, {log.comment or ''}"
             ws_logs[f"E{row_num}"] = flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else ""
             ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else ""
-            ws_logs[f"G{row_num}"] = flight_balance if flight.status == "INACTIVE" else ""
             ws_logs[f"H{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
 
         # Adjust column widths for logs

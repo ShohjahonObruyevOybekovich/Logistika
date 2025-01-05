@@ -146,5 +146,6 @@ class Gas_another_station(TimeStampModel):
         self.km_car = self.car.distance_travelled
         super().save(*args, **kwargs)
 
+
     def __str__(self):
         return f"Purchased {self.purchased_volume} gas - {self.payed_price_uzs} m³"

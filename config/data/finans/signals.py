@@ -53,3 +53,14 @@ def on_flight_expenses(sender, instance: Logs, created, **kwargs):
 
             flight.flight_balance_uzs = flight_balance - expense_amount
             flight.save()
+
+
+@receiver(post_save, sender=Logs)
+def on_flight_balance(sender, instance: Logs, created, **kwargs):
+    if created and instance.kind == "FLIGHT_SALARY" and instance.action == "OUTCOME" and instance.flight is not None:
+        flight = Flight.objects.filter(id=instance.flight.id).first()
+        if flight:
+            expense_amount = instance.amount_uzs or 0
+            flight_amount = instance.flight.price_uzs - expense_amount
+
+            flight.save()
