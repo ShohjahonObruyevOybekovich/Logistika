@@ -3,6 +3,7 @@ from .views import *
 
 
 urlpatterns = [
+    path("Admin", RegisterADMINAPIView.as_view()),
     path("", EmployeeListAPIView.as_view(), name="employee-list"),
     path("<str:pk>", EmployeeRetrieveAPIView.as_view(), name="employee-detail"),
     path("list-pg/",EmployeeListCreateAPIView.as_view(), name="employee-list-create"),

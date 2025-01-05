@@ -16,6 +16,14 @@ def clean_media_path(file_path):
     return file_path
 
 
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("full_name",'phone','password')
+        ref_name = "EmployeeUserCreateSerializer"
+
+
+
 class EmployeeListSerializer(serializers.ModelSerializer):
     passport_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
     license_photo = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), allow_null=True)
