@@ -48,6 +48,9 @@ def outcome(sender, instance: Gas_another_station, created, **kwargs):
             comment=f"Расход для покупки газа с других заправок {instance.name}."
         )
 
+
+
+
 @receiver(post_save, sender=GasSale)
 def sold(sender, instance: GasSale, created, **kwargs):
     if created:
@@ -55,7 +58,6 @@ def sold(sender, instance: GasSale, created, **kwargs):
         purchased_gas = GasSale.objects.filter(car__id=instance.car.id)
         purchased_another_station = Gas_another_station.objects.filter(car__id=instance.car.id)
 
-        # Combine and sort by created_at
         combined_purchases = sorted(
             list(purchased_gas) + list(purchased_another_station),
             key=lambda x: x.created_at,
@@ -70,11 +72,13 @@ def sold(sender, instance: GasSale, created, **kwargs):
         if len(combined_purchases) > 1:
             previous_purchase = combined_purchases[1]
             previous_purchase.used_volume = instance.amount
-            previous_purchase.save()  # Save changes to the database
+            previous_purchase.save()
 
-        # Update the current instance's km field
+        print(instance.car.distance_travelled, instance.km_car)
         if instance.car.distance_travelled is not None and instance.km_car is not None:
+
             instance.km = instance.car.distance_travelled - instance.km_car
+            print(instance.car.distance_travelled - instance.km_car)
             instance.save()
 
 
@@ -100,7 +104,7 @@ def sold(sender, instance: Gas_another_station, created, **kwargs):
         if len(combined_purchases) > 1:
             previous_purchase = combined_purchases[1]
             previous_purchase.used_volume = instance.purchased_volume
-            previous_purchase.save()  # Save changes to the database
+            previous_purchase.save()
 
         # Update the current instance's km field
         if instance.car.distance_travelled is not None and instance.km_car is not None:

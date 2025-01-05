@@ -109,6 +109,9 @@ class GasAnotherListserializer(serializers.ModelSerializer):
                   "km_car",
 
                   ]
+
+
+
 class CombinedGasSaleSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     model_type = serializers.CharField()
