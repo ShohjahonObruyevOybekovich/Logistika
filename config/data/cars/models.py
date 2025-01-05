@@ -86,6 +86,8 @@ class Car(TimeStampModel):
                                       help_text='Trailer number',
                                       null=True, blank=True)
 
+    first_distance_travelled = models.FloatField(null=True, blank=True)
+
     def __str__(self):
         return f"{self.name} - {self.model} ({self.number})"
 
@@ -96,6 +98,10 @@ class Car(TimeStampModel):
         if self.next_oil_recycle_distance - self.distance_travelled <= threshold:
             return True
         return False
+    def save(self, *args, **kwargs):
+
+        self.first_distance_travelled = self.distance_travelled
+        super().save(*args, **kwargs)
 
 
 
