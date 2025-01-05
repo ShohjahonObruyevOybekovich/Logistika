@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.db import models
+
+from data.cars.models import Car
 from data.gas.models import GasPurchase, GasSale, GasStation
 from data.gas.models import Gas_another_station
 from data.gas.serializers import GasAnotherStationCreateseralizer, GasAnotherListserializer, CombinedGasSaleSerializer
@@ -83,7 +85,7 @@ class GasSalesListAPIView(ListCreateAPIView):
             raise NotFound("Gas station not found.")
 
         # Save the object first
-        instance = serializer.save(station=station)
+        serializer.save(station=station)
 
  # # Snapshot of car's current distance_travelled
  #        instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
@@ -180,13 +182,18 @@ class GasByCarID(ListAPIView):
         # Pagination
         paginator = PageNumberPagination()
         paginator.page_size = 30  # Custom page size
-
         page = paginator.paginate_queryset(queryset, request)
+
+        # Fetch car's initial distance travelled
+        car_id = self.kwargs.get("pk")
+        car = Car.objects.get(pk=car_id)
+        car_distance_travelled = car.distance_travelled if car else 0
+
+        # Adjust records for `km` and `km_car`
         if page is not None:
-            car_distance_traveled = queryset[0].car.distance_travelled if queryset else 0
             for record in page:
-                record.distance_traveled = car_distance_traveled
-                car_distance_traveled -= record.km
+                record.km_car = car_distance_travelled
+                record.km = car.distance_travelled - car_distance_travelled
 
             serializer = self.serializer_class(page, many=True)
             return paginator.get_paginated_response(serializer.data)

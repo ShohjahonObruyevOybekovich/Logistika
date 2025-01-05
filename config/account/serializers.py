@@ -14,7 +14,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('phone','password')
-        ref_name = "AccountUserCreateSerializer"
 
 # class ConfirmationCodeSerializer(serializers.Serializer):
 #     phone = serializers.EmailField()
