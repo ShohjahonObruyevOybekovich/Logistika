@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from data.upload.models import File
@@ -19,8 +20,32 @@ def clean_media_path(file_path):
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("full_name",'phone','password')
+        fields = ("full_name", "phone", "password", "can_delete")
         ref_name = "EmployeeUserCreateSerializer"
+
+    def create(self, validated_data):
+        # Ensure `can_delete` defaults to False if not explicitly provided
+        can_delete = validated_data.get("can_delete", False)
+
+        # Set superuser and staff status if `can_delete` is True
+        is_superuser = is_staff = can_delete
+
+        # Create the user instance
+        user = User(
+            full_name=validated_data["full_name"],
+            phone=validated_data["phone"],
+            can_delete=can_delete,
+            is_superuser=is_superuser,
+            is_staff=is_staff,
+        )
+        # Hash the password
+        user.set_password(validated_data["password"])
+        # Save the user instance
+        user.save()
+
+        return user
+
+
 
 
 

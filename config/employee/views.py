@@ -72,28 +72,25 @@ class EmployeeListCreateAPIView(ListAPIView):
 
 class RegisterADMINAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can create
 
     def create(self, request, *args, **kwargs):
-        # Validate incoming data using the serializer
+        # Check if the user has permission to set `can_delete`
+        if "can_delete" in request.data and request.data["can_delete"] is True:
+            if not request.user.is_superuser:  # Only superusers can set `can_delete` to True
+                return Response(
+                    {"success": False, "message": "You do not have permission to set 'can_delete'."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        # Proceed with default creation logic
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Extract validated data
-        full_name = serializer.validated_data.get('full_name')
-        phone = serializer.validated_data['phone']
-        password = serializer.validated_data['password']
+        # Create the user
+        user = serializer.save()
 
-        # Check if the phone number already exists
-        if User.objects.filter(phone=phone).exists():
-            return Response({'success': False, 'message': 'This phone number is already registered.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        # Hash the password before creating the user
-        user = User.objects.create(
-            full_name=full_name,
-            phone=phone,
+        return Response(
+            {"success": True, "message": f"{user.full_name} user created successfully."},
+            status=status.HTTP_201_CREATED,
         )
-        user.set_password(password)  # Hash the password
-        user.save()
-
-        return Response({'success': True, 'message':  f"{full_name} user created successfully."}, status=status.HTTP_201_CREATED)

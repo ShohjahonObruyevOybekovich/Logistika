@@ -11,10 +11,12 @@ from openpyxl.styles import Font, Alignment
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, \
-    ListAPIView, UpdateAPIView
+    ListAPIView, UpdateAPIView, RetrieveUpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from account.permission import CanDeleteUser
 from data.flight.serializers import FlightListserializer, FlightListCReateserializer, FlightOrderedListserializer
 from .models import Flight, Ordered
 from ..finans.models import Logs
@@ -34,11 +36,15 @@ class FlightListAPIView(ListCreateAPIView):
     search_fields = ('flight_type', "route", "status")
 
 
-class FlightRetrieveAPIView(RetrieveUpdateDestroyAPIView):
+class FlightRetrieveAPIView(RetrieveUpdateAPIView):
     queryset = Flight.objects.all().order_by("-created_at")
     serializer_class = FlightListserializer
     permission_classes = [IsAuthenticated]
 
+class FlightDeleteAPIView(DestroyAPIView):
+    permission_classes = [IsAuthenticated, CanDeleteUser]
+    authentication_classes = [JWTAuthentication]
+    queryset = Flight.objects.all()
 
 class FlightFilter(django_filters.FilterSet):
     car_id = django_filters.UUIDFilter(field_name='car__id', lookup_expr='exact')

@@ -13,6 +13,8 @@ class CustomUser(AbstractUser):
     created_at = models.DateField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateField(auto_now=True, null=True, blank=True)
 
+    can_delete = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'phone'
     # REQUIRED_FIELDS = ['phone']
 

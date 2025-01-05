@@ -36,3 +36,7 @@ class PhoneAuthBackend(BaseBackend):
             return CustomUser.objects.get(pk=user_id)
         except CustomUser.DoesNotExist:
             return None
+
+class CanDeleteUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_superuser or request.user.is_staff
