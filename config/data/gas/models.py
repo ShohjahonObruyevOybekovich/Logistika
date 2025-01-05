@@ -110,6 +110,8 @@ class GasSale(TimeStampModel):
     )
     km = models.FloatField(default=0, null=True, blank=True, help_text="KM of car traveled")
     km_car = models.FloatField(default=0, null=True, blank=True, help_text="sum(km)")
+    used_volume = models.FloatField(default=0,null=True, blank=True, help_text="Volume of gas used")
+
 
     def __str__(self):
         return f"{self.station.name } - {self.car.name} - {self.amount} m³"
@@ -141,6 +143,7 @@ class Gas_another_station(TimeStampModel):
 
     km = models.FloatField(default=0, null=True, blank=True, )
     km_car = models.FloatField(default=0, null=True, blank=True, )
+    used_volume = models.FloatField(default=0, null=True, blank=True, help_text="Volume of gas used")
 
     def save(self, *args, **kwargs):
         self.km_car = self.car.distance_travelled

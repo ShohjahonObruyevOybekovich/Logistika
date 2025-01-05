@@ -97,12 +97,12 @@ class GasAnotherStationCreateAPIView(ListCreateAPIView):
     serializer_class = GasAnotherStationCreateseralizer
     permission_classes = (IsAuthenticated,)
 
-    # def perform_create(self, serializer):
-    #     # Save the object first
-    #     instance = serializer.save()
-    #     ic(instance.car.distance_travelled , instance.km_car )
-    #     instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
-    #     instance.save()
+    def perform_create(self, serializer):
+        # Save the object first
+        instance = serializer.save()
+        ic(instance.car.distance_travelled , instance.km_car )
+        instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
+        instance.save()
 
 
 # class GasAnotherStationListAPIView(ListAPIView):
@@ -180,30 +180,7 @@ class GasByCarID(ListAPIView):
 
         return combined_sales
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
 
-        # Pagination
-        paginator = PageNumberPagination()
-        paginator.page_size = 30  # Custom page size
-        page = paginator.paginate_queryset(queryset, request)
-
-        # Fetch car's initial distance travelled
-        car_id = self.kwargs.get("pk")
-        car = Car.objects.get(pk=car_id)
-        car_distance_travelled = car.distance_travelled if car else 0
-
-        # Adjust records for `km` and `km_car`
-        if page is not None:
-            for record in page:
-                record.km_car = car_distance_travelled
-                record.km = car.distance_travelled - car_distance_travelled
-
-            serializer = self.serializer_class(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
 
 
 class ExportGasInfoAPIView(APIView):
