@@ -115,19 +115,21 @@ class FlightOrderedRetrieveAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = FlightOrderedListserializer
     permission_classes = (IsAuthenticated,)
 
-
 class ExportFlightInfoAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter("type", openapi.IN_QUERY, description="Type of data to export (flight, ordered)",
-                              type=openapi.TYPE_STRING),
+            openapi.Parameter("type", openapi.IN_QUERY, description="Type of data to export (flight, ordered)", type=openapi.TYPE_STRING),
+            openapi.Parameter("status", openapi.IN_QUERY, description="Filter by status (ACTIVE, INACTIVE)", type=openapi.TYPE_STRING),
+            openapi.Parameter("flight_type", openapi.IN_QUERY, description="Filter by flight type (IN_UZB, OUT)", type=openapi.TYPE_STRING),
         ],
         responses={200: "Excel file generated"}
     )
     def get(self, request):
         data_type = request.GET.get("type", "flight")  # Default to flight if not specified
+        status = request.GET.get("status")
+        flight_type = request.GET.get("flight_type")
 
         workbook = Workbook()
         sheet = workbook.active
@@ -136,6 +138,13 @@ class ExportFlightInfoAPIView(APIView):
         # Handle different types of data
         if data_type == "flight":
             queryset = Flight.objects.all()
+
+            # Apply filters
+            if status:
+                queryset = queryset.filter(status=status)
+            if flight_type:
+                queryset = queryset.filter(flight_type=flight_type)
+
             headers = [
                 "Регион", "Тип рейса", "Автомобиль", "Водитель",
                 "Дата отправления", "Дата прибытия", "Цена (UZS)", "Расходы водителя (UZS)",
@@ -146,7 +155,7 @@ class ExportFlightInfoAPIView(APIView):
             for flight in queryset:
                 sheet.append([
                     flight.region.name if flight.region else "",
-                    "Рейсы внутри Узбекистана" if flight.flight_type == "In_uzb" else "Рейсы за пределы Узбекистана" if flight.flight_type else "",
+                    "Рейсы внутри Узбекистана" if flight.flight_type == "IN_UZB" else "Рейсы за пределы Узбекистана" if flight.flight_type else "",
                     flight.car.number if flight.car else "",
                     flight.driver.full_name if flight.driver else "",
                     flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else "",
@@ -161,6 +170,13 @@ class ExportFlightInfoAPIView(APIView):
 
         elif data_type == "ordered":
             queryset = Ordered.objects.all()
+
+            # Apply filters
+            if status:
+                queryset = queryset.filter(status=status)
+            if flight_type:
+                queryset = queryset.filter(flight_type=flight_type)
+
             headers = [
                 "Имя водителя", "Номер водителя", "Номер автомобиля", "Информация о грузе",
                 "Статус", "Дата отправления", "Цена (UZS)", "Расходы водителя (UZS)",
@@ -179,7 +195,7 @@ class ExportFlightInfoAPIView(APIView):
                     ordered.price_uzs or "",
                     ordered.driver_expenses_uzs or "",
                     ordered.region.name if ordered.region else "",
-                    "Рейсы внутри Узбекистана" if ordered.flight_type == "In_uzb" else "Рейсы за пределы Узбекистана" if ordered.flight_type else "",
+                    "Рейсы внутри Узбекистана" if ordered.flight_type == "IN_UZB" else "Рейсы за пределы Узбекистана" if ordered.flight_type else "",
                     ordered.created_at.strftime('%d-%m-%Y %H:%M') if ordered.created_at else "",
                 ])
 
@@ -200,6 +216,7 @@ class ExportFlightInfoAPIView(APIView):
         response["Content-Disposition"] = f'attachment; filename="Flight_Info_{data_type}.xlsx"'
         workbook.save(response)
         return response
+
 
 
 from rest_framework.response import Response

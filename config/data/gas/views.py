@@ -85,9 +85,9 @@ class GasSalesListAPIView(ListCreateAPIView):
         # Save the object first
         instance = serializer.save(station=station)
 
- # Snapshot of car's current distance_travelled
-        instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
-        instance.save()
+ # # Snapshot of car's current distance_travelled
+ #        instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
+ #        instance.save()
 
 
 class GasAnotherStationCreateAPIView(ListCreateAPIView):
@@ -95,12 +95,12 @@ class GasAnotherStationCreateAPIView(ListCreateAPIView):
     serializer_class = GasAnotherStationCreateseralizer
     permission_classes = (IsAuthenticated,)
 
-    def perform_create(self, serializer):
-        # Save the object first
-        instance = serializer.save()
-  # Snapshot of car's current distance_travelled
-        instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
-        instance.save()
+    # def perform_create(self, serializer):
+    #     # Save the object first
+    #     instance = serializer.save()
+    #     ic(instance.car.distance_travelled , instance.km_car )
+    #     instance.km = instance.car.distance_travelled - instance.km_car  # Calculate km
+    #     instance.save()
 
 
 # class GasAnotherStationListAPIView(ListAPIView):
@@ -161,7 +161,7 @@ class GasByCarID(ListAPIView):
             model_type=models.Value('GasAnotherStation', output_field=models.CharField())
         )
 
-        # Combine and sort the querysets
+
         combined_sales = sorted(
             list(gas_sales) + list(gas_another_sales),
             key=lambda x: x.created_at,
@@ -183,7 +183,6 @@ class GasByCarID(ListAPIView):
 
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:
-            # Use the car's current `distance_traveled` and update dynamically
             car_distance_traveled = queryset[0].car.distance_travelled if queryset else 0
             for record in page:
                 record.distance_traveled = car_distance_traveled
