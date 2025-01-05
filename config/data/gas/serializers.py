@@ -119,7 +119,6 @@ class CombinedGasSaleSerializer(serializers.Serializer):
     amount = serializers.FloatField(required=False)
     purchased_volume = serializers.FloatField(required=False)
     km = serializers.FloatField()
-    distance_traveled = serializers.SerializerMethodField()  # Calculate dynamically
     used_volume = serializers.FloatField(required=False)  # New field for used volume
     km_car = serializers.FloatField(required=False)       # New field for km_car
 
