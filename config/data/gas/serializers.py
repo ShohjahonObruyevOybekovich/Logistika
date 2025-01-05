@@ -109,7 +109,6 @@ class GasAnotherListserializer(serializers.ModelSerializer):
                   "km_car",
 
                   ]
-
 class CombinedGasSaleSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     model_type = serializers.CharField()
@@ -120,7 +119,7 @@ class CombinedGasSaleSerializer(serializers.Serializer):
     amount = serializers.FloatField(required=False)
     purchased_volume = serializers.FloatField(required=False)
     km = serializers.FloatField()
-    distance_traveled = serializers.FloatField()
+    distance_traveled = serializers.SerializerMethodField()  # Calculate dynamically
 
     def get_car(self, obj):
         """
@@ -135,6 +134,21 @@ class CombinedGasSaleSerializer(serializers.Serializer):
         if hasattr(obj, 'station') and obj.station:
             return GasStationListSerializer(obj.station).data
         return None
+
+    def get_distance_traveled(self, obj):
+        """
+        Calculate distance traveled based on the `km` field and previous purchase.
+        """
+        # Access the previous distance from context if available
+        previous_km = self.context.get('previous_km', None)
+        current_km = obj.km if hasattr(obj, 'km') else 0
+
+        # Update the context for the next record
+        self.context['previous_km'] = current_km
+
+        if previous_km is None:  # No previous record
+            return 0
+        return current_km - previous_km
 
     def to_representation(self, instance):
         """
@@ -154,4 +168,3 @@ class CombinedGasSaleSerializer(serializers.Serializer):
             })
 
         return res
-
