@@ -75,7 +75,8 @@ def sold(sender, instance: GasSale, created, **kwargs):
 
 
             previous_purchase.km = instance.car.distance_travelled - previous_purchase.km_car
-
+            print(instance.car.distance_travelled - previous_purchase.km_car)
+            print(previous_purchase.km)
             ic(instance.car.distance_travelled, previous_purchase.car.distance_travelled)
             ic(instance.km_car, previous_purchase.km_car)
 
@@ -107,9 +108,8 @@ def sold(sender, instance: Gas_another_station, created, **kwargs):
 
 
             previous_purchase.km = instance.car.distance_travelled - previous_purchase.km_car
-
+            print(previous_purchase.km)
             ic(instance.car.distance_travelled, previous_purchase.car.distance_travelled)
-
             ic(instance.km_car, previous_purchase.km_car)
 
             previous_purchase.save()
