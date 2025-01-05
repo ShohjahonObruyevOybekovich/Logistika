@@ -72,14 +72,10 @@ def sold(sender, instance: GasSale, created, **kwargs):
         if len(combined_purchases) > 1:
             previous_purchase = combined_purchases[1]
             previous_purchase.used_volume = instance.amount
+
+
+            previous_purchase.km = instance.car.distance_travelled - instance.km_car
             previous_purchase.save()
-
-        print(instance.car.distance_travelled, instance.km_car)
-        if instance.car.distance_travelled is not None and instance.km_car is not None:
-            previous_km = combined_purchases[1] if combined_purchases else None
-
-            previous_km.km = instance.car.distance_travelled - instance.km_car
-            previous_km.save()
 
 
 @receiver(post_save, sender=Gas_another_station)
@@ -104,11 +100,9 @@ def sold(sender, instance: Gas_another_station, created, **kwargs):
         if len(combined_purchases) > 1:
             previous_purchase = combined_purchases[1]
             previous_purchase.used_volume = instance.purchased_volume
+
+
+            previous_purchase.km = instance.car.distance_travelled - instance.km_car
+
             previous_purchase.save()
-
-        if instance.car.distance_travelled is not None and instance.km_car is not None:
-            previous_km = combined_purchases[1] if combined_purchases else None
-
-            previous_km.km = instance.car.distance_travelled - instance.km_car
-            previous_km.save()
 
