@@ -120,6 +120,8 @@ class CombinedGasSaleSerializer(serializers.Serializer):
     purchased_volume = serializers.FloatField(required=False)
     km = serializers.FloatField()
     distance_traveled = serializers.SerializerMethodField()  # Calculate dynamically
+    used_volume = serializers.FloatField(required=False)  # New field for used volume
+    km_car = serializers.FloatField(required=False)       # New field for km_car
 
     def get_car(self, obj):
         """
@@ -135,21 +137,6 @@ class CombinedGasSaleSerializer(serializers.Serializer):
             return GasStationListSerializer(obj.station).data
         return None
 
-    def get_distance_traveled(self, obj):
-        """
-        Calculate distance traveled based on the `km` field and previous purchase.
-        """
-        # Access the previous distance from context if available
-        previous_km = self.context.get('previous_km', None)
-        current_km = obj.km if hasattr(obj, 'km') else 0
-
-        # Update the context for the next record
-        self.context['previous_km'] = current_km
-
-        if previous_km is None:  # No previous record
-            return 0
-        return current_km - previous_km
-
     def to_representation(self, instance):
         """
         Customize representation based on model type.
@@ -160,11 +147,16 @@ class CombinedGasSaleSerializer(serializers.Serializer):
             res.update({
                 'amount': instance.amount,
                 'station': self.get_station(instance),
+                'used_volume': instance.used_volume,  # Add used_volume dynamically
+                'km_car': instance.km_car,           # Add km_car dynamically
             })
         elif instance.model_type == 'GasAnotherStation':
             res.update({
                 'purchased_volume': instance.purchased_volume,
                 'name': instance.name,
+                'used_volume': instance.used_volume,  # Add used_volume dynamically
+                'km_car': instance.km_car,           # Add km_car dynamically
             })
 
         return res
+
