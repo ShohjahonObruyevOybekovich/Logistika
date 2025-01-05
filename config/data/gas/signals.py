@@ -77,12 +77,12 @@ def sold(sender, instance: GasSale, created, **kwargs):
         print(instance.car.distance_travelled, instance.km_car)
         if instance.car.distance_travelled is not None and instance.km_car is not None:
 
-            instance.km = instance.car.distance_travelled - instance.car.first_distance_travelled
-            print(instance.car.distance_travelled - instance.car.first_distance_travelled)
+            instance.km = instance.car.distance_travelled - instance.km_car
+            print(instance.car.distance_travelled - instance.km_car)
             instance.save()
 
-            instance.car.first_distance_travelled = instance.car.distance_travelled
-            instance.car.save()
+            # instance.car.first_distance_travelled = instance.car.distance_travelled
+            # instance.car.save()
 
 
 @receiver(post_save, sender=Gas_another_station)
@@ -111,8 +111,8 @@ def sold(sender, instance: Gas_another_station, created, **kwargs):
 
         # Update the current instance's km field
         if instance.car.distance_travelled is not None and instance.km_car is not None:
-            instance.km = instance.car.distance_travelled - instance.car.first_distance_travelled
+            instance.km = instance.car.distance_travelled - instance.km_car
             instance.save()
 
-            instance.car.first_distance_travelled = instance.car.distance_travelled
-            instance.car.save()
+            # instance.car.first_distance_travelled = instance.car.distance_travelled
+            # instance.car.save()
