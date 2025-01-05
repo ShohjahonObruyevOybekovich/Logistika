@@ -76,9 +76,9 @@ def sold(sender, instance: GasSale, created, **kwargs):
 
         print(instance.car.distance_travelled, instance.km_car)
         if instance.car.distance_travelled is not None and instance.km_car is not None:
-            previous_km = combined_purchases[0] if combined_purchases else None
+            previous_km = combined_purchases[1] if combined_purchases else None
 
-            previous_km.km = previous_km.car.distance_travelled - instance.car.distance_travelled
+            previous_km.km = instance.car.distance_travelled - instance.km_car
             previous_km.save()
 
 
@@ -107,8 +107,8 @@ def sold(sender, instance: Gas_another_station, created, **kwargs):
             previous_purchase.save()
 
         if instance.car.distance_travelled is not None and instance.km_car is not None:
-            previous_km = combined_purchases[0] if combined_purchases else None
+            previous_km = combined_purchases[1] if combined_purchases else None
 
-            previous_km.km = previous_km.car.distance_travelled - instance.car.distance_travelled
+            previous_km.km = instance.car.distance_travelled - instance.km_car
             previous_km.save()
 
