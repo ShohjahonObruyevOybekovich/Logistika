@@ -81,9 +81,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class UserListSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','phone',"full_name", 'password',]
+        fields = ['id','phone',"full_name", 'password',"can_delete"]
 
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("id","full_name", 'phone',)
+        fields = ("id","full_name", 'phone',"can_delete")
