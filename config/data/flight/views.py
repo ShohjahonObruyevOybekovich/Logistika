@@ -153,8 +153,9 @@ class ExportFlightInfoAPIView(APIView):
 
             headers = [
                 "Регион", "Тип рейса", "Автомобиль", "Водитель",
-                "Дата отправления", "Дата прибытия", "Цена (UZS)", "Расходы водителя (UZS)",
-                "Информация о грузе", "Другие расходы", "Статус", "Дата создания"
+                "Дата отправления", "Дата прибытия", "Цена (USD)", "Расходы водителя (USD)","Расходы рейса(USD)",
+                "Оплата за питание","Прибыль", "Статус", "Дата создания",
+                "Информация о грузе"
             ]
             sheet.append(headers)
 
@@ -168,10 +169,20 @@ class ExportFlightInfoAPIView(APIView):
                     flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else "",
                     flight.price_uzs or "",
                     flight.driver_expenses_uzs or "",
-                    flight.cargo_info or "",
-                    flight.other_expenses or "",
-                    flight.get_status_display() if flight.status else "",
+                    flight.flight_balance_uzs or "",
+                    (
+                        (max((flight.arrival_date - flight.departure_date).days, 0) * (flight.other_expenses_uzs or 0))
+                        if flight.departure_date and flight.arrival_date
+                        else ""
+                    ),
+                    flight.price_uzs-flight.driver_expenses_uzs-flight.flight.flight_balance_uzs-(
+                        (max((flight.arrival_date - flight.departure_date).days, 0) * (flight.other_expenses_uzs or 0))
+                        if flight.departure_date and flight.arrival_date
+                        else ""
+                    ),
+                    "Активный" if flight.status == "ACTIVE" else "Неактивный" if flight.status else "",
                     flight.created_at.strftime("%d-%m-%Y %H:%M") if flight.created_at else "",
+                    flight.cargo_info or "",
                 ])
 
         elif data_type == "ordered":
@@ -196,7 +207,7 @@ class ExportFlightInfoAPIView(APIView):
                     ordered.driver_number or "",
                     ordered.car_number or "",
                     ordered.cargo_info or "",
-                    ordered.get_status_display() if ordered.status else "",
+                    "Активный" if ordered.status == "ACTIVE" else "Неактивный" if ordered.status else "",
                     ordered.departure_date.strftime('%d-%m-%Y') if ordered.departure_date else "",
                     ordered.price_uzs or "",
                     ordered.driver_expenses_uzs or "",

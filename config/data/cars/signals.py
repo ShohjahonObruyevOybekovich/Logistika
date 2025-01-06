@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Car, Notification
+from .models import Car, Notification, Details
 from ..finans.models import Logs
 
 
@@ -30,4 +30,17 @@ def on_car_create(sender, instance: Car, created, **kwargs):
             amount_type=instance.price_type,
             kind="OTHER",
             comment=f"За покупку техники / {instance.name} и {instance.number} "
+        )
+
+@receiver(post_save, sender=Details)
+def on_details_create(sender, instance: Details, created, **kwargs):
+    if created:
+        Logs.objects.create(
+            action="OUTCOME",
+            amount_uzs=instance.price_uzs,
+            amount=instance.price,
+            amount_type=instance.price_type,
+            car=instance.car,
+            kind="OTHER",
+            comment=f"Детали для машины {instance.car.name}-{instance.car.number} обновлены."
         )

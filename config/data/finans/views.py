@@ -168,7 +168,7 @@ class FinansFlightExcel(APIView):
         # Define headers for logs
         headers_logs = [
             "Название",  # Name
-            "Сумма (UZS)",  # Amount (UZS)
+            "Сумма (USD)",  # Amount (UZS)
             "Тип",  # Type
             "Комментарий",  # Comment
             "Начальная дата",  # Start Date
@@ -200,7 +200,7 @@ class FinansFlightExcel(APIView):
         headers_purchases = [
             "Название",  # Name
             "Количество",  # Quantity
-            "Сумма (UZS)",  # Amount (UZS)
+            "Сумма (USD)",  # Amount (UZS)
             "Дата"  # Date
         ]
 
@@ -294,7 +294,7 @@ class ExportLogsToExcelAPIView(APIView):
         sheet.title = "Logs"
 
         # Headers
-        headers = ["Действие", "Сумма (UZS)", "Машина", "Водитель", "Рейс", "Тип", "Причина", "Комментарий",
+        headers = ["Действие", "Сумма (USD)", "Машина", "Водитель", "Рейс", "Тип", "Причина", "Комментарий",
                    "Время создания"]
         for col_num, header in enumerate(headers, 1):
             cell = sheet.cell(row=1, column=col_num)
