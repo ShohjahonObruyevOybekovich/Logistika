@@ -40,6 +40,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://api.logic.sector-soft.ru",
     'https://logistics-dashboard-peach.vercel.app',
     "https://megastroy.sector-soft.ru",
+    "https://api.megastroy.sector-soft.ru"
 ]
 
 # Application definition
@@ -197,6 +198,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://16.171.242.109",
     'https://logistics-dashboard-peach.vercel.app',
     "https://megastroy.sector-soft.ru",
+    "https://api.megastroy.sector-soft.ru"
 ]
 
 CORS_ALLOW_METHODS = (
