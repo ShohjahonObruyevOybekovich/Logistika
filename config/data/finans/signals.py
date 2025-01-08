@@ -61,6 +61,6 @@ def on_flight_balance(sender, instance: Logs, created, **kwargs):
         flight = Flight.objects.filter(id=instance.flight.id).first()
         if flight:
             expense_amount = instance.amount_uzs or 0
-            flight_amount = instance.flight.price_uzs - expense_amount
+            instance.flight.price_uzs -= expense_amount
 
-            flight.save()
+            instance.flight.price_uzs.save()

@@ -8,7 +8,8 @@ from ..finans.models import Logs
 @receiver(post_save, sender=Flight)
 def handle_flight_status_update(sender, instance: Flight, created, **kwargs):
     if created:
-
+        instance.price_uzs+=instance.price_come_uzs
+        instance.save()
         if instance.price_uzs > 0:
             Logs.objects.create(
                 action="INCOME",
@@ -58,4 +59,5 @@ def handle_ordered_status_update(sender, instance: Ordered, created, **kwargs):
             except Exception as e:
                 # Log error or handle as needed
                 print(f"Error handling ordered flight status update signal: {e}")
+
 

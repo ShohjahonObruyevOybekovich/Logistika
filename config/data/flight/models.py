@@ -195,9 +195,8 @@ class Flight(TimeStampModel):
 
     def __str__(self):
         return f"Flight - {self.route} ({self.departure_date})"
-    def save(self, *args, **kwargs):
-        self.price_uzs += self.price_come_uzs
-        super().save(*args, **kwargs)
+
+
 
 
 class Ordered(TimeStampModel):
