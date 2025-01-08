@@ -41,6 +41,10 @@ class FlightListserializer(serializers.ModelSerializer):
             "price",
             "price_type",
 
+            "price_come_uzs",
+            "price_come",
+            "price_come_type",
+
             "driver_expenses",
             "driver_expenses_uzs",
             "driver_expenses_type",

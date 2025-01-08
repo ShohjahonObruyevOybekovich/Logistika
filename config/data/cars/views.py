@@ -255,12 +255,7 @@ class BulkDeleteWithSellPriceAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if not sell_price:
-            return Response(
-                {"detail": "Sell price is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if sell_price:
+        if sell_price and sell_price >= 0:
             # Log the income for the sell_price
             sell_price = Decimal(sell_price)
             Logs.objects.create(
@@ -268,6 +263,11 @@ class BulkDeleteWithSellPriceAPIView(APIView):
                 amount_uzs=sell_price,
                 kind="OTHER",
                 comment=f"Детали проданы за {sell_price} сум.."
+            )
+        else:
+            return Response(
+                {"detail": "Sell price is required."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         deleted_count = 0

@@ -70,7 +70,7 @@ class ModelSerializer(serializers.ModelSerializer):
 
 
 class DetailCreateSerializer(serializers.ModelSerializer):
-    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all())
+    car = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all(),allow_null=True)
 
     class Meta:
         model = Details

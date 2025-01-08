@@ -106,7 +106,7 @@ class Car(TimeStampModel):
 
 
 class Details(TimeStampModel):
-    car = models.ForeignKey("Car", on_delete=models.CASCADE)
+    car = models.ForeignKey("Car", on_delete=models.CASCADE,null=True,blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     id_detail = models.CharField(max_length=100, null=True, blank=True)
     price_uzs = models.FloatField(max_length=100, null=True, blank=True)

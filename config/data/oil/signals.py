@@ -59,7 +59,7 @@ def on_purchase(sender, instance: OilPurchase, created, **kwargs):
             amount_uzs=instance.amount_uzs,
             # amount_usd=instance.amount_usd,
             kind="OTHER",
-            comment=f"{instance.price_uzs} $ расход для покупки {instance.oil_volume} литров масла {instance.oil.oil_name}"
+            comment=f"{instance.amount_uzs} $ расход для покупки {instance.oil_volume} литров масла {instance.oil.oil_name}"
         )
 
 

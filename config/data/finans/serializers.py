@@ -81,7 +81,7 @@ class LogsFilter(filters.FilterSet):
 class FinansUserListserializer(serializers.ModelSerializer):
     income_sum = serializers.SerializerMethodField()
     outcome_sum = serializers.SerializerMethodField()
-    win = serializers.SerializerMethodField()
+    car_price = serializers.SerializerMethodField()
 
     total_leasing_paid = serializers.SerializerMethodField()
     total_car_prices = serializers.SerializerMethodField()
@@ -106,7 +106,7 @@ class FinansUserListserializer(serializers.ModelSerializer):
             "created_at",
             "income_sum",
             "outcome_sum",
-            "win",
+            "car_price",
             "total_leasing_paid",
             "total_car_prices",
             "leasing_balance",
@@ -119,13 +119,18 @@ class FinansUserListserializer(serializers.ModelSerializer):
         return queryset.filter(action="INCOME").aggregate(total_income=Sum('amount_uzs'))['total_income'] or 0
 
     def get_outcome_sum(self, obj):
-        queryset = self.context.get('filtered_queryset', Logs.objects.all())
+        queryset = (
+            self.context.get('filtered_queryset', Logs.objects.all())
+            .exclude(kind__iexact="BUY_CAR")
+            .exclude(kind__isnull=True)
+            .exclude(kind="")
+        )
+
         return queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome'] or 0
 
-    def get_win(self, obj):
-        income = self.get_income_sum(obj)
-        outcome = self.get_outcome_sum(obj)
-        return income - outcome
+    def get_car_price(self, obj):
+        queryset = self.context.get('filtered_queryset', Logs.objects.filter(kind="BUY_CAR"))
+        return queryset.filter(action="OUTCOME").aggregate(car_price=Sum('amount_uzs'))['car_price'] or 0
 
     def get_total_leasing_paid(self, obj):
         """

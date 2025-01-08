@@ -42,6 +42,7 @@ class Logs(TimeStampModel):
             ("FLIGHT", "FLIGHT"),
             ("LEASING","Leasing"),
             ("BONUS","BONUS"),
+            ('BUY_CAR','BUY_CAR'),
         ],
         max_length=20,
         null=True,

@@ -28,13 +28,13 @@ def on_car_create(sender, instance: Car, created, **kwargs):
             amount_uzs=instance.price_uzs,
             amount=instance.price,
             amount_type=instance.price_type,
-            kind="OTHER",
+            kind="BUY_CAR",
             comment=f"За покупку техники / {instance.name} и {instance.number} "
         )
 
 @receiver(post_save, sender=Details)
 def on_details_create(sender, instance: Details, created, **kwargs):
-    if created:
+    if created and instance.car is not None:
         Logs.objects.create(
             action="OUTCOME",
             amount_uzs=instance.price_uzs,
@@ -43,4 +43,13 @@ def on_details_create(sender, instance: Details, created, **kwargs):
             car=instance.car,
             kind="OTHER",
             comment=f"Детали для машины {instance.car.name}-{instance.car.number} обновлены."
+        )
+    else:
+        Logs.objects.create(
+            action="OUTCOME",
+            amount_uzs=instance.price_uzs,
+            amount=instance.price,
+            amount_type=instance.price_type,
+            kind="OTHER",
+            comment=f"Деталь ID {instance.id_detail or ""} создана без привязки к машине"
         )

@@ -324,6 +324,7 @@ class ExportLogsToExcelAPIView(APIView):
                 "FLIGHT": "Рейс",
                 "LEASING": "Лизинг",
                 "BONUS": "Бонус",
+                "BUY_CAR": "Купить машину."
             }
 
             # Populate the Excel cell with the Russian name
@@ -390,7 +391,8 @@ class FilteredIncomeOutcomeAPIView(APIView):
 
         # Calculate income and outcome sums
         income_sum = queryset.filter(action="INCOME").aggregate(total_income=Sum("amount_uzs"))["total_income"] or 0
-        outcome_sum = queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum("amount_uzs"))["total_outcome"] or 0
+        outcome_sum = queryset.filter(action="OUTCOME").exclude(kind="BUY_CAR").aggregate(
+            total_outcome=Sum("amount_uzs"))["total_outcome"] or 0
 
         # Determine grouping
         if start_date and end_date:
@@ -439,7 +441,7 @@ class FilteredIncomeOutcomeAPIView(APIView):
             "results": {
                 "income_sum": income_sum,
                 "outcome_sum": outcome_sum,
-                "win": income_sum - outcome_sum,  # Net income
+                "car_price": income_sum - outcome_sum,  # Net income
                 "chart_data": list(chart_data)  # Grouped data for chart
             },
         }

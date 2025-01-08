@@ -56,6 +56,7 @@ class Flight(TimeStampModel):
         null=True,
         blank=True,
     )
+
     PRICE_CHOICES = [
         ('USD', 'USD'),
         ('RUB', 'RUB'),
@@ -63,6 +64,24 @@ class Flight(TimeStampModel):
         ("UZS", "UZS"),
     ]
     price_type = models.CharField(
+        choices=PRICE_CHOICES,
+        default='USD',
+        max_length=10,
+        null=True,
+        blank=True,
+        help_text="Type of price"
+    )
+    price_come_uzs = models.FloatField(
+        null=True,
+        blank=True,
+        default=0
+    )
+    price_come= models.FloatField(
+        null=True,
+        blank=True,
+        default=0
+    )
+    price_come_type = models.CharField(
         choices=PRICE_CHOICES,
         default='USD',
         max_length=10,
@@ -141,6 +160,7 @@ class Flight(TimeStampModel):
         choices=STATUS_CHOICES,
         default="ACTIVE",
     )
+
     flight_balance_uzs = models.FloatField(
         null=True,
         blank=True,
@@ -166,6 +186,9 @@ class Flight(TimeStampModel):
 
     def __str__(self):
         return f"Flight - {self.route} ({self.departure_date})"
+    def save(self, *args, **kwargs):
+        self.price_uzs += self.price_come_uzs
+        super().save(*args, **kwargs)
 
 
 class Ordered(TimeStampModel):
