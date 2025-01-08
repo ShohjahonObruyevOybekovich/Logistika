@@ -65,6 +65,8 @@ class FlightListserializer(serializers.ModelSerializer):
             "flight_balance_uzs",
             "flight_balance_type",
 
+            "payment_type",
+
             "upload",
             "created_at",
         ]
@@ -133,6 +135,7 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "flight_balance",
             "flight_balance_uzs",
             "flight_balance_type",
+            "payment_type",
             "upload",
             "created_at",
         ]

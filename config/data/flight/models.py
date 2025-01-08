@@ -178,6 +178,14 @@ class Flight(TimeStampModel):
         blank=True,
         default=0
     )
+    Payment_CHOICES = (
+        ("CASH", "CASH"),
+        ("PERECHESLINIYA", "PERECHESLINIYA"),
+    )
+    payment_type = models.CharField(
+        choices=Payment_CHOICES,
+        default='CASH',
+    )
     start_km = models.FloatField(max_length=150,
                                  null=True, blank=True)
     end_km = models.FloatField(max_length=150,null=True,blank=True)
