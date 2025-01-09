@@ -44,7 +44,7 @@ def on_details_create(sender, instance: Details, created, **kwargs):
             kind="OTHER",
             comment=f"Детали для машины {instance.car.name}-{instance.car.number} обновлены."
         )
-    elif instance.price_uzs is not None:
+    elif instance.in_sklad is True:
         Logs.objects.create(
             action="OUTCOME",
             amount_uzs=instance.price_uzs,

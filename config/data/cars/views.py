@@ -246,6 +246,7 @@ class BulkDeleteWithSellPriceAPIView(APIView):
         """
         data = request.data  # Expecting a dict with 'ids' and 'sell_price'
         ids = data.get("id")  # List of IDs to delete
+
         sell_price = data.get("sell_price")
         sell_price_uzs = data.get("sell_price_uzs")
         sell_price_type = data.get("sell_price_type")
