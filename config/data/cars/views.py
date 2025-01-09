@@ -246,7 +246,11 @@ class BulkDeleteWithSellPriceAPIView(APIView):
         """
         data = request.data  # Expecting a dict with 'ids' and 'sell_price'
         ids = data.get("id")  # List of IDs to delete
-        sell_price = data.get("sell_price")  # Common sell price
+        sell_price = data.get("sell_price")
+        sell_price_uzs = data.get("sell_price_uzs")
+        sell_price_type = data.get("sell_price_type")
+
+
 
         # Validate input
         if not ids or not isinstance(ids, list):
@@ -260,9 +264,11 @@ class BulkDeleteWithSellPriceAPIView(APIView):
             sell_price = Decimal(sell_price)
             Logs.objects.create(
                 action="INCOME",
-                amount_uzs=sell_price,
+                amount_uzs=sell_price_uzs,
+                amount=sell_price,
+                amount_type=sell_price_type,
                 kind="OTHER",
-                comment=f"Детали проданы за {sell_price} сум.."
+                comment=f"Детали проданы за {sell_price} {sell_price_type}.."
             )
         else:
             return Response(
