@@ -191,6 +191,8 @@ class Flight(TimeStampModel):
                                  null=True, blank=True)
     end_km = models.FloatField(max_length=150,null=True,blank=True)
 
+    is_archived = models.BooleanField(default=False)
+
 
 
     def __str__(self):
@@ -257,6 +259,8 @@ class Ordered(TimeStampModel):
         choices=Flight_CHOICES,
         default="IN_UZB",
     )
+    is_archived = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"Ordered Flight - {self.status} and {self.departure_date}"

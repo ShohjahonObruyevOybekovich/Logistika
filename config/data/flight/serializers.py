@@ -69,6 +69,7 @@ class FlightListserializer(serializers.ModelSerializer):
 
             "upload",
             "created_at",
+            'is_archived',
         ]
 
 
@@ -136,6 +137,8 @@ class FlightListCReateserializer(serializers.ModelSerializer):
             "flight_balance_uzs",
             "flight_balance_type",
             "payment_type",
+            "is_archived",
+
             "upload",
             "created_at",
         ]
@@ -181,6 +184,8 @@ class FlightOrderedListserializer(serializers.ModelSerializer):
             "driver_name",
             "driver_number",
             "car_number",
+            "is_archived",
+
             "status",
             "created_at",
         ]

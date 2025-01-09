@@ -30,10 +30,10 @@ class FlightListAPIView(ListCreateAPIView):
 
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = [
-        'flight_type', "route", "status","payment_type"
+        'flight_type', "route", "status","payment_type","is_archived",
     ]
-    ordering_fields = ('flight_type', "route", "status","payment_type")
-    search_fields = ('flight_type', "route", "status","payment_type")
+    ordering_fields = ('flight_type', "route", "status","payment_type","is_archived")
+    search_fields = ('flight_type', "route", "status","payment_type","is_archived")
 
 
 class FlightRetrieveAPIView(RetrieveUpdateAPIView):

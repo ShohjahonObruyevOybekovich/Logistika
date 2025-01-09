@@ -80,9 +80,11 @@ class DetailCreateSerializer(serializers.ModelSerializer):
             "id_detail",
             "car",
             "in_sklad",
+
             "price_uzs",
             "price",
             "price_type",
+
             "created_at",
             "updated_at",
         ]
