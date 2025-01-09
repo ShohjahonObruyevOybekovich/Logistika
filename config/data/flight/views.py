@@ -114,6 +114,14 @@ class FlightOrderedListAPIView(ListCreateAPIView):
     serializer_class = FlightOrderedListserializer
     queryset = Ordered.objects.all().order_by("-created_at")
     permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = [
+        "is_archived",
+    ]
+    ordering_fields = ("is_archived",)
+    search_fields = ("is_archived",)
+
+
 
 
 class FlightOrderedRetrieveAPIView(RetrieveUpdateDestroyAPIView):
