@@ -68,14 +68,21 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['phone','full_name', 'password',]
+        fields = ['phone', 'full_name', 'password','can_delete']
 
-    def validate(self, attrs):
-        user = self.instance  # Get the user instance
-        if 'password' in attrs:
-            user.set_password(attrs['password'])
-            user.save()
-        return attrs
+    def validate_phone(self, value):
+        user = self.instance
+        if User.objects.exclude(pk=user.pk).filter(phone=value).exists():
+            raise serializers.ValidationError("This phone number is already in use.")
+        return value
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data.pop('password'))
+        if 'can_delete' in validated_data:
+            instance.can_delete = validated_data.pop('can_delete')
+        return super().update(instance, validated_data)
+
 
 class UserListSerializer(ModelSerializer):
     class Meta:
