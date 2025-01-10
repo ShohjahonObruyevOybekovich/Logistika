@@ -119,10 +119,7 @@ class FinansUserListserializer(serializers.ModelSerializer):
         return queryset.filter(action="INCOME").aggregate(total_income=Sum('amount_uzs'))['total_income'] or 0
 
     def get_outcome_sum(self, obj):
-        queryset = (
-            self.context.get('filtered_queryset', Logs.objects.all())
-            .exclude(kind__iexact="BUY_CAR")
-        )
+        queryset = self.context.get('filtered_queryset', Logs.objects.filter().exclude(action="BUY_CAR"))
 
         return queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome'] or 0
 
