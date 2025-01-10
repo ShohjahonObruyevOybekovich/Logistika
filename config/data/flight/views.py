@@ -293,16 +293,12 @@ class FlightCloseApi(APIView):
 
                 if flight.flight_type == "OUT":
                     ic(f"Updating driver balance for {flight.driver.full_name}")
+
                     driver = flight.driver
-
-                    driver.balance_uzs = (
-                            (driver.balance_uzs or 0) + float(flight.driver_expenses_uzs or 0)
-                    )
+                    lunch_payments = data.get("lunch_payments", 0)  # Default to 0 if not provided
+                    driver.balance_uzs = float(driver.balance_uzs or 0)  # Ensure it's a float
                     driver.balance_uzs += float(lunch_payments or 0)
-                    ic(driver.balance_uzs)
                     driver.balance_uzs -= float(flight.flight_balance_uzs or 0)
-                    ic(driver.balance_uzs)
-
                     driver.save()
 
                     if flight.flight_balance_uzs < 0:
@@ -315,7 +311,7 @@ class FlightCloseApi(APIView):
                             flight=flight,
                             employee=flight.driver
                         )
-                    if flight.flight_balance_uzs > 0 and flight.flight_type == "IN_UZB":
+                    if flight.flight_balance_uzs > 0 :
                         Logs.objects.create(
                             action="OUTCOME",
                             amount_uzs=flight.flight_balance_uzs,
@@ -325,7 +321,7 @@ class FlightCloseApi(APIView):
                             flight=flight,
                             employee=flight.driver
                         )
-                    if lunch_payments > 0 and flight.flight_type == "IN_UZB":
+                    if lunch_payments > 0 :
                         Logs.objects.create(
                             action="OUTCOME",
                             amount_uzs=lunch_payments,
@@ -335,16 +331,15 @@ class FlightCloseApi(APIView):
                             flight=flight,
                             employee=flight.driver
                         )
-                    if flight.flight_type == "IN_UZB":
-                        Logs.objects.create(
-                            action="OUTCOME",
-                            amount_uzs=flight.driver_expenses_uzs or 0,
-                            kind="FLIGHT_SALARY",
-                            comment=f"оплата за рейс "
-                                    f"{flight.car.name}  {flight.car.number} для водителя {flight.driver.full_name}",
-                            flight=flight,
-                            employee=flight.driver
-                        )
+                    Logs.objects.create(
+                        action="OUTCOME",
+                        amount_uzs=flight.driver_expenses_uzs or 0,
+                        kind="FLIGHT_SALARY",
+                        comment=f"оплата за рейс "
+                                f"{flight.car.name}  {flight.car.number} для водителя {flight.driver.full_name}",
+                        flight=flight,
+                        employee=flight.driver
+                    )
 
                     ic(f"Updated driver balance for {flight.driver.full_name}")
                 else:
