@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from passlib.context import CryptContext
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -94,11 +94,15 @@ class UserUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def get_object(self):
-        return self.request.user  # Get the current user
+    def get_object(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise serializers.ValidationError({"error": "User not found."})
 
     def put(self, request, *args, **kwargs):
-        user = self.get_object()
+        pk = kwargs.get('pk')  # Get the pk from the URL
+        user = self.get_object(pk)
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)  # Allow partial updates
         if serializer.is_valid():
             try:
@@ -110,6 +114,7 @@ class UserUpdateAPIView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
