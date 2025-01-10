@@ -291,7 +291,7 @@ class FlightCloseApi(APIView):
                 flight.flight_balance_uzs = float(flight.flight_balance_uzs or 0)
                 flight.flight_expenses_uzs = float(flight.flight_balance_uzs or 0)
 
-                if flight.driver:
+                if flight.type == "OUT":
                     ic(f"Updating driver balance for {flight.driver.full_name}")
                     driver = flight.driver
 
