@@ -298,6 +298,8 @@ class FlightCloseApi(APIView):
                     lunch_payments = data.get("lunch_payments", 0)  # Default to 0 if not provided
                     driver.balance_uzs = float(driver.balance_uzs or 0)  # Ensure it's a float
                     driver.balance_uzs += float(lunch_payments or 0)
+
+
                     driver.balance_uzs -= float(flight.flight_balance_uzs or 0)
                     driver.save()
 
@@ -321,16 +323,15 @@ class FlightCloseApi(APIView):
                             flight=flight,
                             employee=flight.driver
                         )
-                    if lunch_payments > 0 :
-                        Logs.objects.create(
-                            action="OUTCOME",
-                            amount_uzs=lunch_payments,
-                            kind="FLIGHT_SALARY",
-                            comment=f"за оплату еды для водителя {flight.driver.full_name} "
-                                    f"по рейсу {flight.car.name} {flight.car.number}",
-                            flight=flight,
-                            employee=flight.driver
-                        )
+                    Logs.objects.create(
+                        action="OUTCOME",
+                        amount_uzs=lunch_payments,
+                        kind="FLIGHT_SALARY",
+                        comment=f"за оплату еды для водителя {flight.driver.full_name} "
+                                f"по рейсу {flight.car.name} {flight.car.number}",
+                        flight=flight,
+                        employee=flight.driver
+                    )
                     Logs.objects.create(
                         action="OUTCOME",
                         amount_uzs=flight.driver_expenses_uzs or 0,
