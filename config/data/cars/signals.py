@@ -34,7 +34,7 @@ def on_car_create(sender, instance: Car, created, **kwargs):
 
 @receiver(post_save, sender=Details)
 def on_details_create(sender, instance: Details, created, **kwargs):
-    if created and instance.car is not None:
+    if created :
         Logs.objects.create(
             action="OUTCOME",
             amount_uzs=instance.price_uzs,
