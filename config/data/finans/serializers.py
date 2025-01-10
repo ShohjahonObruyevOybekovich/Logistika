@@ -122,8 +122,6 @@ class FinansUserListserializer(serializers.ModelSerializer):
         queryset = (
             self.context.get('filtered_queryset', Logs.objects.all())
             .exclude(kind__iexact="BUY_CAR")
-            .exclude(kind__isnull=True)
-            .exclude(kind="")
         )
 
         return queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome'] or 0
