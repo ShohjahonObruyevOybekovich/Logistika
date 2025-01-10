@@ -1,6 +1,7 @@
 # Create your views here.
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from passlib.context import CryptContext
@@ -97,11 +98,18 @@ class UserUpdateAPIView(APIView):
 
     def put(self, request, *args, **kwargs):
         user = self.get_object()
-        serializer = UserUpdateSerializer(user, data=request.data, partial=True)  # Allow partial updates
+        data = request.data.copy()
+
+        # Check if password is provided and hash it
+        if "password" in data:
+            data["password"] = make_password(data["password"])
+
+        serializer = UserUpdateSerializer(user, data=data, partial=True)  # Allow partial updates
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class LogoutAPIView(APIView):
