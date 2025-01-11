@@ -186,7 +186,7 @@ class FinansFlightExcel(APIView):
             ws_logs[f"A{row_num}"] = f"{flight.car.number} - {flight.region.name}"
             ws_logs[f"B{row_num}"] = log.amount_uzs
             ws_logs[f"C{row_num}"] = "Приход" if log.action == "INCOME" else "Расход"
-            ws_logs[f"D{row_num}"] = f"{log.reason or ''}, {log.comment or ''}"
+            ws_logs[f"D{row_num}"] = f"{log.reason or ''} {log.comment or ''}"
             ws_logs[f"E{row_num}"] = flight.departure_date.strftime('%d-%m-%Y') if flight.departure_date else ""
             ws_logs[f"F{row_num}"] = flight.arrival_date.strftime('%d-%m-%Y') if flight.arrival_date else ""
             ws_logs[f"H{row_num}"] = log.created_at.strftime('%d-%m-%Y %H:%M')
