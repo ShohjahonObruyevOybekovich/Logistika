@@ -118,13 +118,20 @@ class FinansUserListserializer(serializers.ModelSerializer):
         queryset = self.context.get('filtered_queryset', Logs.objects.all())
         return queryset.filter(action="INCOME").aggregate(total_income=Sum('amount_uzs'))['total_income'] or 0
 
-    def get_outcome_sum(self, obj):
-        queryset = (
-            self.context.get('filtered_queryset', Logs.objects.all())
-            .exclude(kind__iexact="BUY_CAR")
-        )
+    from django.db.models import Sum
 
-        return queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome'] or 0
+    def get_outcome_sum(self, obj):
+        # Get the filtered queryset from context or default to Logs.objects.all()
+        queryset = self.context.get('filtered_queryset', Logs.objects.all())
+
+        # Exclude entries where kind is "BUY_CAR"
+        queryset = queryset.exclude(kind__iexact="BUY_CAR")
+
+        # Filter by action and aggregate the total outcome
+        total_outcome = queryset.filter(action="OUTCOME").aggregate(total_outcome=Sum('amount_uzs'))['total_outcome']
+
+        # Return 0 if total_outcome is None
+        return total_outcome or 0
 
     def get_car_price(self, obj):
         queryset = self.context.get('filtered_queryset', Logs.objects.filter(kind="BUY_CAR"))
