@@ -45,7 +45,7 @@ class Finans(ListCreateAPIView):
 
 
 class FinansList(ListAPIView):
-    queryset = Logs.objects.all().exclude(kind="FLIGHT_SALARY").order_by("-created_at")
+    queryset = Logs.objects.all().order_by("-created_at")
     serializer_class = FinansUserListserializer
     # permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]

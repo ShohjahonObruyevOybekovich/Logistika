@@ -317,7 +317,7 @@ class FlightCloseApi(APIView):
                         Logs.objects.create(
                             action="OUTCOME",
                             amount_uzs=flight.flight_balance_uzs,
-                            kind="FLIGHT_SALARY",
+                            kind="PAY_SALARY",
                             comment=f"оплата за рейс "
                                     f"{flight.car.name} {flight.car.number} для водителя {flight.driver.full_name}",
                             flight=flight,
@@ -326,7 +326,7 @@ class FlightCloseApi(APIView):
                     Logs.objects.create(
                         action="OUTCOME",
                         amount_uzs=lunch_payments,
-                        kind="FLIGHT_SALARY",
+                        kind="PAY_SALARY",
                         comment=f"за оплату еды для водителя {flight.driver.full_name} "
                                 f"по рейсу {flight.car.name} {flight.car.number}",
                         flight=flight,
@@ -335,7 +335,7 @@ class FlightCloseApi(APIView):
                     Logs.objects.create(
                         action="OUTCOME",
                         amount_uzs=flight.driver_expenses_uzs or 0,
-                        kind="FLIGHT_SALARY",
+                        kind="PAY_SALARY",
                         comment=f"оплата за рейс "
                                 f"{flight.car.name}  {flight.car.number} для водителя {flight.driver.full_name}",
                         flight=flight,
