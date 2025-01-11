@@ -134,8 +134,10 @@ class FinansUserListserializer(serializers.ModelSerializer):
         return total_outcome or 0
 
     def get_car_price(self, obj):
-        queryset = self.context.get('filtered_queryset', Logs.objects.filter(kind="BUY_CAR"))
-        return queryset.filter(action="OUTCOME").aggregate(car_price=Sum('amount_uzs'))['car_price'] or 0
+        queryset = self.context.get('filtered_queryset', Logs.objects.filter(kind="BUY_CAR",action="OUTCOME").
+                                    aggregate(car_price=Sum('amount_uzs'))['car_price'] )
+        return queryset or 0
+
 
     def get_total_leasing_paid(self, obj):
         """
