@@ -24,7 +24,7 @@ from ..salarka.models import Salarka, SalarkaAnotherStation
 
 
 class Finans(ListCreateAPIView):
-    queryset = Logs.objects.all().exclude(kind="FLIGHT_SALARY").order_by("-created_at")
+    queryset = Logs.objects.all().order_by("-created_at")
     serializer_class = FinansListserializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
@@ -128,7 +128,7 @@ class FinansFlightExcel(APIView):
         fuel_type = car.fuel_type.lower()  # Assuming fuel_type is either "salaka" or "gaz"
 
         # Fetch related logs
-        logs = Logs.objects.filter(flight=flight, kind="FLIGHT").order_by("-created_at")
+        logs = Logs.objects.filter(flight=flight, kind__in=["FLIGHT","FLIGHT_SALARY"]).order_by("-created_at")
 
         # Fetch purchases based on fuel type
         if fuel_type == "diesel":
