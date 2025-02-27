@@ -1,7 +1,5 @@
 FROM python:3.13.0-alpine
 
-
-
 WORKDIR /usr/src/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
