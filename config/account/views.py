@@ -123,9 +123,20 @@ class LogoutAPIView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def post(self, request, *args, **kwargs):
-        request.user.auth_token.delete()
-        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+        try:
+            # Get refresh token from request
+            refresh_token = request.data.get("refresh_token")
+            if not refresh_token:
+                return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Blacklist the token
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserInfo(APIView):
     permission_classes = (IsAuthenticated,)
