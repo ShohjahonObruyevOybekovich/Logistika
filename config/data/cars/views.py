@@ -571,8 +571,6 @@ class CarDetailsExcelAPIView(APIView):
         return response
 
 
-
-
 class NotificationListApi(ListCreateAPIView):
     queryset = Notification.objects.all().order_by("-created_at")
     # permission_classes = [IsAuthenticated]
@@ -592,3 +590,17 @@ class NotificationDetailsApi(RetrieveUpdateDestroyAPIView):
     queryset = Notification.objects.all().order_by("-created_at")
     permission_classes = [IsAuthenticated]
     serializer_class = Notificationserializer
+
+class CarInfoApi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        cars = Car.objects.all()
+        total_price = cars.aggregate(total=Sum("price"))["total"] or 0
+        total_price_uzs = cars.aggregate(total=Sum("price_uzs"))["total"] or 0
+
+        return Response({
+            "cars": cars.count(),
+            "total_price_usd": total_price,
+            "total_price_uzs": total_price_uzs
+        })

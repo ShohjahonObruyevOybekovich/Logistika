@@ -28,4 +28,6 @@ urlpatterns = [
     path("notification",NotificationListApi.as_view(), name="notification"),
     path("notif/<uuid:pk>", NotificationDetailsApi.as_view(), name="notif"),
 
+
+    path("car-finance/",CarInfoApi.as_view(), name="car-finance"),
 ]
