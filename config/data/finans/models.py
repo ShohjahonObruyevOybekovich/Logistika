@@ -1,6 +1,9 @@
 from django.db import models
 
+from data.cars.models import Car
 from data.command.models import TimeStampModel
+from data.flight.models import Flight
+from employee.models import Employee
 
 
 class Logs(TimeStampModel):
@@ -22,13 +25,13 @@ class Logs(TimeStampModel):
         ("UZS", "UZS"),
     ],default='USD', max_length=10, null=True, blank=True)
 
-    car = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
+    car : "Car" = models.ForeignKey("cars.Car", on_delete=models.SET_NULL, null=True, blank=True)
 
-    employee = models.ForeignKey(
+    employee : "Employee" = models.ForeignKey(
         "employee.Employee", on_delete=models.SET_NULL, null=True, blank=True
     )
 
-    flight = models.ForeignKey(
+    flight : "Flight" = models.ForeignKey(
         "flight.Flight", on_delete=models.SET_NULL, null=True, blank=True
     )
 
