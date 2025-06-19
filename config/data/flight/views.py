@@ -183,7 +183,7 @@ class ExportFlightInfoAPIView(APIView):
                         if flight.departure_date and flight.arrival_date
                         else ""
                     ),
-                    flight.price_uzs-flight.driver_expenses_uzs-flight.flight.flight_balance_uzs-(
+                    flight.price_uzs-flight.driver_expenses_uzs-flight.flight_balance_uzs-(
                         (max((flight.arrival_date - flight.departure_date).days, 0) * (flight.other_expenses_uzs or 0))
                         if flight.departure_date and flight.arrival_date
                         else ""
