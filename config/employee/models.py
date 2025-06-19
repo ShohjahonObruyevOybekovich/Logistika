@@ -50,4 +50,4 @@ class Employee(models.Model):
                                   null=True, blank=True)
 
     def __str__(self):
-        return f"{self.full_name} - {self.phone}
+        return f"{self.full_name} - {self.phone}"
