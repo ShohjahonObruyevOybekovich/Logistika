@@ -390,9 +390,9 @@ class FilteredIncomeOutcomeAPIView(APIView):
             queryset = queryset.filter(action=action)
 
         # Calculate income and outcome sums
-        income_sum = queryset.filter(action="INCOME").aggregate(total_income=Sum("amount_uzs"))["total_income"] or 0
+        income_sum = queryset.filter(action="INCOME").aggregate(total_income=Sum("amount"))["total_income"] or 0
         outcome_sum = queryset.filter(action="OUTCOME").exclude(kind="BUY_CAR").aggregate(
-            total_outcome=Sum("amount_uzs"))["total_outcome"] or 0
+            total_outcome=Sum("amount"))["total_outcome"] or 0
 
         # Determine grouping
         if start_date and end_date:
@@ -412,14 +412,14 @@ class FilteredIncomeOutcomeAPIView(APIView):
             .annotate(
                 income=Sum(
                     Case(
-                        When(action="INCOME", then=F('amount_uzs')),
+                        When(action="INCOME", then=F('amount')),
                         default=0,
                         output_field=FloatField()
                     )
                 ),
                 outcome=Sum(
                     Case(
-                        When(action="OUTCOME", then=F('amount_uzs')),
+                        When(action="OUTCOME", then=F('amount')),
                         default=0,
                         output_field=FloatField()
                     )
