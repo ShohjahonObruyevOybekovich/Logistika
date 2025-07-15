@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from employee.models import Employee
 
-admin.site.unregister(Employee)
+# admin.site.unregister(Employee)
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
